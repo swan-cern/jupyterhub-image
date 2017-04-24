@@ -95,6 +95,12 @@ docker network inspect $DOCKER_NETWORK_NAME >/dev/null 2>&1 || docker network cr
 docker network inspect $DOCKER_NETWORK_NAME
 
 
+# ----- Set the permissions for LDAP/PAM configuration files ----- #
+echo ""
+echo "Setting permission for LDAP/PAM configuration files..."
+chmod 600 ldappam.d/nslcd.conf
+
+
 # ----- Check to have (or pull) the CERN Jupyter notobook server image
 # See: https://github.com/cernphsft/systemuser
 echo ""
