@@ -1,0 +1,24 @@
+
+Box-in-the-box: self-contained, containerized demo for next-generation cloud storage and computing services for scientific and general-purpose use.
+
+Contains: 
+ - CERNBox: https://cernbox.cern.ch
+ - EOS: https://eos.cern.ch
+ - SWAN: https://swan.cern.ch
+
+Packaging:
+ - Enrico Bocchi (SWAN)
+ - Hugo Gonzalez Labrador (CERNBox)
+ - Jozsef Makai (EOS)
+ - Jakub T. Moscicki (CERNBox)
+
+Packaging license: AGPL
+
+How to use:
+
+ 1. install docker and docker-compose
+ 2. run: ./SetupHost.sh
+
+--
+
+Copyright 2017, CERN.
