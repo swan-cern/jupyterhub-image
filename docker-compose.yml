@@ -141,6 +141,14 @@ services:
     ports:
       - 443:443
 
+  # smashbox
+  smashbox:
+    build:
+      context: .
+      dockerfile: smashbox.Dockerfile
+    image: smashbox
+    container_name: smashbox
+
 networks:
   default:
     external:
