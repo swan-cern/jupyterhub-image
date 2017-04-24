@@ -1,0 +1,181 @@
+# JupyterHub docker-compose configuration file
+# For the time being, it is not really required as everything is contained in the JupyterHub container
+version: "2"
+
+services:
+
+  # JupyterHub with CERN customizations
+  jupyterhub:
+    # Build from local Dockerfile
+    build:
+      context: .
+      dockerfile: jupyterhub.Dockerfile
+    image: swan_jupyterhub
+    container_name: jupyterhub
+    # Specify CERN DNS resolvers
+    #dns:
+    #  - 137.138.17.5
+    #  - 137.138.16.5
+    # Expose ports on the outside of the container
+    ports:
+      - 4443:443
+    # Enable to spawn new containers from the inside of the JupyterHub container
+    # by exposing the Docker socket of the host machine
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+    # Required to authenticate users using GitHub OAuth
+    # This is going to be removed at the advantage of LDAP
+    #environment:
+    #  GITHUB_CLIENT_ID: e54ff548df72f4ec2987
+    #  GITHUB_CLIENT_SECRET: d7d89029c856c410f29f5c629c3b36514e6c00d1
+    #  OAUTH_CALLBACK_URL: https://127.0.0.1/hub/oauth_callback
+    #command: > 
+    #   python3 /jupyterhub-dmaas/scripts/start_jupyterhub.py --config /srv/jupyterhub/jupyterhub_config.py
+    #  jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
+
+  # LDAP for users authentication
+  # See: https://github.com/osixia/docker-openldap
+  ldap:
+    build:
+      context: .
+      dockerfile: openldap.Dockerfile
+    image: swan_ldap
+    container_name: openldap
+    # Bind external Docker volumes to the path where LDAP stores data and config. Users list is persistent.
+    volumes:
+      - openldap_database:/var/lib/ldap
+      - openldap_config:/etc/ldap/slapd.d
+    environment:
+      LDAP_TLS_VERIFY_CLIENT: try
+      # This is a workaround to avoid TLS error when Client Authentication 
+      # fails due to self-signed certificates.
+      # Possible values -- never | allow | try | demand (default is demand)
+      # https://github.com/osixia/docker-openldap/issues/105
+
+  # Add demo users on the LDAP server
+  ldap-ldapadd:
+    image: swan_ldap
+    container_name: openldap-ldapadd
+    depends_on:
+      - ldap
+    links:
+      - ldap
+    # Sharing:  1. SWAN-in-Docker directory for lockfile 'eos-storage-lock'
+    volumes:
+      - /tmp/SWAN-in-Docker:/tmp/SWAN-in-Docker
+    entrypoint: bash /openldap_addusers.sh
+
+  # CVMFS software repository. 
+  # Single-user' Jupyter servers need to access CVMFS for additional Kernels (e.g., ROOT C++, R) and software packages.
+  cvmfs:
+    build:
+      context: .
+      dockerfile: cvmfs.Dockerfile
+    image: swan_cvmfs
+    container_name: cvmfs
+    cap_add:
+      - SYS_ADMIN
+    devices:
+      - /dev/fuse
+    # Bind a folder on the host in which CVMFS will be mounted from the inside of the container.
+    # Containers in the need of accessing CVMFS can in turn mount the host folder.
+    volumes:
+      - /tmp/SWAN-in-Docker/cvmfs_mount:/cvmfs:shared
+
+  # EOS Client with Fuse mount
+  eos-fuse:
+    build:
+      context: .
+      dockerfile: eos-fuse.Dockerfile
+    image: swan_eos-fuse
+    container_name: eos-fuse
+    hostname: eos-fuse
+    domainname: demonet
+    cap_add:
+      - SYS_ADMIN
+    devices:
+      - /dev/fuse
+    pid: host
+    # Sharing:	1. The /eos mount coming from fuse
+    #		2. SWAN-in-Docker directory for lockfile 'eos-fuse-lock'
+    volumes:
+      - /tmp/SWAN-in-Docker/eos_mount:/eos:shared
+      - /tmp/SWAN-in-Docker:/tmp/SWAN-in-Docker
+    #depends_on:
+    #  - "eos-fuse-trigger"
+
+  # EOS Storage 
+  # This container is spawning all the EOS core containers, i.e., MGM, FTS, ...
+  # and the container with the fuse mount
+  eos-controller:
+    build:
+      context: .
+      dockerfile: eos-controller.Dockerfile
+    image: eos-controller
+    container_name: eos-controller
+    # Sharing:	1. The Docker daemon on the host to spawn EOS Storage containers
+    #		2. SWAN-in-Docker directory for lockfile 'eos-fuse-lock'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+      - /tmp/SWAN-in-Docker:/tmp/SWAN-in-Docker
+    #command: >
+    #  bash start_eos.sh
+
+  # CERNBox
+  cernbox:
+    build:
+      context: .
+      dockerfile: cernbox.Dockerfile
+    image: cernbox
+    container_name: cernbox
+    ports:
+      - 80:80
+
+  # CERNBox gateway
+  cernboxgateway:
+    build:
+     context: .
+     dockerfile: cernboxgateway.Dockerfile
+    image: cernboxgateway
+    container_name: cernboxgateway
+    ports:
+      - 443:443
+
+networks:
+  default:
+    external:
+      name: demonet
+
+volumes:
+  openldap_database:
+    external:
+      name: openldap_database
+  openldap_config:
+    external:
+      name: openldap_config
+  eos-fst1:
+    external:
+      name: eos-fst1
+  eos-fst2:
+    external:
+      name: eos-fst2
+  eos-fst3:
+    external:
+      name: eos-fst3
+  eos-fst4:
+    external:
+      name: eos-fst4
+  eos-fst5:
+    external:
+      name: eos-fst5
+  eos-fst6:
+    external:
+      name: eos-fst6
+  eos-mgm:
+    external:
+      name: eos-mgm
+  eos-mq:
+    external:
+      name: eos-mq
+
+
