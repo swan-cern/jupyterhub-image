@@ -140,11 +140,16 @@ services:
     container_name: cernboxgateway
     ports:
       - 443:443
+    # Sharing:  1. SWAN-in-Docker directory for lockfile 'cernboxgateway-lock'
+    volumes:
+      - /tmp/SWAN-in-Docker:/tmp/SWAN-in-Docker
+
 
 networks:
   default:
     external:
       name: demonet
+
 
 volumes:
   openldap_database:
@@ -177,5 +182,3 @@ volumes:
   eos-mq:
     external:
       name: eos-mq
-
-
