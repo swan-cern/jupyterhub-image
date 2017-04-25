@@ -242,9 +242,6 @@ touch /tmp/SWAN-in-Docker/eos-fuse-lock
 echo "Locking cernboxgateway -- Needs EOS storage"
 touch /tmp/SWAN-in-Docker/cernboxgateway-lock
 
-# ----- Updating hostname for cernbox ----
-sed -e "s/%%%HOSTNAME%%%/`hostname --fqdn`/" cernbox.d/cernbox.config.template > cernbox.d/cernbox.config
-
 # ----- Build and run via Docker Compose ----- #
 echo ""
 echo "Build and run"
