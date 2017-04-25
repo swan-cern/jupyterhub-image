@@ -2,6 +2,14 @@
 # NOTE: The container needs access to the Docker daemon socket on the host (/var/run/docker.sock:/var/run/docker.sock:rw) 
 #		to execute tests on the containers of services, e.g., JupyterHub, CVMFS, etc...
 
+#
+# Run command from the host:
+#docker build -t microtests -f microtests.Dockerfile .; docker run --net demonet --name mt --rm --volume /var/run/docker.sock:/var/run/docker.sock:rw -it microtests
+#
+# TODO: include in Docker Compose
+#		Also set the related lock to wait for all the other services to be there
+#
+
 # ----- Use CERN cc7 as base image for EOS|FUSE ----- #
 FROM cern/cc7-base:20170113
 
