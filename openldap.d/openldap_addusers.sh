@@ -1,5 +1,10 @@
 #!/usr/bin/bash
 
+ACTION_FILE='/tmp/action.ldif'
+ldapadd_macro  () {
+  /usr/bin/ldapadd -x -H ldap://ldap -D "cn=admin,dc=example,dc=org" -w admin -f $ACTION_FILE
+}
+
 # Wait for the ldap server to be up and running
 sleep 15
 
@@ -23,9 +28,9 @@ do
 	userPassword: {crypt}x
 	shadowLastChange: 0
 	shadowMax: 0
-	shadowWarning: 0" > newuser.ldif
+	shadowWarning: 0" > $ACTION_FILE
 	# Add the user and set a password for her
-	ldapadd -x -H ldap://ldap -D "cn=admin,dc=example,dc=org" -w admin -f newuser.ldif
+	ldapadd_macro
 	ldappasswd -x -H ldap://ldap -D "cn=admin,dc=example,dc=org" -w admin "uid=user$i,dc=example,dc=org" -s test$i
 done
 
@@ -45,13 +50,12 @@ gecos: dummy_admin
 userPassword: {crypt}x
 shadowLastChange: 0
 shadowMax: 0
-shadowWarning: 0" > dummy_admin.ldif
-ldapadd -x -H ldap://ldap -D "cn=admin,dc=example,dc=org" -w admin -f dummy_admin.ldif 
+shadowWarning: 0" > $ACTION_FILE
+ldapadd_macro
 ldappasswd -x -H ldap://ldap -D "cn=admin,dc=example,dc=org" -w admin "uid=dummy_admin,dc=example,dc=org" -s adminadmin
 
 # Clean up
-rm newuser.ldif
-rm dummy_admin.ldif
+rm -f $ACTION_FILE
 
 # Removing the lock for EOS-Storage
 echo "Unlocking eos-controller for EOS-Storage deployment."
