@@ -16,7 +16,11 @@ Packaging license: AGPL
 
 How to use:
 
- 1. install docker and docker-compose
+ 1. install on the host machine
+      - wget 
+      - fuse 
+      - docker (version 17.03.1-ce or greater)
+      - docker-compose (version 1.11.2 or greater)
  2. run: ./SetupHost.sh
 
 --

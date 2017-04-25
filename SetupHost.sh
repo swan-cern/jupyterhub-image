@@ -17,28 +17,46 @@ OPENLDAP_DB_VOLUME="openldap_database"
 OPENLDAP_CF_VOLUME="openldap_config"
 
 
+# ----- Functions ----- #
+# Check to be root
+need_root()
+{
+if [ "$EUID" -ne 0 ]; then
+	echo "Please run as root"
+	exit 1
+else
+	echo "I am root."
+fi
+}
+
+
+# Check to have certificates and admins list for JupyterHub
+jupyterhub_requirements()
+{
+if [[ -f secrets/jupyterhub.crt && -f secrets/jupyterhub.key ]]; then
+	echo "I have certificates for serving JupyterHub over SSL."
+else
+	echo "Need SSL key and certificate in secrets/jupyterhub.{key,crt}"
+	exit 1
+fi
+
+if [[ -f jupyterhub.d/adminslist ]]; then
+	echo "I have the adminlist for JupyterHub."
+else
+	echo "Need usernames for admins, one per line, in jupyterhub.d/adminslist"
+	exit 1
+fi
+}
+
 
 # ----- Preliminary Checks ----- # 
-# Check to have certificates for serving JupyterHub over TLS
-if [[ -f secrets/jupyterhub.crt && -f secrets/jupyterhub.key ]]; then
-	echo "I have secrets for SSL."
-else
-	echo "Need a SSL key and certificate in secrets/jupyterhub.{key,crt}"
-	exit 1
-fi
-
-# Check to have an admins list for JupyterHub
-if [[ -f jupyterhub.d/adminslist ]]; then
-	echo "I have the userlist."
-else
-	echo "Need usernames for admins, one per line, to jupyterhub.d/adminslist"
-	exit 1
-fi
+need_root
+jupyterhub_requirements
 echo "All fine. Continuing..."
 echo ""
 
 
-# ----- Clean up and preparation ----- #
+# ----- Preparation and Clean-Up ----- #
 # Raise warning about CVMFS and EOS before continuing
 echo ""
 echo "WARNING: The deployment interferes with eventual CVMFS and EOS clients running on the host."
@@ -49,7 +67,8 @@ case "$response" in
 	echo "Ok."
         ;;
     *)
-        echo "Aborted."
+        echo "Cannot continue. Exiting..."
+        echo ""
         exit
         ;;
 esac
