@@ -52,8 +52,25 @@ fi
 # ----- Preliminary Checks ----- # 
 need_root
 jupyterhub_requirements
-echo "All fine. Continuing..."
+
 echo ""
+echo "The following software has to be installed:"
+echo -e "\t- wget"
+echo -e "\t- fuse"
+echo -e "\t- git"
+echo -e "\t- docker (version 17.03.1-ce or greater)"
+echo -e "\t- docker-compose (version 1.11.2 or greater)"
+echo ""
+echo "Please consider installing it manually or using the script SetupInstall.sh (for CentOS based systems)."
+echo ""
+
+wait_time=10
+while [ $wait_time -gt 0 ]; do
+   echo -ne "\r$wait_time...\033[0K"
+   sleep 1
+   wait_time=$((wait_time-1))
+done
+echo "Continuing..."
 
 
 # ----- Preparation and Clean-Up ----- #
