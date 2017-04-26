@@ -239,6 +239,8 @@ echo "Locking EOS-Storage -- Needs LDAP"
 touch /tmp/SWAN-in-Docker/eos-storage-lock
 echo "Locking eos-fuse client -- Needs EOS storage"
 touch /tmp/SWAN-in-Docker/eos-fuse-lock
+echo "Locking cernbox -- Needs EOS storage"
+touch /tmp/SWAN-in-Docker/cernbox-lock
 echo "Locking cernboxgateway -- Needs EOS storage"
 touch /tmp/SWAN-in-Docker/cernboxgateway-lock
 

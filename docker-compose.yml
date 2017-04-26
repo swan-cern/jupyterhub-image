@@ -130,6 +130,9 @@ services:
     container_name: cernbox
     ports:
       - 80:80
+    # Sharing:  1. SWAN-in-Docker directory for lockfile 'cernbox-lock'
+    volumes:
+      - /tmp/SWAN-in-Docker:/tmp/SWAN-in-Docker
 
   # CERNBox gateway
   cernboxgateway:
