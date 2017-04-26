@@ -145,6 +145,14 @@ services:
       - /tmp/SWAN-in-Docker:/tmp/SWAN-in-Docker
 
 
+  # smashbox
+  smashbox:
+    build:
+      context: .
+      dockerfile: smashbox.Dockerfile
+    image: smashbox
+    container_name: smashbox
+
 networks:
   default:
     external:

@@ -95,8 +95,8 @@ esac
 echo ""
 echo "Cleaning up..."
 # TODO: CERNBox Containers should be added to the list
-docker stop jupyterhub openldap openldap-ldapadd cvmfs eos-fuse cernbox cernboxgateway 2>/dev/null
-docker rm -f jupyterhub openldap openldap-ldapadd cvmfs eos-fuse cernbox cernboxgateway 2>/dev/null
+docker stop jupyterhub openldap openldap-ldapadd cvmfs eos-fuse cernbox cernboxgateway smashbox 2>/dev/null
+docker rm -f jupyterhub openldap openldap-ldapadd cvmfs eos-fuse cernbox cernboxgateway smashbox 2>/dev/null
 
 # Note: Containers for eos server are not managed by docker-compose. They need to be stopped and removed here.
 docker stop eos-fst{1..6} eos-mq eos-mgm 2>/dev/null
@@ -242,6 +242,8 @@ touch /tmp/SWAN-in-Docker/eos-fuse-lock
 echo "Locking cernboxgateway -- Needs EOS storage"
 touch /tmp/SWAN-in-Docker/cernboxgateway-lock
 
+# ----- Updating hostname for cernbox ----
+sed -e "s/%%%HOSTNAME%%%/`hostname --fqdn`/" cernbox.d/cernbox.config.template > cernbox.d/cernbox.config
 
 # ----- Build and run via Docker Compose ----- #
 echo ""
