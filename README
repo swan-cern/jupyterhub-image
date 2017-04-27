@@ -16,12 +16,35 @@ Packaging license: AGPL
 
 How to use:
 
- 1. install on the host machine
-      - wget 
-      - fuse 
-      - docker (version 17.03.1-ce or greater)
-      - docker-compose (version 1.11.2 or greater)
- 2. run: ./SetupHost.sh
+ 1. Install required software on the Centos7 host (other host OSes -- see below [*]):
+    
+    run ./SetupInstall-Centos7.sh
+
+
+ 2. Setup and initialize all services:
+
+    run: ./SetupHost.sh
+
+
+ 3. Quick test of the services:
+
+    run: ./TestHost.sh
+
+
+ 4. You are now ready to use the system:
+
+    Connect with the browser to: https://yourhost
+
+
+[*]
+
+We test this package on Centos7 hosts. For other OSes you may need some extra work (and sweat or tears). 
+We are happy to hear from you and eventually include instructions for other OSes.
+
+Required software on the host:
+  - install wget, fuse
+  - install docker (version 17.03.1-ce or greater)
+  - install docker-compose (version 1.11.2 or greater)
 
 --
 
