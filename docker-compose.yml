@@ -133,6 +133,9 @@ services:
     # Sharing:  1. SWAN-in-Docker directory for lockfile 'cernbox-lock'
     volumes:
       - /tmp/SWAN-in-Docker:/tmp/SWAN-in-Docker
+    # Setting environment variable to fill cernbox.php.template
+    environment:
+      BOX_HOSTNAME: ${BOX_HOSTNAME}
 
   # CERNBox gateway
   cernboxgateway:

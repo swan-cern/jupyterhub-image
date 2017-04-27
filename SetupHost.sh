@@ -16,6 +16,9 @@ EOSSTORAGE_FST_NAME="fst"
 OPENLDAP_DB_VOLUME="openldap_database"
 OPENLDAP_CF_VOLUME="openldap_config"
 
+### Variables used by Docker compose
+export BOX_HOSTNAME=`hostname --fqdn`
+
 
 # ----- Functions ----- #
 # Check to be root
@@ -246,7 +249,7 @@ touch /tmp/SWAN-in-Docker/cernboxgateway-lock
 
 
 # ----- Updating hostname for cernbox ----
-sed -e "s/%%%HOSTNAME%%%/`hostname --fqdn`/" cernbox.d/cernbox.config.template > cernbox.d/cernbox.config
+#sed -e "s/%%%HOSTNAME%%%/`hostname --fqdn`/" cernbox.d/cernbox.config.template > cernbox.d/cernbox.config
 
 
 # ----- Build and run via Docker Compose ----- #
