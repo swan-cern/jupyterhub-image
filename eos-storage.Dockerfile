@@ -11,14 +11,14 @@ RUN yum -y --nogpg update
 
 # ----- Pick the preferred EOS version by copying the repo file ----- #
 # ==> EOS CITRINE -- EOS 4 Version
-COPY eos-storage.d/eos_citrine.repo /etc/yum.repos.d/eos.repo
-COPY eos-storage.d/epel_citrine.repo /etc/yum.repos.d/epel.repo
-ENV XRD_VERSION 4.5.0
+#COPY eos-storage.d/eos_citrine.repo /etc/yum.repos.d/eos.repo
+#COPY eos-storage.d/epel_citrine.repo /etc/yum.repos.d/epel.repo
+#ENV XRD_VERSION 4.5.0
 
 # ==> EOS AQUAMARINE -- EOS 0.3 Version
-#COPY eos-storage.d/eos_aquamarine.repo /etc/yum.repos.d/eos.repo
-#COPY eos-storage.d/epel_aquamarine.repo /etc/yum.repos.d/epel.repo
-#ENV XRD_VERSION 3.3.6
+COPY eos-storage.d/eos_aquamarine.repo /etc/yum.repos.d/eos.repo
+COPY eos-storage.d/epel_aquamarine.repo /etc/yum.repos.d/epel.repo
+ENV XRD_VERSION 3.3.6
 
 
 # ----- Install XRootD ----- #
