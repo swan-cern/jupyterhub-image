@@ -1,26 +1,29 @@
-!/bin/bash
+#!/bin/bash
 set -o errexit # bail out on all errors immediately
 
 export CERNBOXURL=https://cernboxgateway/cernbox/desktop/remote.php/webdav
 
-dd if=/dev/zero of=/tmp/largefile1M.dat bs=1000 count=1000
-dd if=/dev/zero of=/tmp/largefile10M.dat bs=100000 count=1000
+dd if=/dev/zero of=/tmp/largefile256.dat bs=1024 count=250
+dd if=/dev/zero of=/tmp/largefile512.dat bs=1024 count=500
+dd if=/dev/zero of=/tmp/largefile1024.dat bs=1024 count=1000
+dd if=/dev/zero of=/tmp/largefile10240.dat bs=1024 count=10000
 
 
-FILES="/etc/passwd /tmp/largefile1M.dat /tmp/largefile10M.dat"
+FILES="/etc/passwd /tmp/largefile256.dat /tmp/largefile512.dat /tmp/largefile1024.dat /tmp/largefile10240.dat"
 
-echo $FILES
+for ff in $FILES; do
 
-# TODO: loop on FILES
+    f=`basename $ff`
 
-# upload
-curl -f -k -u user0:test0 --upload-file /etc/passwd ${CERNBOXURL}/home/passwd || exit 1
-
-# overwrite file
-curl -f -k -u user0:test0 --upload-file /etc/passwd ${CERNBOXURL}/home/passwd || exit 1
-
-# download
-curl -f -k -u user0:test0 ${CERNBOXURL}/home/passwd > /dev/null || exit 1
+    # upload
+    curl -f -k -u user0:test0 --upload-file $ff ${CERNBOXURL}/home/$f || exit 1
+    
+    # overwrite file
+    curl -f -k -u user0:test0 --upload-file $ff ${CERNBOXURL}/home/$f || exit 1
+    
+    # download
+    curl -f -k -u user0:test0 ${CERNBOXURL}/home/$f > /dev/null || exit 1
+done
 
 
 # test expected failures
