@@ -1,5 +1,6 @@
 #!/bin/bash
 set -o errexit # bail out on all errors immediately
+set -x
 
 export CERNBOXURL=https://cernboxgateway/cernbox/desktop/remote.php/webdav
 
