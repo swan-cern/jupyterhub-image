@@ -18,28 +18,31 @@ RUN yum -y --nogpg update
 # ==> EOS CITRINE -- EOS 4 Version
 #COPY eos-storage.d/eos_citrine.repo /etc/yum.repos.d/eos.repo
 #COPY eos-storage.d/epel_citrine.repo /etc/yum.repos.d/epel.repo
-#ENV XRD_VERSION 4.5.0
+#ENV XRD_VERSION -4.5.0
 
 # ==> EOS AQUAMARINE -- EOS 0.3 Version
 COPY eos-storage.d/eos_aquamarine.repo /etc/yum.repos.d/eos.repo
 COPY eos-storage.d/epel_aquamarine.repo /etc/yum.repos.d/epel.repo
 COPY eos-storage.d/eos-ai.repo /etc/yum.repos.d/eos-ai.repo
-ENV XRD_VERSION 3.3.6
+
+# pin the versions (set to empty string to unpin and get the latest version available)
+ENV XRD_VERSION -3.3.6 
+ENV EOS_VERSION -0.3.231
 
 
 # ----- Install XRootD ----- #
 RUN yum -y --nogpg install \
-    xrootd-$XRD_VERSION \
-    xrootd-client-$XRD_VERSION \
-    xrootd-client-libs-$XRD_VERSION \
-    xrootd-libs-$XRD_VERSION \
-    xrootd-server-devel-$XRD_VERSION \
-    xrootd-server-libs-$XRD_VERSION
+    xrootd$XRD_VERSION \
+    xrootd-client$XRD_VERSION \
+    xrootd-client-libs$XRD_VERSION \
+    xrootd-libs$XRD_VERSION \
+    xrootd-server-devel$XRD_VERSION \
+    xrootd-server-libs$XRD_VERSION
 
 
 # ----- Install EOS ----- #
 RUN yum -y --nogpg install \
-    eos-server eos-client eos-testkeytab quarkdb 
+    eos-server$EOS_VERSION eos-client$EOS_VERSION eos-testkeytab$EOS_VERSION quarkdb 
 
 # NOTE: you may want to pin the version: eos-server-0.3.240 eos-client-0.3.240
 
