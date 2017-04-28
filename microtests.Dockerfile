@@ -20,8 +20,7 @@ RUN yum -y install yum-plugin-ovl # See http://unix.stackexchange.com/questions/
 
 # ----- Install the EOS|FUSE client ----- #
 RUN yum -y update
-RUN yum -y install \
-		nmap
+RUN yum -y install nmap less
 
 # ----- Install Docker to run commands against the other containers ----- #
 RUN yum -y update
@@ -30,7 +29,7 @@ RUN wget -q https://get.docker.com -O /tmp/getdocker.sh && \
 	bash /tmp/getdocker.sh && \
 	rm /tmp/getdocker.sh
 
-COPY microtests.d/microtests_tests.sh /tests.sh
+COPY microtests.d /microtests.d
 
-CMD ["/bin/bash", "/tests.sh"]
+CMD ["/bin/bash"] #, "/tests.sh"]
 
