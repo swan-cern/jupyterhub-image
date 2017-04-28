@@ -3,9 +3,14 @@
 #
 # Credits go to Elvin Sindrilaru and József Makai, CERN 2017
 
-FROM centos:7
+#FROM cern/slc6-base:20170406
+#FROM cern/cc7-base:20170113
+#FROM centos:7
+FROM centos:6.9
+
 MAINTAINER Enrico Bocchi <enrico.bocchi@cern.ch>
 
+RUN yum -y install yum-plugin-ovl # See http://unix.stackexchange.com/questions/348941/rpmdb-checksum-is-invalid-trying-to-install-gcc-in-a-centos-7-2-docker-image
 RUN yum -y --nogpg update
 
 
@@ -18,6 +23,7 @@ RUN yum -y --nogpg update
 # ==> EOS AQUAMARINE -- EOS 0.3 Version
 COPY eos-storage.d/eos_aquamarine.repo /etc/yum.repos.d/eos.repo
 COPY eos-storage.d/epel_aquamarine.repo /etc/yum.repos.d/epel.repo
+COPY eos-storage.d/eos-ai.repo /etc/yum.repos.d/eos-ai.repo
 ENV XRD_VERSION 3.3.6
 
 
@@ -33,8 +39,9 @@ RUN yum -y --nogpg install \
 
 # ----- Install EOS ----- #
 RUN yum -y --nogpg install \
-    eos-server eos-testkeytab quarkdb 
+    eos-server eos-client eos-testkeytab quarkdb 
 
+# NOTE: you may want to pin the version: eos-server-0.3.240 eos-client-0.3.240
 
 # ----- Install sssd to access user account information ----- #
 # Note: This will be used by the MGM only
@@ -59,3 +66,4 @@ ADD ldappam.d /etc
 
 
 #ENTRYPOINT ["/bin/bash"]
+#CMD ["/bin/bash"]
