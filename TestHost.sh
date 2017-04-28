@@ -5,7 +5,7 @@ echo setting up the tests...  'logfile: # less test-setup.log'
     set -o verbose
     docker build -t microtests -f microtests.Dockerfile .
     docker rm -f microtests
-    docker run -d -it --name microtests --network demonet microtests
+    docker run -d -it --name microtests --network demonet --volume /var/run/docker.sock:/var/run/docker.sock:rw microtests
     set +o verbose
 } > test-setup.log 2>&1
 
