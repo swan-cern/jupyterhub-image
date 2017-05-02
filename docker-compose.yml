@@ -46,11 +46,15 @@ services:
       - openldap_database:/var/lib/ldap
       - openldap_config:/etc/ldap/slapd.d
     environment:
+      LDAP_LOG_LEVEL: none      # See: http://www.openldap.org/doc/admin24/slapdconf2.html
+                                # Default log level is 256 (0x100 stats)
       LDAP_TLS_VERIFY_CLIENT: try
       # This is a workaround to avoid TLS error when Client Authentication 
       # fails due to self-signed certificates.
       # Possible values -- never | allow | try | demand (default is demand)
       # https://github.com/osixia/docker-openldap/issues/105
+    #logging:
+    #  driver: none
 
   # Add demo users on the LDAP server
   ldap-ldapadd:
