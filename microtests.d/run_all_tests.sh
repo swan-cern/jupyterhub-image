@@ -21,9 +21,18 @@ cd $DIR
 echo > test.log
 
 for test in test_*.sh; do
-    echo running $test >&2 
-    echo running $test >> test.log
-    runtest ./$test || exit 1
+    RUN_CONTAINER=`grep '^#RUN_IN_CONTAINER' $test | awk '{print $2}'`
+
+    echo running $test "(container:$RUN_CONTAINER)" >&2 
+    echo running $test "(container:$RUN_CONTAINER)" >> test.log
+
+    if [[ -z $RUN_CONTAINER ]]; then
+	runtest ./$test || exit 1
+    else
+	docker cp $test $RUN_CONTAINER:/$test >> test.log
+	runtest docker exec -t $RUN_CONTAINER /$test || exit 1
+    fi
+
 done
 
 echo "All tests passed successfully" >&2 
