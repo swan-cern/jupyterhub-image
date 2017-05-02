@@ -256,11 +256,5 @@ echo ""
 echo "Build and run"
 docker-compose build
 docker-compose up -d
-
-# Create user homes after all servers start
-# We have to do it here, because on build or even startup stage ldap is not avaliable 
-#   and we can't get user information by id command from cernbox.
-echo "Create user homes"
-docker exec -it cernbox /createUsersHome.sh
-
 docker-compose logs -f
+
