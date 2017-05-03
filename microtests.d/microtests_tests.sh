@@ -93,7 +93,7 @@ echo "Checking NSS/PAM..."
 for i in $LDAP_CLIENTS;
 do
 	errors=0
-	USERLIST=`cat $LDAP_OUT.$i | grep uid: | cut -d ' ' -f 2 | tr '\n' ' ' | head -n 10`
+	USERLIST=`cat $LDAP_OUT.$i | grep uid: | cut -d ' ' -f 2 | head -n 10 | tr '\n' ' '`
 	for un in $USERLIST;
 	do
 		docker exec $i id $un >> $PAM_OUT.$i 2>&1
