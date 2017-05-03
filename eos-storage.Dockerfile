@@ -3,16 +3,15 @@
 #
 # Credits go to Elvin Sindrilaru and József Makai, CERN 2017
 
-#FROM cern/slc6-base:20170406
-#FROM cern/cc7-base:20170113
 #FROM centos:7
-FROM centos:6.9
+#FROM cern/cc7-base:20170113
+#FROM centos:6.9
+FROM cern/slc6-base:20170406
+
 
 MAINTAINER Enrico Bocchi <enrico.bocchi@cern.ch>
 
 RUN yum -y install yum-plugin-ovl # See http://unix.stackexchange.com/questions/348941/rpmdb-checksum-is-invalid-trying-to-install-gcc-in-a-centos-7-2-docker-image
-RUN yum -y --nogpg update
-
 
 # ----- Pick the preferred EOS version by copying the repo file ----- #
 # ==> EOS CITRINE -- EOS 4 Version
@@ -24,8 +23,14 @@ RUN yum -y --nogpg update
 COPY eos-storage.d/eos_aquamarine.repo /etc/yum.repos.d/eos.repo
 COPY eos-storage.d/epel_aquamarine.repo /etc/yum.repos.d/epel.repo
 COPY eos-storage.d/eos-ai.repo /etc/yum.repos.d/eos-ai.repo
+COPY eos-storage.d/eos-aquamarine-dss-ci.repo /etc/yum.repos.d/eos-aquamarine-dss-ci.repo
 
-# pin the versions (set to empty string to unpin and get the latest version available)
+# Required by EOS Aquamarine on CERN SLC6
+RUN yum -y install gnutls
+RUN yum -y --disablerepo=slc6-os --disablerepo=slc6-updates install libmicrohttpd
+
+
+# Pin the versions (set to empty string to unpin and get the latest version available)
 ENV XRD_VERSION -3.3.6 
 ENV EOS_VERSION -0.3.231
 
@@ -42,9 +47,11 @@ RUN yum -y --nogpg install \
 
 # ----- Install EOS ----- #
 RUN yum -y --nogpg install \
-    eos-server$EOS_VERSION eos-client$EOS_VERSION eos-testkeytab$EOS_VERSION quarkdb 
+    eos-server$EOS_VERSION \
+    eos-client$EOS_VERSION \
+    eos-testkeytab$EOS_VERSION \
+    quarkdb 
 
-# NOTE: you may want to pin the version: eos-server-0.3.240 eos-client-0.3.240
 
 # ----- Install sssd to access user account information ----- #
 # Note: This will be used by the MGM only
@@ -69,4 +76,4 @@ ADD ldappam.d /etc
 
 
 #ENTRYPOINT ["/bin/bash"]
-#CMD ["/bin/bash"]
+CMD ["/bin/bash"]
