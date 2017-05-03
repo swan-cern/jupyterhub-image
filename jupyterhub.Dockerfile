@@ -42,7 +42,7 @@ RUN yum install -y \
 RUN wget -q https://get.docker.com -O /tmp/getdocker.sh && \
 	bash /tmp/getdocker.sh && \
 	rm /tmp/getdocker.sh
-RUN	pip3 install jupyterhub==0.5
+RUN pip3 install jupyterhub==0.5
 RUN pip3 install git+git://github.com/jupyterhub/dockerspawner.git@75dd1dc8019119cfa851a510c1beeaae50bce9ae
 # ----- ----- #
 
@@ -59,24 +59,28 @@ RUN chmod 700 /srv/jupyterhub/secrets && \
 
 
 # ----- Install CERN customizations ----- #
-# TODO : we should clone the whole JH repository from GitLab 
-#		(https://gitlab.cern.ch/dmaas/jupyterhub) 
-#		but it asks for username and password...
-# TODO: need to put the keys to clone the repo
-COPY jupyterhub.d/jupyterhub-dmaas /jupyterhub-dmaas
+# Note: need to clone the whole JH repository from GitLab (done by SetupHost.sh), 
+# 	but access is not granted to 3rd parties 
 
 # Install CERN Spawner
+COPY jupyterhub.d/jupyterhub-dmaas/CERNSpawner /jupyterhub-dmaas/CERNSpawner
 WORKDIR /jupyterhub-dmaas/CERNSpawner
 RUN pip3 install -r requirements.txt && \
 	python3 setup.py install
 
 # Install CERN Handlers
+COPY jupyterhub.d/jupyterhub-dmaas/CERNHandlers /jupyterhub-dmaas/CERNHandlers
 WORKDIR /jupyterhub-dmaas/CERNHandlers
 RUN pip3 install -r requirements.txt && \
 	python3 setup.py install
 
-# Copy the form to spawn SWAN personalized instances
+# Copy the templates and the logos
+COPY jupyterhub.d/jupyterhub-dmaas/templates /jupyterhub-dmaas/templates
+COPY jupyterhub.d/jupyterhub-dmaas/logo /jupyterhub-dmaas/logo
 COPY jupyterhub.d/jupyterhub-puppet/code/templates/jupyterhub/jupyterhub_form.html.erb /srv/jupyterhub/jupyterhub_form.html
+
+# Copy the bootstrap script
+COPY jupyterhub.d/jupyterhub-dmaas/scripts/start_jupyterhub.py /jupyterhub-dmaas/scripts/start_jupyterhub.py
 # ----- ----- #
 
 
@@ -97,6 +101,7 @@ RUN yum install -y \
 		openldap-clients
 ADD ./ldappam.d /etc
 
+# Needed to bind to CERN ldap
 #RUN yum install -y \
 #		sssd \
 #		nss \
@@ -118,18 +123,6 @@ COPY jupyterhub.d/adminslist /srv/jupyterhub/adminslist
 
 # Copy the configuration for JupyterHub
 COPY jupyterhub.d/jupyterhub_config.py /srv/jupyterhub/jupyterhub_config.py
-
-
-# ----- Configure the container running JupyterHub ----- #
-RUN echo -e "#!/bin/bash\n\
-\n\
-# Start nscd and nslcd to get user information from LDAP\n\
-nscd\n\
-nslcd\n\
-\n\
-# Start JupyterHub\n\
-python3 /jupyterhub-dmaas/scripts/start_jupyterhub.py --config /srv/jupyterhub/jupyterhub_config.py" \
-		> /setup_jupyterhub.sh
 
 # ----- Run the setup script in the container ----- #
 WORKDIR /

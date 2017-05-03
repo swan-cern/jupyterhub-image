@@ -124,22 +124,17 @@ c.CERNSpawner.network_name = DOCKER_NETWORK_NAME
 c.CERNSpawner.extra_host_config = { 'network_mode': DOCKER_NETWORK_NAME }
 
 # Single-user's servers extra config, CVMFS, EOS
-#c.CERNSpawner.extra_host_config = { 'mem_limit': '8g', 'cap_drop': [ <% @drop_capabilities.each_with_index do |name, index|-%>'<%= name %>'<%=', ' if index < @drop_capabilities.length - 1%><% end -%> ] }
-#hg_dmaas::private::jupyterhub::drop_capabilities: [NET_BIND_SERVICE, SYS_CHROOT]
 #c.CERNSpawner.extra_host_config = { 'mem_limit': '8g', 'cap_drop': ['NET_BIND_SERVICE', 'SYS_CHROOT']}
 c.CERNSpawner.read_only_volumes = { CVMFS_FOLDER : '/cvmfs' }
 
 # Local home inside users' containers
 #c.CERNSpawner.local_home = True		# If set to True, user <username> $HOME will be /scratch/<username>/
-#c.CERNSpawner.volumes = { EOS_FOLDER : '/eos'}
 # TODO: This is a workaround to facilitate debugging while we configure EOS
 #	Mapping: /tmp/SWAN-in-Docker/eos_mount/demo/user to /eos/user on single-user Jupyter container
+#	EOS_FOLDER should include /demo/user to hide the proc directory to users 
 c.CERNSpawner.local_home = False
 c.CERNSpawner.volumes = { os.path.join(EOS_FOLDER, "demo", "user") : '/eos/user' }
 #c.CERNSpawner.volumes = { EOS_FOLDER : '/eos' }
-
-#c.CERNSpawner.auth_script  = '/root/eos-fuse.sh'
-#c.CERNSpawner.eos_path_prefix  = '/eos/scratch/user'
 
 
 '''
