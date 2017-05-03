@@ -67,13 +67,13 @@ echo ""
 echo "Please consider installing it manually or using the script SetupInstall.sh (for CentOS based systems)."
 echo ""
 
-wait_time=10
-while [ $wait_time -gt 0 ]; do
-   echo -ne "\r$wait_time...\033[0K"
-   sleep 1
-   wait_time=$((wait_time-1))
-done
-echo "Continuing..."
+#wait_time=10
+#while [ $wait_time -gt 0 ]; do
+#   echo -ne "\r$wait_time...\033[0K"
+#   sleep 1
+#   wait_time=$((wait_time-1))
+#done
+#echo "Continuing..."
 
 
 # ----- Preparation and Clean-Up ----- #
@@ -256,5 +256,9 @@ echo ""
 echo "Build and run"
 docker-compose build
 docker-compose up -d
-docker-compose logs -f
+
+echo "Access to log files: docker-compose logs -f"
+
+echo "[Done]"
+
 
