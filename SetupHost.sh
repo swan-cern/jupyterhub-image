@@ -36,7 +36,7 @@ fi
 # Check to have certificates and admins list for JupyterHub
 jupyterhub_requirements()
 {
-if [[ -f secrets/jupyterhub.crt && -f secrets/jupyterhub.key ]]; then
+if [[ -f secrets/boxed.crt && -f secrets/boxed.key ]]; then
 	echo "I have certificates for serving JupyterHub over SSL."
 else
 	echo "Need SSL key and certificate in secrets/jupyterhub.{key,crt}"
