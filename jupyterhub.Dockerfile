@@ -44,6 +44,12 @@ RUN wget -q https://get.docker.com -O /tmp/getdocker.sh && \
 	rm /tmp/getdocker.sh
 RUN pip3 install jupyterhub==0.5
 RUN pip3 install git+git://github.com/jupyterhub/dockerspawner.git@75dd1dc8019119cfa851a510c1beeaae50bce9ae
+
+# Fix the redirection loop when the user container is slow to start
+# See: https://github.com/jupyterhub/jupyterhub/commit/933478bfff9ea01c6aadd08f0bf3c2e606013f83
+# This fix is embedded in JupyterHub code from version 0.7.0
+COPY jupyterhub.d/jupyterhub-waiting_for_response-fixes/jupyterhub/user.py /usr/lib/python3.4/site-packages/jupyterhub/user.py
+COPY jupyterhub.d/jupyterhub-waiting_for_response-fixes/jupyterhub/handlers/base.py /usr/lib/python3.4/site-packages/jupyterhub/handlers/base.py
 # ----- ----- #
 
 
