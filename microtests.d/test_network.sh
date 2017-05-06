@@ -21,6 +21,6 @@ done
 # Check open ports with nmap
 for i in $RUNNING_CONTAINERS;
 do
-	nmap -PS --max-retries 0 --host-timeout 10s - $i || exit 1
+	nmap -PS --max-retries 0 --host-timeout 10s $i || exit 1
 done
 
