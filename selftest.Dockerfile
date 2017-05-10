@@ -4,7 +4,7 @@
 
 #
 # Run command from the host:
-#docker build -t microtests -f microtests.Dockerfile .; docker run --net demonet --name mt --rm --volume /var/run/docker.sock:/var/run/docker.sock:rw -it microtests
+#docker build -t selftest -f selftest.Dockerfile .; docker run --net demonet --name mt --rm --volume /var/run/docker.sock:/var/run/docker.sock:rw -it selftest
 #
 # TODO: include in Docker Compose
 #		Also set the related lock to wait for all the other services to be there
@@ -29,7 +29,7 @@ RUN wget -q https://get.docker.com -O /tmp/getdocker.sh && \
 	bash /tmp/getdocker.sh && \
 	rm /tmp/getdocker.sh
 
-COPY microtests.d /microtests.d
+COPY selftest.d /selftest.d
 
 CMD ["/bin/bash"] #, "/tests.sh"]
 
