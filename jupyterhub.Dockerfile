@@ -58,8 +58,8 @@ COPY jupyterhub.d/jupyterhub-waiting_for_response-fixes/jupyterhub/handlers/base
 # TODO: This should be modified in case we will have proper ceritificates
 # TODO:	for the time being, use self-signed ceritificates
 RUN mkdir -p /srv/jupyterhub/
-COPY ./secrets/*.crt /srv/jupyterhub/secrets/jupyterhub.crt
-COPY ./secrets/*.key /srv/jupyterhub/secrets/jupyterhub.key
+COPY ./secrets/boxed.crt /srv/jupyterhub/secrets/jupyterhub.crt
+COPY ./secrets/boxed.key /srv/jupyterhub/secrets/jupyterhub.key
 RUN chmod 700 /srv/jupyterhub/secrets && \
     chmod 600 /srv/jupyterhub/secrets/*
 
