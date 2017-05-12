@@ -39,7 +39,7 @@ services:
     build:
       context: .
       dockerfile: openldap.Dockerfile
-    image: swan_ldap
+    image: openldap
     container_name: openldap
     # Bind external Docker volumes to the path where LDAP stores data and config. Users list is persistent.
     volumes:
@@ -58,7 +58,7 @@ services:
 
   # Add demo users on the LDAP server
   ldap-ldapadd:
-    image: swan_ldap
+    image: openldap
     container_name: openldap-ldapadd
     depends_on:
       - ldap
