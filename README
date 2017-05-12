@@ -12,21 +12,35 @@ Packaging by:
 
  - Enrico Bocchi, Hugo Gonzalez Labrador, Jozsef Makai, Jakub T. Moscicki
 
+==========================
+THIS IS A DEVELOPMENT REPO
+==========================
+
+This is a developer repository: build and rune images from Docker files.
+
+For quick "user" deployment from ready-images see: https://github.com/cernbox/uboxed
+
+Initialize the user deployment repo first:
+
+ # git submodule init
+ # git submodule update
+
+
 How to use:
 
  1. Install required software on the Centos7 host or check [*] for other OSes
      
-    ./SetupInstall-Centos7.sh
+    ./uboxed/SetupInstall-Centos7.sh
     
 
  2. Setup and initialize all services:
 
-    ./SetupHost.sh
+    ./BuildHost.sh
 
 
  3. Quick test of the services:
 
-    ./TestHost.sh
+    ./uboxed/TestHost.sh
 
 
  4. Go to: https://yourhost
