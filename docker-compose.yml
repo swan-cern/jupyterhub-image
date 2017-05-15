@@ -1,5 +1,4 @@
-# JupyterHub docker-compose configuration file
-# For the time being, it is not really required as everything is contained in the JupyterHub container
+# docker-compose configuration file
 version: "2"
 
 services:
@@ -66,10 +65,10 @@ services:
       - ldap
     # Sharing:  1. SWAN-in-Docker directory for lockfile 'eos-storage-lock'
     volumes:
-      - /tmp/SWAN-in-Docker:/tmp/SWAN-in-Docker
+      - ${HOST_FOLDER}:${HOST_FOLDER}
     entrypoint: bash /openldap_addusers.sh
 
-  # CVMFS software repository. 
+  # CVMFS software repository
   # Single-user' Jupyter servers need to access CVMFS for additional Kernels (e.g., ROOT C++, R) and software packages.
   cvmfs:
     build:
@@ -84,7 +83,7 @@ services:
     # Bind a folder on the host in which CVMFS will be mounted from the inside of the container.
     # Containers in the need of accessing CVMFS can in turn mount the host folder.
     volumes:
-      - /tmp/SWAN-in-Docker/cvmfs_mount:/cvmfs:shared
+      - ${CVMFS_FOLDER}:/cvmfs:shared
 
   # EOS Client with Fuse mount
   eos-fuse:
@@ -103,14 +102,14 @@ services:
     # Sharing:	1. The /eos mount coming from fuse
     #		2. SWAN-in-Docker directory for lockfile 'eos-fuse-lock'
     volumes:
-      - /tmp/SWAN-in-Docker/eos_mount:/eos:shared
-      - /tmp/SWAN-in-Docker:/tmp/SWAN-in-Docker
+      - ${EOS_FOLDER}:/eos:shared
+      - ${HOST_FOLDER}:${HOST_FOLDER}
     #depends_on:
     #  - "eos-fuse-trigger"
 
   # EOS Storage 
-  # This container is spawning all the EOS core containers, i.e., MGM, FTS, ...
-  # and the container with the fuse mount
+  # This container spawns all the EOS core containers, i.e., MGM, MQ, FST, ...
+  # and triggers the fuse mount from eos-fuse container
   eos-controller:
     build:
       context: .
@@ -121,7 +120,7 @@ services:
     #		2. SWAN-in-Docker directory for lockfile 'eos-fuse-lock'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:rw
-      - /tmp/SWAN-in-Docker:/tmp/SWAN-in-Docker
+      - ${HOST_FOLDER}:${HOST_FOLDER}
     #command: >
     #  bash start_eos.sh
 
@@ -136,7 +135,7 @@ services:
       - 80:80
     # Sharing:  1. SWAN-in-Docker directory for lockfile 'cernbox-lock'
     volumes:
-      - /tmp/SWAN-in-Docker:/tmp/SWAN-in-Docker
+      - ${HOST_FOLDER}:${HOST_FOLDER}
     # Setting environment variable to fill cernbox.php.template
     environment:
       BOX_HOSTNAME: ${BOX_HOSTNAME}
@@ -152,7 +151,7 @@ services:
       - 443:443
     # Sharing:  1. SWAN-in-Docker directory for lockfile 'cernboxgateway-lock'
     volumes:
-      - /tmp/SWAN-in-Docker:/tmp/SWAN-in-Docker
+      - ${HOST_FOLDER}:${HOST_FOLDER}
 
   # smashbox
   #smashbox:
@@ -172,30 +171,40 @@ volumes:
   openldap_database:
     external:
       name: openldap_database
+
   openldap_config:
     external:
       name: openldap_config
+
   eos-fst1:
     external:
       name: eos-fst1
+
   eos-fst2:
     external:
       name: eos-fst2
+
   eos-fst3:
     external:
       name: eos-fst3
+
   eos-fst4:
     external:
       name: eos-fst4
+
   eos-fst5:
     external:
       name: eos-fst5
+
   eos-fst6:
     external:
       name: eos-fst6
+
   eos-mgm:
     external:
       name: eos-mgm
+
   eos-mq:
     external:
       name: eos-mq
+
