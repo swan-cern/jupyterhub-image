@@ -151,6 +151,9 @@ services:
     # Sharing:  1. SWAN-in-Docker directory for lockfile 'cernboxgateway-lock'
     volumes:
       - ${HOST_FOLDER}:${HOST_FOLDER}
+    environment:
+      BOX_HOSTNAME: ${BOX_HOSTNAME}
+
 
   # smashbox
   #smashbox:
