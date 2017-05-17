@@ -8,9 +8,10 @@ ldapadd_macro  () {
 
 # Wait for the ldap server to be up and running
 echo "Waiting for LDAP server to be ready..."
+sleep 5
 until ldapsearch -x -H ldap://ldap -D "cn=admin,dc=example,dc=org" -w admin -b dc=example,dc=org &>/dev/null; 
 do
-  sleep 10s;
+  sleep 5
 done
 
 # Create entries for dummy users on the ldap server
