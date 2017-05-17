@@ -131,8 +131,6 @@ services:
       dockerfile: cernbox.Dockerfile
     image: cernbox
     container_name: cernbox
-    ports:
-      - 80:80
     # Sharing:  1. SWAN-in-Docker directory for lockfile 'cernbox-lock'
     volumes:
       - ${HOST_FOLDER}:${HOST_FOLDER}
@@ -148,10 +146,14 @@ services:
     image: cernboxgateway
     container_name: cernboxgateway
     ports:
+      - 80:80
       - 443:443
     # Sharing:  1. SWAN-in-Docker directory for lockfile 'cernboxgateway-lock'
     volumes:
       - ${HOST_FOLDER}:${HOST_FOLDER}
+    environment:
+      BOX_HOSTNAME: ${BOX_HOSTNAME}
+
 
   # smashbox
   #smashbox:
