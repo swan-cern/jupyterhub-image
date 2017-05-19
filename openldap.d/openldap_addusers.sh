@@ -3,11 +3,16 @@
 USER_Ns=`seq 0 9`
 ACTION_FILE='/tmp/action.ldif'
 ldapadd_macro  () {
-  /usr/bin/ldapadd -x -H ldap://ldap -D "cn=admin,dc=example,dc=org" -w admin -f $ACTION_FILE
+  ldapadd -x -H ldap://ldap -D "cn=admin,dc=example,dc=org" -w admin -f $ACTION_FILE
 }
 
 # Wait for the ldap server to be up and running
-sleep 15
+echo "Waiting for LDAP server to be ready..."
+sleep 5
+until ldapsearch -x -H ldap://ldap -D "cn=admin,dc=example,dc=org" -w admin -b dc=example,dc=org &>/dev/null; 
+do
+  sleep 5
+done
 
 # Create entries for dummy users on the ldap server
 echo "Configuring demo users on LDAP server..."
@@ -106,3 +111,5 @@ rm -f $ACTION_FILE
 echo "Unlocking eos-controller for EOS-Storage deployment."
 rm /tmp/SWAN-in-Docker/eos-storage-lock
 echo "I'm done. Exiting..."
+
+
