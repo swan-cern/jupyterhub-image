@@ -90,6 +90,9 @@ services:
     build:
       context: .
       dockerfile: eos-fuse.Dockerfile
+      args:
+        FUSE_EOS_VERSION: ${FUSE_EOS_VERSION}
+        FUSE_XRD_VERSION: ${FUSE_XRD_VERSION}
     image: swan_eos-fuse
     container_name: eos-fuse
     hostname: eos-fuse
