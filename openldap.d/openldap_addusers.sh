@@ -109,7 +109,7 @@ rm -f $ACTION_FILE
 
 # Removing the lock for EOS-Storage
 echo "Unlocking eos-controller for EOS-Storage deployment."
-rm /tmp/SWAN-in-Docker/eos-storage-lock
+rm ${HOST_FOLDER}/eos-storage-lock
 echo "I'm done. Exiting..."
 
 

@@ -1,5 +1,8 @@
 # Configuration file for JupyterHub
 
+import os
+
+
 ### VARIABLES ###
 # Likely duplicated from other configuration files... 
 # TODO: this should be improved
@@ -15,18 +18,16 @@ SSL_CERT = "/srv/jupyterhub/secrets/jupyterhub.crt"
 
 # User's Notebook image
 #DOCKER_NOTEBOOK_IMAGE = 'jupyter/scipy-notebook'
-DOCKER_NOTEBOOK_IMAGE = 'jupyter/minimal-notebook'
+#DOCKER_NOTEBOOK_IMAGE = 'jupyter/minimal-notebook'
 #DOCKER_NOTEBOOK_IMAGE = 'cernphsft/systemuser'
-DOCKER_SPAWN_CMD = 'start-singleuser.sh'
+#DOCKER_SPAWN_CMD = 'start-singleuser.sh'
 #DOCKER_NOTEBOOK_DIR = '/home/user1'
 
+# Get configuration parameters from environment variables
+DOCKER_NETWORK_NAME=os.environ['DOCKER_NETWORK_NAME']
+CVMFS_FOLDER=os.environ['CVMFS_FOLDER']
+EOS_FOLDER=os.environ['EOS_FOLDER']
 
-DOCKER_NETWORK_NAME = 'demonet'
-CVMFS_FOLDER="/tmp/SWAN-in-Docker/cvmfs_mount"
-EOS_FOLDER="/tmp/SWAN-in-Docker/eos_mount"
-
-
-import os
 
 c = get_config()
 
