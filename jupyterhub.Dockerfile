@@ -31,6 +31,7 @@ RUN yum install -y \
 		python34-jinja2 \
 		python34-traitlets \
 		python34-requests \
+		http-parser \
 		nodejs \
 		sudo
 
