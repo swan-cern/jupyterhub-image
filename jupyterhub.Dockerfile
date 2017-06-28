@@ -55,9 +55,7 @@ COPY jupyterhub.d/jupyterhub-waiting_for_response-fixes/jupyterhub/handlers/base
 
 
 # ----- Copy TLS certificates to serve the Hub over HTTPS ----- #
-# Copy the TLS ceritificate to reach JupyterHub over HTTPS
-# TODO: This should be modified in case we will have proper ceritificates
-# TODO:	for the time being, use self-signed ceritificates
+# NOTE: These certificates might be overridden at run time by the ones available in uboxed/certs/boxed.{key,crt}
 RUN mkdir -p /srv/jupyterhub/
 COPY ./secrets/boxed.crt /srv/jupyterhub/secrets/jupyterhub.crt
 COPY ./secrets/boxed.key /srv/jupyterhub/secrets/jupyterhub.key
