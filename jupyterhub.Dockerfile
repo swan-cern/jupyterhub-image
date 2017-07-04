@@ -40,9 +40,13 @@ RUN npm install -g configurable-http-proxy
 RUN yum install -y \
 		wget \
 		git
-RUN wget -q https://get.docker.com -O /tmp/getdocker.sh && \
-	bash /tmp/getdocker.sh && \
-	rm /tmp/getdocker.sh
+# NOTE: Since July 2017, the installation script provided by get.docker.com calls systemctl,
+# 	which is a nightmare to have in Docker containers.
+# 	We resort to the previous script (not making use of systemctl) until this works
+COPY jupyterhub.d/getdocker.sh /root/getdocker.sh
+RUN bash /root/getdocker.sh
+#RUN wget -q https://get.docker.com -O /tmp/getdocker.sh && \
+#	bash /tmp/getdocker.sh
 RUN pip3 install jupyterhub==0.5
 RUN pip3 install git+git://github.com/jupyterhub/dockerspawner.git@75dd1dc8019119cfa851a510c1beeaae50bce9ae
 
