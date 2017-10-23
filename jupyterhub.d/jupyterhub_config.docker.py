@@ -27,7 +27,7 @@ SSL_CERT = "/srv/jupyterhub/secrets/jupyterhub.crt"
 DOCKER_NETWORK_NAME=os.environ['DOCKER_NETWORK_NAME']
 CVMFS_FOLDER=os.environ['CVMFS_FOLDER']
 EOS_FOLDER=os.environ['EOS_FOLDER']
-
+CONTAINER_IMAGE=os.environ['CONTAINER_IMAGE']
 
 c = get_config()
 
@@ -115,7 +115,7 @@ c.JupyterHub.authenticator_class = 'ssoauthenticator.SSOAuthenticator'
 
 # Spawn single-user's servers as Docker containers
 c.JupyterHub.spawner_class = 'cernspawner.CERNSpawner'
-c.CERNSpawner.container_image = 'cernphsft/systemuser:v2.9'
+c.CERNSpawner.container_image = CONTAINER_IMAGE
 c.CERNSpawner.remove_containers = True
 c.CERNSpawner.options_form = '/srv/jupyterhub/jupyterhub_form.html'
 
@@ -134,7 +134,7 @@ c.CERNSpawner.read_only_volumes = { CVMFS_FOLDER : '/cvmfs' }
 #	Mapping: /tmp/SWAN-in-Docker/eos_mount/demo/user to /eos/user on single-user Jupyter container
 #	EOS_FOLDER should include /demo/user to hide the proc directory to users 
 c.CERNSpawner.local_home = False
-c.CERNSpawner.volumes = { os.path.join(EOS_FOLDER, "demo", "user") : '/eos/user' }
+c.CERNSpawner.volumes = { os.path.join(EOS_FOLDER, "docker", "user") : '/eos/user' }
 #c.CERNSpawner.volumes = { EOS_FOLDER : '/eos' }
 
 
