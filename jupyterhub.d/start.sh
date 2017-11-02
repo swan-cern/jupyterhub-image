@@ -29,10 +29,6 @@ case $DEPLOYMENT_TYPE in
     echo "Deploying with configuration for Kubespawner..."
     cp /srv/jupyterhub/jupyterhub_config.kubespawner.py /srv/jupyterhub/jupyterhub_config.py
 
-    sed -i "s/%%%LDAP_ENDPOINT%%%/${LDAP_ENDPOINT}/" /etc/nslcd.conf
-    nscd
-    nslcd
-
     sleep infinity
     ##TODO
     ##python3 /jupyterhub-dmaas/scripts/start_jupyterhub.py --config /srv/jupyterhub/jupyterhub_config.py
@@ -45,8 +41,8 @@ case $DEPLOYMENT_TYPE in
     # Eventually override the certificates with the ones available in certs/boxed.{key,crt}
     if [[ -f "$HOST_FOLDER"/certs/boxed.crt && -f "$HOST_FOLDER"/certs/boxed.key ]]; then
       echo 'Replacing default certificate for HTTPS...'
-      /bin/cp "$HOST_FOLDER"/certs/boxed.crt /srv/jupyterhub/secrets/jupyterhub.crt
-      /bin/cp "$HOST_FOLDER"/certs/boxed.key /srv/jupyterhub/secrets/jupyterhub.key
+      /bin/cp "$HOST_FOLDER"/certs/boxed.crt /etc/boxed/certs/boxed.crt
+      /bin/cp "$HOST_FOLDER"/certs/boxed.key /etc/boxed/certs/boxed.key
     fi
 
     cp /srv/jupyterhub/jupyterhub_config.docker.py /srv/jupyterhub/jupyterhub_config.py
@@ -63,7 +59,35 @@ sed -i "s/%%%LDAP_ENDPOINT%%%/${LDAP_ENDPOINT}/" /etc/nslcd.conf
 nscd
 nslcd
 
-# Start JupyterHub
+# Configure httpd proxy with correct ports and hostname
+echo "CONFIG: HTTP port is ${HTTP_PORT}"
+echo "CONFIG: HTTPS port is ${HTTPS_PORT}"
+echo "CONFIG: Hostname is ${HOSTNAME}"
+sed "s/%%%HTTPS_PORT%%%/${HTTPS_PORT}/" /root/httpd_config/jupyterhub_ssl.conf.template > /etc/httpd/conf.d/jupyterhub_ssl.conf
+sed -e "s/%%%HTTP_PORT%%%/${HTTP_PORT}/
+s/%%%HTTPS_PORT%%%/${HTTPS_PORT}/
+s/%%%HOSTNAME%%%/${HOSTNAME}/" /root/httpd_config/jupyterhub_plain.conf.template > /etc/httpd/conf.d/jupyterhub_plain.conf
+
+# Configure according to selected authentication method
+if [ -z "$AUTH_TYPE" ]; then
+  echo "WARNING: Authentication type not specified. Defaulting to local LDAP."
+  export AUTH_TYPE="local"
+fi
+
+case $AUTH_TYPE in
+  "local")
+    echo "CONFIG: User authentication via LDAP"
+    ;;
+
+  "shibboleth")
+    echo "CONFIG: User authentication via Shibboleth"
+    mv /etc/httpd/conf.d/shib.noload /etc/httpd/conf.d/shib.conf
+    cp /root/httpd_config/shib_auth.conf /etc/httpd/conf.d/shib_auth.conf
+    shibd
+    ;;
+esac
+
 echo "Starting JupyterHub..."
-python3 /jupyterhub-dmaas/scripts/start_jupyterhub.py --config /srv/jupyterhub/jupyterhub_config.py
+httpd
+python3 /jupyterhub-dmaas/scripts/start_jupyterhub.py --no-ssl --config /srv/jupyterhub/jupyterhub_config.py
 

@@ -43,21 +43,19 @@ RUN yum install -y \
 	nodejs
 RUN npm install -g configurable-http-proxy
 
-# Install Docker and JupyterHub
+# Install Docker, JupyterHub, spawners, and authenticators
 RUN wget -q https://get.docker.com -O /tmp/getdocker.sh && \
     bash /tmp/getdocker.sh
 RUN pip3 install jupyterhub==0.7.2
+
 RUN pip3 install git+git://github.com/jupyterhub/dockerspawner.git@92a7ca676997dc77b51730ff7626d8fcd31860da	# Dockerspawner
-#TODO: Add here kubespawner
+RUN pip3 install git+git://github.com/jupyterhub/kubespawner.git@ae1c6d6f58a45c2ba4b9e2fa81d50b16503f9874	# Kubespawner
 
-
-# ----- Copy TLS certificates to serve the Hub over HTTPS ----- #
-# NOTE: These certificates might be overridden at run time by the ones available in uboxed/certs/boxed.{key,crt}
-RUN mkdir -p /srv/jupyterhub/
-ADD ./secrets/boxed.crt /srv/jupyterhub/secrets/jupyterhub.crt
-ADD ./secrets/boxed.key /srv/jupyterhub/secrets/jupyterhub.key
-RUN chmod 700 /srv/jupyterhub/secrets && \
-    chmod 600 /srv/jupyterhub/secrets/*
+RUN pip3 install git+git://github.com/jupyterhub/ldapauthenticator.git@f3b2db14bfb591df09e05f8922f6041cc9c1b3bd	# LDAP auth
+ADD ./jupyterhub.d/jupyterhub-dmaas/SSOAuthenticator /jupyterhub-dmaas/SSOAuthenticator
+WORKDIR /jupyterhub-dmaas/SSOAuthenticator
+RUN pip3 install -r requirements.txt && \
+	python3 setup.py install
 
 
 # ----- Install CERN customizations ----- #
@@ -76,6 +74,14 @@ WORKDIR /jupyterhub-dmaas/CERNHandlers
 RUN pip3 install -r requirements.txt && \
 	python3 setup.py install
 
+# TODO
+# Need a CERNKubeSpawner here
+#ADD ./jupyterhub.d/jupyterhub-dmaas/CERNKubeSpawner /jupyterhub-dmaas/CERNKubeSpawner
+#WORKDIR /jupyterhub-dmaas/CERNKubeSpawner
+#RUN pip3 install -r requirements.txt && \
+#        python3 setup.py install
+# TODO
+
 # Copy the templates and the logos
 ADD ./jupyterhub.d/jupyterhub-dmaas/templates /jupyterhub-dmaas/templates
 ADD ./jupyterhub.d/jupyterhub-dmaas/logo /jupyterhub-dmaas/logo
@@ -85,8 +91,29 @@ ADD ./jupyterhub.d/jupyterhub-puppet/code/templates/jupyterhub/jupyterhub_form.h
 ADD ./jupyterhub.d/jupyterhub-dmaas/scripts/start_jupyterhub.py /jupyterhub-dmaas/scripts/start_jupyterhub.py
 
 
-# ----- Install LDAP authenticator ----- #
-RUN pip3 install git+git://github.com/jupyterhub/ldapauthenticator.git@f3b2db14bfb591df09e05f8922f6041cc9c1b3bd
+# ----- Install and related mods ----- #
+RUN yum -y install \
+        httpd \
+        mod_ssl
+# Disable listen directive from conf/httpd.conf and SSL default config
+RUN sed -i "s/Listen 80/#Listen 80/" /etc/httpd/conf/httpd.conf
+RUN mv /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/ssl.noload
+#Copy plain+ssl config files and rewrites for shibboleth
+ADD ./jupyterhub.d/httpd.d/jupyterhub_plain.conf.template /root/httpd_config/jupyterhub_plain.conf.template
+ADD ./jupyterhub.d/httpd.d/jupyterhub_ssl.conf.template /root/httpd_config/jupyterhub_ssl.conf.template
+#Copy secrets for SSL
+ADD ./secrets/boxed.crt /etc/boxed/certs/boxed.crt
+ADD ./secrets/boxed.key /etc/boxed/certs/boxed.key
+
+
+# ----- Install shibboleth ----- #
+RUN yum -y install \
+        shibboleth \
+        opensaml-schemas \
+        xmltooling-schemas
+RUN ln -s /usr/lib64/shibboleth/mod_shib_24.so /etc/httpd/modules/mod_shib_24.so
+RUN mv /etc/httpd/conf.d/shib.conf /etc/httpd/conf.d/shib.noload
+ADD ./jupyterhub.d/httpd.d/shib_auth.conf /root/httpd_config/shib_auth.conf
 
 
 # ----- Install sssd to access user account information ----- #
@@ -119,6 +146,7 @@ ADD ./jupyterhub.d/adminslist /srv/jupyterhub/adminslist
 # Copy the configuration for JupyterHub
 ADD ./jupyterhub.d/jupyterhub_config.docker.py /srv/jupyterhub/jupyterhub_config.docker.py
 ADD ./jupyterhub.d/jupyterhub_config.kubernetes.py /srv/jupyterhub/jupyterhub_config.kubernetes.py
+ADD ./jupyterhub.d/jupyterhub_config.kubespawner.py /srv/jupyterhub/jupyterhub_config.kubespawner.py
 
 
 
@@ -130,18 +158,6 @@ ADD ./jupyterhub.d/jupyterhub_config.kubernetes.py /srv/jupyterhub/jupyterhub_co
 #        bind-utils \
 #        nmap \
 #        tcpdump
-
-### Kubernetes spawner for testing
-#RUN pip3 install git+git://github.com/jupyterhub/kubespawner.git@ae1c6d6f58a45c2ba4b9e2fa81d50b16503f9874	# Kubespawner
-
-
-# Install CERN Kube Spawner
-#ADD ./jupyterhub.d/jupyterhub-dmaas/CERNKubeSpawner /jupyterhub-dmaas/CERNKubeSpawner
-#WORKDIR /jupyterhub-dmaas/CERNKubeSpawner
-#RUN pip3 install -r requirements.txt && \
-#        python3 setup.py install
-
-#ADD ./jupyterhub.d/jupyterhub_config.kubespawner.py /srv/jupyterhub/jupyterhub_config.kubespawner.py
 
 
 # ----- Run the setup script in the container ----- #
