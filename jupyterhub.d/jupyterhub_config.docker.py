@@ -42,7 +42,6 @@ if ( os.environ['AUTH_TYPE'] == "shibboleth" ):
     print ("Authenticator: Using SSO")
     c.JupyterHub.authenticator_class = 'ssoauthenticator.SSOAuthenticator'
     c.SSOAuthenticator.accepted_egroup = 'swan-admins;swan-qa;swan-qa2'
-
 elif ( os.environ['AUTH_TYPE'] == "local" ):
     print ("Authenticator: Using LDAP")
     # See: https://github.com/jupyterhub/ldapauthenticator
@@ -62,7 +61,6 @@ elif ( os.environ['AUTH_TYPE'] == "local" ):
     #c.LDAPAuthenticator.lookup_dn = True
     #c.LDAPAuthenticator.user_search_base = 'ou=People,dc=example,dc=com'
     #c.LDAPAuthenticator.user_attribute = 'uid'
-
 else:
     print ("ERROR: Authentication type not specified.")
     print ("Cannot start JupyterHub.")
@@ -104,10 +102,6 @@ c.CERNSpawner.read_only_volumes = { CVMFS_FOLDER : '/cvmfs' }
 
 # Local home inside users' containers
 #c.CERNSpawner.local_home = True		# If set to True, user <username> $HOME will be /scratch/<username>/
-# TODO: This is a workaround to facilitate debugging while we configure EOS
-#	Mapping: /tmp/SWAN-in-Docker/eos_mount/demo/user to /eos/user on single-user Jupyter container
-#	EOS_FOLDER should include /demo/user to hide the proc directory to users 
 c.CERNSpawner.local_home = False
 c.CERNSpawner.volumes = { os.path.join(EOS_FOLDER, "docker", "user") : '/eos/user' }
-#c.CERNSpawner.volumes = { EOS_FOLDER : '/eos' }
 
