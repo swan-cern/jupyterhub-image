@@ -17,7 +17,12 @@ c = get_config()
 # JupyterHub
 c.JupyterHub.cookie_secret_file = '/srv/jupyterhub/cookie_secret'
 c.JupyterHub.db_url = '/srv/jupyterhub/jupyterhub.sqlite'
+
+# Logging
 c.JupyterHub.extra_log_file = '/var/log/jupyterhub.log'
+c.JupyterHub.log_level = 'DEBUG'
+c.Spawner.debug = True
+c.LocalProcessSpawner.debug = True
 
 # Add SWAN look&feel
 c.JupyterHub.template_paths = ['/jupyterhub-dmaas/templates']
