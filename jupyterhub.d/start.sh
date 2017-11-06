@@ -17,8 +17,8 @@ case $DEPLOYMENT_TYPE in
     echo "Deploying with configuration for Kubernetes..."
     cp /srv/jupyterhub/jupyterhub_config.kubernetes.py /srv/jupyterhub/jupyterhub_config.py
 
-    echo "Downloading single-user image: $SINGLEUSER_IMAGE_NAME ..."
-    docker pull $SINGLEUSER_IMAGE_NAME
+    echo "Downloading single-user image: $CONTAINER_IMAGE ..."
+    docker pull $CONTAINER_IMAGE
 
     echo "Creating internal Docker network: $DOCKER_NETWORK_NAME ..."
     docker network inspect $DOCKER_NETWORK_NAME > /dev/null 2>&1 || docker network create $DOCKER_NETWORK_NAME
@@ -81,8 +81,18 @@ case $AUTH_TYPE in
 
   "shibboleth")
     echo "CONFIG: User authentication via Shibboleth"
+    mv /etc/httpd/conf.d/jupyterhub_ssl.conf /etc/httpd/conf.d/jupyterhub_ssl.noload
     mv /etc/httpd/conf.d/shib.noload /etc/httpd/conf.d/shib.conf
-    cp /root/httpd_config/shib_auth.conf /etc/httpd/conf.d/shib_auth.conf
+    sed "s/%%%HTTPS_PORT%%%/${HTTPS_PORT}/" /root/httpd_config/jupyterhub_shib.conf.template > /etc/httpd/conf.d/jupyterhub_shib.conf
+    if [ "${HTTPS_PORT}" != "443" ]; then
+      sed "s/%%%HOSTNAME%%%/${HOSTNAME}:${HTTPS_PORT}/" /root/shibd_config/shibboleth2.yaml.template > /etc/shibboleth/shibboleth2.xml
+    else
+      sed "s/%%%HOSTNAME%%%/${HOSTNAME}/" /root/shibd_config/shibboleth2.yaml.template > /etc/shibboleth/shibboleth2.xml
+      # NOTE: We assume nobody specifies ":443" when registering the application in the SSO form
+      # If ":443" is explicited in the shibboleth2.xml Audience but not in the SSO form, opensaml returns an exception as follows: 
+      #   opensaml::SecurityPolicyException at (https://up2kube-swan.cern.ch/Shibboleth.sso/ADFS)
+      #   Assertion contains an unacceptable AudienceRestrictionCondition.
+    fi
     shibd
     ;;
 esac

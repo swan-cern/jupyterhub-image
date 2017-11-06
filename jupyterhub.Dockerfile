@@ -101,6 +101,7 @@ RUN mv /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/ssl.noload
 #Copy plain+ssl config files and rewrites for shibboleth
 ADD ./jupyterhub.d/httpd.d/jupyterhub_plain.conf.template /root/httpd_config/jupyterhub_plain.conf.template
 ADD ./jupyterhub.d/httpd.d/jupyterhub_ssl.conf.template /root/httpd_config/jupyterhub_ssl.conf.template
+ADD ./jupyterhub.d/httpd.d/jupyterhub_shib.conf.template /root/httpd_config/jupyterhub_shib.conf.template
 #Copy secrets for SSL
 ADD ./secrets/boxed.crt /etc/boxed/certs/boxed.crt
 ADD ./secrets/boxed.key /etc/boxed/certs/boxed.key
@@ -113,7 +114,13 @@ RUN yum -y install \
         xmltooling-schemas
 RUN ln -s /usr/lib64/shibboleth/mod_shib_24.so /etc/httpd/modules/mod_shib_24.so
 RUN mv /etc/httpd/conf.d/shib.conf /etc/httpd/conf.d/shib.noload
-ADD ./jupyterhub.d/httpd.d/shib_auth.conf /root/httpd_config/shib_auth.conf
+# Copy shibboleth config files
+ADD ./shibd.d/ADFS-metadata.xml /etc/shibboleth/ADFS-metadata.xml
+ADD ./shibd.d/attribute-map.xml /etc/shibboleth/attribute-map.xml
+ADD ./jupyterhub.d/shibboleth2.yaml.template /root/shibd_config/shibboleth2.yaml.template
+RUN mv /etc/shibboleth/shibboleth2.xml /etc/shibboleth/shibboleth2.defaults
+# Fix the library path for shibboleth (https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPLinuxRH6)
+ENV LD_LIBRARY_PATH=/opt/shibboleth/lib64
 
 
 # ----- Install sssd to access user account information ----- #
