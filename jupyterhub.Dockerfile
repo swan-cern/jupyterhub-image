@@ -52,43 +52,30 @@ RUN pip3 install git+git://github.com/jupyterhub/dockerspawner.git@92a7ca676997d
 RUN pip3 install git+git://github.com/jupyterhub/kubespawner.git@ae1c6d6f58a45c2ba4b9e2fa81d50b16503f9874	# Kubespawner
 
 RUN pip3 install git+git://github.com/jupyterhub/ldapauthenticator.git@f3b2db14bfb591df09e05f8922f6041cc9c1b3bd	# LDAP auth
-ADD ./jupyterhub.d/jupyterhub-dmaas/SSOAuthenticator /jupyterhub-dmaas/SSOAuthenticator
-WORKDIR /jupyterhub-dmaas/SSOAuthenticator
-RUN pip3 install -r requirements.txt && \
-	python3 setup.py install
+ADD ./jupyterhub.d/jupyterhub_CERN/1afb53edbf1ede3650b003aa3cd7e24f /tmp
 
 
 # ----- Install CERN customizations ----- #
-# Note: need to clone the whole JH repository from GitLab (done by SetupHost.sh), 
-# 	but access is not granted to 3rd parties 
+# Note: This is a temporary solution before we get a public and a private repo in GitLab dmaas.
+# 	Then, all compressed archives will be replace by git pull actions directly from source.
 
 # Install CERN Spawner
-ADD ./jupyterhub.d/jupyterhub-dmaas/CERNSpawner /jupyterhub-dmaas/CERNSpawner
-WORKDIR /jupyterhub-dmaas/CERNSpawner
+ADD ./jupyterhub.d/jupyterhub_CERN/CERNSpawner.tar.gz /tmp
+WORKDIR /tmp/CERNSpawner
 RUN pip3 install -r requirements.txt && \
 	python3 setup.py install
 
 # Install CERN Handlers
-ADD ./jupyterhub.d/jupyterhub-dmaas/CERNHandlers /jupyterhub-dmaas/CERNHandlers
-WORKDIR /jupyterhub-dmaas/CERNHandlers
+ADD ./jupyterhub.d/jupyterhub_CERN/CERNHandlers.tar.gz /tmp
+WORKDIR /tmp/CERNHandlers
 RUN pip3 install -r requirements.txt && \
-	python3 setup.py install
+        python3 setup.py install
 
-# TODO
-# Need a CERNKubeSpawner here
-#ADD ./jupyterhub.d/jupyterhub-dmaas/CERNKubeSpawner /jupyterhub-dmaas/CERNKubeSpawner
-#WORKDIR /jupyterhub-dmaas/CERNKubeSpawner
-#RUN pip3 install -r requirements.txt && \
-#        python3 setup.py install
-# TODO
-
-# Copy the templates and the logos
-ADD ./jupyterhub.d/jupyterhub-dmaas/templates /jupyterhub-dmaas/templates
-ADD ./jupyterhub.d/jupyterhub-dmaas/logo /jupyterhub-dmaas/logo
-ADD ./jupyterhub.d/jupyterhub-puppet/code/templates/jupyterhub/jupyterhub_form.html.erb /srv/jupyterhub/jupyterhub_form.html
-
-# Copy the bootstrap script
-ADD ./jupyterhub.d/jupyterhub-dmaas/scripts/start_jupyterhub.py /jupyterhub-dmaas/scripts/start_jupyterhub.py
+# CERN Logos, Templates, Session Form, Start Script
+ADD ./jupyterhub.d/jupyterhub_CERN/CERNTemplates.tar.gz /srv/jupyterhub
+ADD ./jupyterhub.d/jupyterhub_CERN/CERNLogos.tar.gz /srv/jupyterhub
+ADD ./jupyterhub.d/jupyterhub_CERN/jupyterhub_form.html.erb /srv/jupyterhub/jupyterhub_form.html
+ADD ./jupyterhub.d/jupyterhub_CERN/start_jupyterhub.py /srv/jupyterhub/start_jupyterhub.py
 
 
 # ----- Install and related mods ----- #
@@ -150,21 +137,8 @@ RUN chmod 600 /etc/nslcd.conf
 # Copy the list of users with administrator privileges
 ADD ./jupyterhub.d/adminslist /srv/jupyterhub/adminslist
 
-# Copy the configuration for JupyterHub
-ADD ./jupyterhub.d/jupyterhub_config.docker.py /srv/jupyterhub/jupyterhub_config.docker.py
-ADD ./jupyterhub.d/jupyterhub_config.kubernetes.py /srv/jupyterhub/jupyterhub_config.kubernetes.py
-ADD ./jupyterhub.d/jupyterhub_config.kubespawner.py /srv/jupyterhub/jupyterhub_config.kubespawner.py
-
-
-
-#RUN yum install -y \
-#        vim \
-#        nano \
-#        less \
-#        net-tools \
-#        bind-utils \
-#        nmap \
-#        tcpdump
+# Copy the configuration files for JupyterHub
+ADD ./jupyterhub.d/jupyterhub_config/*.py /srv/jupyterhub/
 
 
 # ----- Run the setup script in the container ----- #

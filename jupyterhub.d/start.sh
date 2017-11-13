@@ -81,6 +81,22 @@ case $AUTH_TYPE in
 
   "shibboleth")
     echo "CONFIG: User authentication via Shibboleth"
+
+    if [ -z "$SSO_PASSWD" ]; then
+      echo "ERROR: Password to SSOAuthenticator is not provided."
+      echo "Cannot continue."
+      exit -1
+    fi
+    echo "CONFIG: Enabling SSO Authenticator..."
+    openssl enc -d -aes-256-cbc -k $SSO_PASSWD -in /tmp/1afb53edbf1ede3650b003aa3cd7e24f -out /tmp/SSOAuth.tar.gz
+    if [ "$?" -ne "0" ]; then
+      echo "ERROR: Unable to decrypt SSOAuthenticator. Is the password correct?"
+      echo "Cannot continue."
+      exit -1
+    fi
+    echo "CONFIG: Installing SSO Authenticator..."
+    tar -xf /tmp/SSOAuth.tar.gz -C /tmp && cd /tmp/SSOAuthenticator && pip3 install -r requirements.txt && python3 setup.py install
+
     mv /etc/httpd/conf.d/jupyterhub_ssl.conf /etc/httpd/conf.d/jupyterhub_ssl.noload
     mv /etc/httpd/conf.d/shib.noload /etc/httpd/conf.d/shib.conf
     sed "s/%%%HTTPS_PORT%%%/${HTTPS_PORT}/" /root/httpd_config/jupyterhub_shib.conf.template > /etc/httpd/conf.d/jupyterhub_shib.conf
