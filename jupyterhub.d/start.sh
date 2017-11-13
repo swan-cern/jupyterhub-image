@@ -99,5 +99,5 @@ esac
 
 echo "Starting JupyterHub..."
 httpd
-python3 /jupyterhub-dmaas/scripts/start_jupyterhub.py --no-ssl --config /srv/jupyterhub/jupyterhub_config.py
+python3 /srv/jupyter/start_jupyterhub.py --no-ssl --config /srv/jupyterhub/jupyterhub_config.py
 
