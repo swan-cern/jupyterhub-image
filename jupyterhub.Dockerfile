@@ -138,7 +138,7 @@ RUN chmod 600 /etc/nslcd.conf
 ADD ./jupyterhub.d/adminslist /srv/jupyterhub/adminslist
 
 # Copy the configuration files for JupyterHub
-ADD ./jupyterhub.d/jupyterhub_config/*.py /srv/jupyterhub/
+ADD ./jupyterhub.d/jupyterhub_config /srv/jupyterhub/jupyterhub_config
 
 
 # ----- Run the setup script in the container ----- #
