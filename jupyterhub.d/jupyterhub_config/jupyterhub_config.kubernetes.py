@@ -35,7 +35,7 @@ c.JupyterHub.port = 8000
 # Configuration to reach the Hub from Jupyter containers
 # NOTE: Containers are connected to a separate Docker network: DOCKER_NETWORK_NAME
 #       The hub must listen on an IP address that is reachable from DOCKER_NETWORK_NAME
-#       and not on "localhost"i||"127.0.0.1" or any other name that could not be resolved
+#       and not on "localhost"||"127.0.0.1" or any other name that could not be resolved
 #       See also c.CERNSpawner.hub_ip_connect (https://github.com/jupyterhub/jupyterhub/issues/291)
 public_ip = socket.gethostbyname(socket.getfqdn())
 c.JupyterHub.hub_ip = public_ip
