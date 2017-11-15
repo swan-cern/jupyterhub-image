@@ -26,12 +26,17 @@ case $DEPLOYMENT_TYPE in
 
   ###
   "kubespawner")
-    echo "Deploying with configuration for Kubespawner..."
-    cp /srv/jupyterhub/jupyterhub_config.kubespawner.py /srv/jupyterhub/jupyterhub_config.py
+    # Print PodInfo
+    echo ""
+    echo "%%%--- PodInfo ---%%%"
+    echo "Pod namespace: ${PODINFO_NAMESPACE}"
+    echo "Pod name: ${PODINFO_NAME}"
+    echo "Pod IP: ${PODINFO_IP}"
+    echo "Node name (of the host where the pod is running): ${PODINFO_NODE_NAME}" 
+    echo "Node IP (of the host where the pod is running): ${PODINFO_NODE_IP}"
 
-    sleep infinity
-    ##TODO
-    ##python3 /jupyterhub-dmaas/scripts/start_jupyterhub.py --config /srv/jupyterhub/jupyterhub_config.py
+    echo "Deploying with configuration for KubeSpawner..."
+    cp /srv/jupyterhub/jupyterhub_config.kubespawner.py /srv/jupyterhub/jupyterhub_config.py
     ;;
 
   ###
