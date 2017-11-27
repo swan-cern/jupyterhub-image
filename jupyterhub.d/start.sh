@@ -15,7 +15,7 @@ case $DEPLOYMENT_TYPE in
     echo "Node IP (of the host where the pod is running): ${PODINFO_NODE_IP}"
 
     echo "Deploying with configuration for Kubernetes..."
-    cp /srv/jupyterhub/jupyterhub_config/kubernetes.py /srv/jupyterhub/jupyterhub_config.py
+    cp /root/jupyterhub_config/kubernetes.py /srv/jupyterhub/jupyterhub_config.py
 
     echo "Downloading single-user image: $CONTAINER_IMAGE ..."
     docker pull $CONTAINER_IMAGE
@@ -36,7 +36,7 @@ case $DEPLOYMENT_TYPE in
     echo "Node IP (of the host where the pod is running): ${PODINFO_NODE_IP}"
 
     echo "Deploying with configuration for KubeSpawner..."
-    cp /srv/jupyterhub/jupyterhub_config/kubespawner.py /srv/jupyterhub/jupyterhub_config.py
+    cp /root/jupyterhub_config/kubespawner.py /srv/jupyterhub/jupyterhub_config.py
     ;;
 
   ###
@@ -50,7 +50,7 @@ case $DEPLOYMENT_TYPE in
       /bin/cp "$HOST_FOLDER"/certs/boxed.key /etc/boxed/certs/boxed.key
     fi
 
-    cp /srv/jupyterhub/jupyterhub_config/docker.py /srv/jupyterhub/jupyterhub_config.py
+    cp /root/jupyterhub_config/docker.py /srv/jupyterhub/jupyterhub_config.py
     ;;
   *)
     echo "ERROR: Deployment context is not defined."

@@ -26,8 +26,8 @@ c = get_config()
 
 ### Configuration for JupyterHub ###
 # JupyterHub
-c.JupyterHub.cookie_secret_file = '/srv/jupyterhub/cookie_secret'
-c.JupyterHub.db_url = '/srv/jupyterhub/jupyterhub.sqlite'
+c.JupyterHub.cookie_secret_file = '/srv/jupyterhub/jupyterhub_runtime/cookie_secret'
+c.JupyterHub.db_url = '/srv/jupyterhub/jupyterhub_runtime/jupyterhub.sqlite'
 
 # Logging
 c.JupyterHub.extra_log_file = '/var/log/jupyterhub.log'
@@ -109,17 +109,6 @@ c.LDAPAuthenticator.user_attribute = 'sAMAccountName'
 
 ### Configuration for single-user containers ###
 
-'''
-# Spawn single-user's servers in the Kubernetes cluster
-c.JupyterHub.spawner_class = 'kubespawner.KubeSpawner'
-c.KubeSpawner.singleuser_image_spec = CONTAINER_IMAGE
-c.KubeSpawner.namespace = NAMESPACE                                                 # Namespace of the whole machines (unless you want to separete SWAN users for accounting reasons)
-c.KubeSpawner.singleuser_node_selector = {NODE_SELECTOR_KEY : NODE_SELECTOR_VALUE}  # Where to run user containers
-c.KubeSpawner.options_form = '/srv/jupyterhub/jupyterhub_form.html'
-c.KubeSpawner.start_timeout = 60 * 5    # Can be very high if the user image is not available locally yet
-                                        # TODO: Need to pre-fetch the image somehow
-'''
-
 # Spawn single-user's servers in the Kubernetes cluster
 c.JupyterHub.spawner_class = 'cernkubespawner.CERNKubeSpawner'
 c.CERNKubeSpawner.singleuser_image_spec = CONTAINER_IMAGE
@@ -132,11 +121,16 @@ c.CERNKubeSpawner.start_timeout = 60 * 5    # Can be very high if the user image
 # Single-user's servers extra config, CVMFS, EOS
 #c.CERNKubeSpawner.extra_host_config = { 'mem_limit': '8g', 'cap_drop': ['NET_BIND_SERVICE', 'SYS_CHROOT']}
 
-###c.CERNKubeSpawner.read_only_volumes = { CVMFS_FOLDER : '/cvmfs' }
+#c.CERNKubeSpawner.local_home = True	# $HOME is a volatile scratch space at /scratch/<username>/
+c.CERNKubeSpawner.local_home = False	# $HOME is on EOS
 c.CERNKubeSpawner.volume_mounts = [
     {
         'name': 'cvmfs',
         'mountPath': '/cvmfs:shared',
+    },
+    {
+        'name': 'eos',
+        'mountPath': '/eos/user:shared',
     }
 ]
 
@@ -147,11 +141,13 @@ c.CERNKubeSpawner.volumes = [
             'path': '/cvmfs',
             'type': 'Directory',
         }
+    },
+    {
+        'name': 'eos',
+        'hostPath': {
+            'path': '/eos/docker/user',
+            'type': 'Directory',
+        }
     }
 ]
-
-# Local home inside users' containers
-c.CERNKubeSpawner.local_home = True                # If set to True, user <username> $HOME will be /scratch/<username>/
-#c.CERNKubeSpawner.local_home = False
-#c.CERNKubeSpawner.volumes = { os.path.join(EOS_FOLDER, "docker", "user") : '/eos/user' }
 
