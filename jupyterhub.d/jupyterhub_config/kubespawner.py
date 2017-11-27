@@ -26,8 +26,14 @@ c = get_config()
 
 ### Configuration for JupyterHub ###
 # JupyterHub
-c.JupyterHub.cookie_secret_file = '/srv/jupyterhub/jupyterhub_runtime/cookie_secret'
-c.JupyterHub.db_url = '/srv/jupyterhub/jupyterhub_runtime/jupyterhub.sqlite'
+jupyterhub_runtime_dir = '/srv/jupyterhub/jupyterhub_data/'
+os.makedirs(jupyterhub_runtime_dir, exist_ok=True)
+c.JupyterHub.cookie_secret_file = os.path.join(jupyterhub_runtime_dir, 'cookie_secret')
+c.JupyterHub.db_url = os.path.join(jupyterhub_runtime_dir, 'jupyterhub.sqlite')
+c.JupyterHub.cleanup_proxy = False
+c.JupyterHub.cleanup_servers = False	# Avoid deletion of single-user session if the Hub fails
+					# Note: Need to store the database on persistent storage so to have
+					#	the Hub resuming from the previous state
 
 # Logging
 c.JupyterHub.extra_log_file = '/var/log/jupyterhub.log'
