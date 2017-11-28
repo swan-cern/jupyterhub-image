@@ -25,15 +25,16 @@ NODE_SELECTOR_VALUE     = os.environ['NODE_SELECTOR_VALUE']
 c = get_config()
 
 ### Configuration for JupyterHub ###
-# JupyterHub
+# JupyterHub runtime configuration
 jupyterhub_runtime_dir = '/srv/jupyterhub/jupyterhub_data/'
 os.makedirs(jupyterhub_runtime_dir, exist_ok=True)
 c.JupyterHub.cookie_secret_file = os.path.join(jupyterhub_runtime_dir, 'cookie_secret')
 c.JupyterHub.db_url = os.path.join(jupyterhub_runtime_dir, 'jupyterhub.sqlite')
+
+# Resume previous state if the Hub fails
+c.JupyterHub.proxy_auth_token = '122aee66284d48c032752e16d650ae6b71181c96cec3798fa9b335d17111511a'
 c.JupyterHub.cleanup_proxy = False
-c.JupyterHub.cleanup_servers = False	# Avoid deletion of single-user session if the Hub fails
-					# Note: Need to store the database on persistent storage so to have
-					#	the Hub resuming from the previous state
+c.JupyterHub.cleanup_servers = False	# Note: Need to store the sqlite database on persistent storage
 
 # Logging
 c.JupyterHub.extra_log_file = '/var/log/jupyterhub.log'
