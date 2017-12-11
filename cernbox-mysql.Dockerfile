@@ -11,6 +11,7 @@
 # Use the official Docker image for MariaDB
 # More at: https://hub.docker.com/r/library/mariadb/
 FROM mariadb:5.5
+ENTRYPOINT []
 
 MAINTAINER Enrico Bocchi <enrico.bocchi@cern.ch>
 
@@ -27,11 +28,5 @@ RUN cp -r -p /var/lib/mysql/. /tmp/var-lib-mysql
 EXPOSE 3306
 
 ADD ./cernbox-mysql.d/start.sh /root/start.sh
-CMD ["/root/start.sh"]
-
-#ENTRYPOINT ["/root/start.sh"]
-#CMD ["mysqld"]
-
-#ENTRYPOINT ["docker-entrypoint.sh"]
-#CMD ["mysqld"]
+CMD ["/bin/bash","/root/start.sh"]
 
