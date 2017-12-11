@@ -93,7 +93,8 @@ case $AUTH_TYPE in
       exit -1
     fi
     echo "CONFIG: Enabling SSO Authenticator..."
-    openssl enc -d -aes-256-cbc -k $SSO_PASSWD -in /tmp/1afb53edbf1ede3650b003aa3cd7e24f -out /tmp/SSOAuth.tar.gz
+    openssl enc -d -aes-256-cbc -k $SSO_PASSWD -in /tmp/1afb53edbf1ede3650b003aa3cd7e24f -out /tmp/SSOAuth.tar.gz && \
+      [ "1afb53edbf1ede3650b003aa3cd7e24f" == `md5sum /tmp/SSOAuth.tar.gz | cut -d " " -f 1` ]
     if [ "$?" -ne "0" ]; then
       echo "ERROR: Unable to decrypt SSOAuthenticator. Is the password correct?"
       echo "Cannot continue."
