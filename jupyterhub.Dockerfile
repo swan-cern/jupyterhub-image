@@ -20,21 +20,27 @@ ENV LANG en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
 
 
-# ----- Install the required packages ----- #
-# Install Pyhon 3.4, pip and related upgrades
-RUN yum install -y \
+# ----- Install the basics ----- #
+RUN yum -y install \
 	wget \
-        git \
+	git \
 	sudo
 
-# Install Pyhon 3.4, pip, ...
+
+# ----- Install supervisord and base configuration file ----- #
+RUN yum -y install supervisor
+ADD ./supervisord.d/supervisord.conf /etc/supervisord.conf
+
+
+# ----- Install the required packages ----- #
+# Install Pyhon 3.4, pip and related upgrades
 RUN yum -y install \
 	python34 \
 	python34-pip
 RUN pip3 install --upgrade pip
 
 # Install Tornado, NodeJS, ...
-RUN yum install -y \
+RUN yum -y install \
 	python34-sqlalchemy \
 	python34-tornado \
 	python34-jinja2 \
@@ -111,15 +117,17 @@ ENV LD_LIBRARY_PATH=/opt/shibboleth/lib64
 
 
 # ----- Install sssd to access user account information ----- #
-RUN yum install -y \
+RUN yum -y install \
 	nscd \
 	nss-pam-ldapd \
 	openldap-clients
-ADD ./ldappam.d /etc
+ADD ./ldappam.d/*.conf /etc/
 RUN chmod 600 /etc/nslcd.conf
+ADD ./ldappam.d/nslcd_foreground.sh /usr/sbin/nslcd_foreground.sh
+RUN chmod +x /usr/sbin/nslcd_foreground.sh
 
 # Needed to bind to CERN ldap
-#RUN yum install -y \
+#RUN yum -y install \
 #		sssd \
 #		nss \
 #		pam \
@@ -138,11 +146,16 @@ RUN chmod 600 /etc/nslcd.conf
 ADD ./jupyterhub.d/adminslist /srv/jupyterhub/adminslist
 
 # Copy the configuration files for JupyterHub
-ADD ./jupyterhub.d/jupyterhub_config /srv/jupyterhub/jupyterhub_config
+ADD ./jupyterhub.d/jupyterhub_config /root/jupyterhub_config
 
 
 # ----- Run the setup script in the container ----- #
 WORKDIR /
 ADD ./jupyterhub.d/start.sh /root/start.sh
+ADD ./supervisord.d/nscd.ini /etc/supervisord.d
+ADD ./supervisord.d/nslcd.ini /etc/supervisord.d
+ADD ./supervisord.d/shibd.ini /etc/supervisord.d/shibd.noload
+ADD ./supervisord.d/httpd.ini /etc/supervisord.d
+ADD ./supervisord.d/jupyterhub.ini /etc/supervisord.d
 CMD ["/bin/bash", "/root/start.sh"]
 

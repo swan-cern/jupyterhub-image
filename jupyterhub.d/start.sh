@@ -58,12 +58,9 @@ case $DEPLOYMENT_TYPE in
     exit -1
 esac
 
-# Start nscd and nslcd to get user information from LDAP
-echo "Starting LDAP services..."
+echo "Configuring runtime parameters..."
+# Configuration to connect to LDAP
 sed -i "s/%%%LDAP_ENDPOINT%%%/${LDAP_ENDPOINT}/" /etc/nslcd.conf
-nscd
-nslcd
-
 # Configure httpd proxy with correct ports and hostname
 echo "CONFIG: HTTP port is ${HTTP_PORT}"
 echo "CONFIG: HTTPS port is ${HTTPS_PORT}"
@@ -115,11 +112,10 @@ case $AUTH_TYPE in
       #   opensaml::SecurityPolicyException at (https://up2kube-swan.cern.ch/Shibboleth.sso/ADFS)
       #   Assertion contains an unacceptable AudienceRestrictionCondition.
     fi
-    shibd
+    mv /etc/supervisord.d/shibd.noload /etc/supervisord.d/shibd.ini
     ;;
 esac
 
-echo "Starting JupyterHub..."
-httpd
-python3 /srv/jupyterhub/start_jupyterhub.py --no-ssl --config /srv/jupyterhub/jupyterhub_config.py
+echo "Starting services..." 
+/usr/bin/supervisord -c /etc/supervisord.conf
 
