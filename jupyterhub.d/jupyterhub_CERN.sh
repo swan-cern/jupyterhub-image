@@ -1,5 +1,15 @@
 #! /bin/bash
 
+# This script automatically fetches CERN customizations for JupyterHub, which come
+# from private repositories on CERN GitLab. Please, check to have the required
+# authroizations to clone the repos and to own a valid kerberos ticket before
+# running this script.
+#
+# Customization files are bundled in compressed archives and stored on the local
+# machine. Such archives will be used by the building process of the JupyterHub 
+# Docker image. Please, consider to add the latest version of the archives to
+# the Boxed repo so to keep it consistent with the content of the Docker image.
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 TMP_FOLDER="./tmp"
 OUT_FOLDER="./jupyterhub_CERN"
