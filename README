@@ -22,8 +22,6 @@ Packaging by: Enrico Bocchi, Hugo Gonzalez Labrador, Jozsef Makai, Jakub T. Mosc
 THIS IS A DEVELOPMENT REPO
 ==========================
 
-This is a developer repository: build and rune images from Docker files.
-
 For demo deployment from ready-images see: https://github.com/cernbox/uboxed
 For scalable and highly-available deployment with Kubernetes see: //github.com/cernbox/kuboxed
 
