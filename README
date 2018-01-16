@@ -23,7 +23,7 @@ THIS IS A DEVELOPMENT REPO
 ==========================
 
 For demo deployment from ready-images see: https://github.com/cernbox/uboxed
-For scalable and highly-available deployment with Kubernetes see: //github.com/cernbox/kuboxed
+For scalable and highly-available deployment with Kubernetes see: https://github.com/cernbox/kuboxed
 
 
 
