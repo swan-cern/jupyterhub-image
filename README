@@ -1,24 +1,41 @@
+Welcome to BOXED
+*Development Repository*
 
-Box-in-the-box
---------------
+-----
 
-Self-contained, containerized demo for next-generation cloud storage and computing services for scientific and general-purpose use:
+https://cernbox.cern.ch/cernbox/doc/boxed
 
- - CERNBox: https://cernbox.cern.ch
- - EOS: https://eos.cern.ch
- - SWAN: https://swan.cern.ch
+Self-contained, containerized package for next-generation cloud storage and computing services for scientific and general-purpose use:
 
-Packaging by:
+ - CERNBox: https://cernbox.web.cern.ch
+ - EOS: https://eos.web.cern.ch
+ - SWAN: https://swan.web.cern.ch
+ - CVMFS: https://cvmfs.web.cern.ch
 
- - Enrico Bocchi, Hugo Gonzalez Labrador, Jozsef Makai, Jakub T. Moscicki
+
+Packaging by: Enrico Bocchi, Hugo Gonzalez Labrador, Jozsef Makai, Jakub T. Moscicki
+
+
+-----
 
 ==========================
 THIS IS A DEVELOPMENT REPO
 ==========================
 
-This is a developer repository: build and rune images from Docker files.
+For demo deployment from ready-images see: https://github.com/cernbox/uboxed
+For scalable and highly-available deployment with Kubernetes see: https://github.com/cernbox/kuboxed
 
-For quick "user" deployment from ready-images see: https://github.com/cernbox/uboxed
+
+
+==========================
+
+The following instructions are deprecated.
+Images should be built and pushed to a Docker Container Registry service independenlty on the others.
+
+Please refer to CHANGELOG.md for the list of changes applied over time to Docker images.
+Please refer to the single Dockerfiles for instructions on how to build and push Docker images.
+
+==========================
 
 Initialize the user deployment repo first:
 
