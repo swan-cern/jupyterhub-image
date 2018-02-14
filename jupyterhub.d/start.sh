@@ -85,7 +85,7 @@ case $AUTH_TYPE in
     echo "CONFIG: User authentication via Shibboleth"
 
     if [ -z "$SSO_PASSWD" ]; then
-      echo "ERROR: Password to SSOAuthenticator is not provided."
+      echo "ERROR: Password for SSOAuthenticator is not provided."
       echo "Cannot continue."
       exit -1
     fi
@@ -115,6 +115,28 @@ case $AUTH_TYPE in
     mv /etc/supervisord.d/shibd.noload /etc/supervisord.d/shibd.ini
     ;;
 esac
+
+# Apply the customization script (if required)
+if [ "$CUSTOMIZATION_REPO" ]; then
+  CUSTOMIZATION_PATH="/tmp/customization"
+  mkdir -p $CUSTOMIZATION_PATH
+  echo "Fetching customizations from $CUSTOMIZATION_REPO"
+  git config --global http.sslVerify false
+  git clone $CUSTOMIZATION_REPO $CUSTOMIZATION_PATH
+  cd $CUSTOMIZATION_PATH
+  # Checkout specific commit, if set
+  if [ "$CUSTOMIZATION_COMMIT" ]; then
+    echo "Checkout commit $CUSTOMIZATION_COMMIT"
+    git checkout $CUSTOMIZATION_COMMIT
+  fi
+  # Run the customization script
+  if [ -z "$CUSTOMIZATION_SCRIPT" ]; then
+    export CUSTOMIZATION_SCRIPT="entrypoint.sh"
+  fi
+  echo "Applying customizations via $CUSTOMIZATION_SCRIPT"
+  sh $CUSTOMIZATION_SCRIPT
+  cd /
+fi
 
 echo "Starting services..." 
 /usr/bin/supervisord -c /etc/supervisord.conf
