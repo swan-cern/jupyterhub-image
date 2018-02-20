@@ -37,6 +37,7 @@ Listen %%%HTTPS_PORT%%%
   ## SSL directives
   SSLEngine on
   SSLCertificateFile      /etc/boxed/certs/boxed.crt
+  SSLCertificateChainFile /etc/boxed/certs/boxed.crt
   SSLCertificateKeyFile   /etc/boxed/certs/boxed.key
   SSLCACertificatePath    /etc/pki/tls/certs
 
