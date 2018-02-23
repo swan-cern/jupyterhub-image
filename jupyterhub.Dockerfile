@@ -90,7 +90,7 @@ RUN yum -y install \
         mod_ssl
 # Disable listen directive from conf/httpd.conf and SSL default config
 RUN sed -i "s/Listen 80/#Listen 80/" /etc/httpd/conf/httpd.conf
-RUN mv /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/ssl.noload
+RUN mv /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/ssl.defaults
 #Copy plain+ssl config files and rewrites for shibboleth
 ADD ./jupyterhub.d/httpd.d/jupyterhub_plain.conf.template /root/httpd_config/jupyterhub_plain.conf.template
 ADD ./jupyterhub.d/httpd.d/jupyterhub_ssl.conf.template /root/httpd_config/jupyterhub_ssl.conf.template
@@ -106,7 +106,7 @@ RUN yum -y install \
         opensaml-schemas \
         xmltooling-schemas
 RUN ln -s /usr/lib64/shibboleth/mod_shib_24.so /etc/httpd/modules/mod_shib_24.so
-RUN mv /etc/httpd/conf.d/shib.conf /etc/httpd/conf.d/shib.noload
+RUN mv /etc/httpd/conf.d/shib.conf /etc/httpd/conf.d/shib.defaults
 # Copy shibboleth config files
 ADD ./shibd.d/ADFS-metadata.xml /etc/shibboleth/ADFS-metadata.xml
 ADD ./shibd.d/attribute-map.xml /etc/shibboleth/attribute-map.xml
