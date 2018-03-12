@@ -51,6 +51,10 @@ Listen %%%HTTPS_PORT%%%
   <Location />
     AuthType shibboleth
     ShibRequestSetting requireSession 1
+    Require valid-user
+
+    RewriteEngine On
+    RequestHeader set REMOTE_USER %{REMOTE_USER}s
 
     SSLRequireSSL
 
