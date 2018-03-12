@@ -17,18 +17,25 @@ from ldap3 import Server, Connection, ALL
 
 
 class SSOUserLogoutHandler(BaseHandler):
-    """Log a user out by clearing both their JupyterHub login cookie and SSO cookie."""
+    """
+    Log a user out by clearing her JupyterHub login cookie.
+    Clearing out SSO cookie is deferred to a hook on the SSO side callable
+    from a URL, which can be set via the 'SSO_LOGOUT_REDIRECT' parameter.
+    """
     def get(self):
-        sso_logout_redirect = os.environ['SSO_LOGOUT_REDIRECT']
+        if ('SSO_LOGOUT_REDIRECT' not in os.environ.keys()):
+            sso_logout_url = "https://swan.web.cern.ch"
+        else:
+            sso_logout_url = os.environ['SSO_LOGOUT_REDIRECT']
 
         user = self.get_current_user()
         self.clear_login_cookie()
         if user:
-            self.log.info("User logged out: %s", user.name)
+            self.log.info("INFO: User logged out: %s", user.name)
             for name in user.other_user_cookies:
                 self.clear_login_cookie(name)
             user.other_user_cookies = set([])
-        self.redirect(sso_logout_redirect, permanent=False)
+        self.redirect(sso_logout_url, permanent=False)
 
 
 
@@ -48,7 +55,7 @@ class SSOUserLoginHandler(BaseHandler):
 
         # If the field is empty, I cannot authenticate the user
         if (sso_uid == ""):
-            print ("ERROR: SSO_UID field from Shibboleth is empty")
+            self.log.info("ERROR: SSO_UID field from Shibboleth is empty")
             raise web.HTTPError(401)
             return
 	
@@ -67,28 +74,31 @@ class SSOUserLoginHandler(BaseHandler):
             ldap_conn.search(ldap_basedn, search_filter, attributes=wanted_attributes)
             ldap_result = ldap_conn.entries
         except Exception as e:
-            print ("ERROR: Unable to retrieve entries from LDAP Server.")
-            print (e)
+            self.log.info("ERROR: Unable to retrieve entries from LDAP Server.")
+            self.log.info(e)
             raise web.HTTPError(503)
             return
 
         # Handle the response
         if (len(ldap_result) == 0):
-            print ("ERROR: Matching entry for SSO_UID %s not found" %(sso_uid))
+            self.log.info("ERROR: Matching entry for SSO_UID %s not found", sso_uid)
+            self.log.info("ERROR: Does user %s have a CERNBox?", sso_uid)
             raise web.HTTPError(403)
             return
         if (len(ldap_result) > 1):
-            print ("ERROR: More than one matching entry found for SSO_UID %s" %(sso_uid))
+            self.log.info("ERROR: More than one matching entry found for SSO_UID %s", sso_uid)
             raise web.HTTPError(401)
             return
         try:
             unix_user = getattr(ldap_result[0], unix_user_attrname).value
         except:
-            print ("ERROR: Something went wrong parsing the LDAP response for SSO_UID %s" %(sso_uid))
+            self.log.info("ERROR: Something went wrong parsing the LDAP response for SSO_UID: %s", sso_uid)
             raise web.HTTPError(401)
             return
 
         # From now on, use the Unix uid instead of the SSO one
+        self.log.info("INFO: User logged in %s", sso_uid)
+        self.log.info("INFO: SSO user %s mapped to %s", sso_uid, unix_user)
         user = self.user_from_username(unix_user)
         self.set_login_cookie(user)
         self.redirect(url_path_join(self.hub.server.base_url, 'home'))
