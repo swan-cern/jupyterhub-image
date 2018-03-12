@@ -63,8 +63,11 @@ ADD ./jupyterhub.d/jupyterhub_CERN/1afb53edbf1ede3650b003aa3cd7e24f /tmp
 
 
 # ----- Install CERN customizations ----- #
-# Note: This is a temporary solution before we get a public and a private repo in GitLab dmaas.
-# 	Then, all compressed archives will be replace by git pull actions directly from source.
+# Install Web to Unix Authenticator
+ADD ./jupyterhub.d/Web2UnixAuthenticator /tmp/Web2UnixAuthenticator
+WORKDIR /tmp/Web2UnixAuthenticator
+RUN pip3 install -r requirements.txt && \
+	python3 setup.py install
 
 # Install CERN Spawner
 ADD ./jupyterhub.d/jupyterhub_CERN/CERNSpawner.tar.gz /tmp
