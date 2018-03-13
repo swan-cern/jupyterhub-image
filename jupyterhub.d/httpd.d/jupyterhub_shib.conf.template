@@ -61,8 +61,6 @@ Listen %%%HTTPS_PORT%%%
     ShibUseHeaders On
     ShibRequireSession On
     ShibExportAssertion Off
-
-    Require valid-user
   </Location>
 
 </VirtualHost>
