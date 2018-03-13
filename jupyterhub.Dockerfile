@@ -110,11 +110,8 @@ RUN yum -y install \
         opensaml-schemas \
         xmltooling-schemas
 RUN ln -s /usr/lib64/shibboleth/mod_shib_24.so /etc/httpd/modules/mod_shib_24.so
-RUN mv /etc/httpd/conf.d/shib.conf /etc/httpd/conf.d/shib.defaults
-# Copy shibboleth config files
-ADD ./shibd.d/ADFS-metadata.xml /etc/shibboleth/ADFS-metadata.xml
-ADD ./shibd.d/attribute-map.xml /etc/shibboleth/attribute-map.xml
-ADD ./jupyterhub.d/shibboleth2.yaml.template /root/shibd_config/shibboleth2.yaml.template
+RUN mv /etc/httpd/conf.d/shib.conf /etc/httpd/conf.d/shib.noload
+RUN mv /etc/shibboleth/attribute-map.xml /etc/shibboleth/attribute-map.xml.defaults
 RUN mv /etc/shibboleth/shibboleth2.xml /etc/shibboleth/shibboleth2.defaults
 # Fix the library path for shibboleth (https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPLinuxRH6)
 ENV LD_LIBRARY_PATH=/opt/shibboleth/lib64
@@ -143,6 +140,17 @@ RUN chmod +x /usr/sbin/nslcd_foreground.sh
 #	chmod 0600 /etc/sssd/sssd.conf && \
 #	restorecon /etc/sssd/sssd.conf
 #RUN authconfig --enablesssd --enablesssdauth --update 2>/dev/null
+
+
+# ----- Extra files required by integration with SSO solutions ----- #
+
+# 1. CERN-specific shibboleth config and attributes
+ADD ./shibd.d/attribute-map.xml /root/CERN_SSO/attribute-map.xml
+ADD ./shibd.d/ADFS-metadata.xml /root/CERN_SSO/ADFS-metadata.xml
+ADD ./jupyterhub.d/shibboleth2.yaml.template /root/CERN_SSO/shibboleth2.yaml.template
+
+# NOTE: Integration with SSO solutions might require a custom authenticator!
+
 
 
 # ----- Copy configuration files and reset current directory ----- #
