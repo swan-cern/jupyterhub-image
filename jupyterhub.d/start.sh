@@ -65,7 +65,9 @@ sed -i "s/%%%LDAP_ENDPOINT%%%/${LDAP_ENDPOINT}/" /etc/nslcd.conf
 echo "CONFIG: HTTP port is ${HTTP_PORT}"
 echo "CONFIG: HTTPS port is ${HTTPS_PORT}"
 echo "CONFIG: Hostname is ${HOSTNAME}"
+# 1. Traffic on HTTPS port
 sed "s/%%%HTTPS_PORT%%%/${HTTPS_PORT}/" /root/httpd_config/jupyterhub_ssl.conf.template > /etc/httpd/conf.d/jupyterhub_ssl.conf
+# 2. Traffic on HTTP port for redirection to HTTPS
 sed -e "s/%%%HTTP_PORT%%%/${HTTP_PORT}/
 s/%%%HTTPS_PORT%%%/${HTTPS_PORT}/
 s/%%%HOSTNAME%%%/${HOSTNAME}/" /root/httpd_config/jupyterhub_plain.conf.template > /etc/httpd/conf.d/jupyterhub_plain.conf
@@ -81,9 +83,9 @@ case $AUTH_TYPE in
     echo "CONFIG: User authentication via LDAP"
     ;;
 
-  "shibboleth")
-    echo "CONFIG: User authentication via Shibboleth"
-
+  "cernsso")
+    echo "CONFIG: User authentication via CERN SSO"
+    # Install the SSO Authenticator, if a valid password is provided
     if [ -z "$SSO_PASSWD" ]; then
       echo "ERROR: Password for SSOAuthenticator is not provided."
       echo "Cannot continue."
@@ -99,20 +101,45 @@ case $AUTH_TYPE in
     fi
     echo "CONFIG: Installing SSO Authenticator..."
     tar -xf /tmp/SSOAuth.tar.gz -C /tmp && cd /tmp/SSOAuthenticator && pip3 install -r requirements.txt && python3 setup.py install
-
+    echo "CONFIG: Configuring httpd, shibd, and jupyterhub for use with CERN SSO..."
+    # Disable HTTPS rules on httpd (are included in config file for Shibboleth)
     mv /etc/httpd/conf.d/jupyterhub_ssl.conf /etc/httpd/conf.d/jupyterhub_ssl.noload
+    # Enable Shibboleth rules on httpd
     mv /etc/httpd/conf.d/shib.noload /etc/httpd/conf.d/shib.conf
     sed "s/%%%HTTPS_PORT%%%/${HTTPS_PORT}/" /root/httpd_config/jupyterhub_shib.conf.template > /etc/httpd/conf.d/jupyterhub_shib.conf
+    # Enable Shibboleth daemon
+    mv /etc/supervisord.d/shibd.noload /etc/supervisord.d/shibd.ini
+    # Copy CERN-specific Shibboleth files
+    cp /root/CERN_SSO/attribute-map.xml /etc/shibboleth/attribute-map.xml
+    cp /root/CERN_SSO/ADFS-metadata.xml /etc/shibboleth/ADFS-metadata.xml
     if [ "${HTTPS_PORT}" != "443" ]; then
-      sed "s/%%%HOSTNAME%%%/${HOSTNAME}:${HTTPS_PORT}/" /root/shibd_config/shibboleth2.yaml.template > /etc/shibboleth/shibboleth2.xml
+      sed "s/%%%HOSTNAME%%%/${HOSTNAME}:${HTTPS_PORT}/" /root/CERN_SSO/shibboleth2.yaml.template > /etc/shibboleth/shibboleth2.xml
     else
-      sed "s/%%%HOSTNAME%%%/${HOSTNAME}/" /root/shibd_config/shibboleth2.yaml.template > /etc/shibboleth/shibboleth2.xml
+      sed "s/%%%HOSTNAME%%%/${HOSTNAME}/" /root/CERN_SSO/shibboleth2.yaml.template > /etc/shibboleth/shibboleth2.xml
       # NOTE: We assume nobody specifies ":443" when registering the application in the SSO form
       # If ":443" is explicited in the shibboleth2.xml Audience but not in the SSO form, opensaml returns an exception as follows: 
       #   opensaml::SecurityPolicyException at (https://up2kube-swan.cern.ch/Shibboleth.sso/ADFS)
       #   Assertion contains an unacceptable AudienceRestrictionCondition.
     fi
+    ;;
+
+  "shibboleth")
+    echo "CONFIG: User authentication via Shibboleth"
+    # Disable HTTPS rules on httpd (are included in config file for Shibboleth)
+    mv /etc/httpd/conf.d/jupyterhub_ssl.conf /etc/httpd/conf.d/jupyterhub_ssl.noload
+    # Enable Shibboleth rules on httpd
+    mv /etc/httpd/conf.d/shib.noload /etc/httpd/conf.d/shib.conf
+    sed "s/%%%HTTPS_PORT%%%/${HTTPS_PORT}/" /root/httpd_config/jupyterhub_shib.conf.template > /etc/httpd/conf.d/jupyterhub_shib.conf
+    # Enable shibboleth daemon
     mv /etc/supervisord.d/shibd.noload /etc/supervisord.d/shibd.ini
+    # Make sure the customization script puts in place all the remaining files
+    if [ -z "$CUSTOMIZATION_REPO" ]; then
+      echo "ERROR: Customization script is not set."
+      echo "ERROR: The customization script should provide additional configuration files for Shibboleth authentication"
+      echo "Cannot continue."
+      exit 1
+    echo "CONFIG: Plese make sure the customization script fetches all the required files (shibboleth2.yaml, attribute-map.xml, ...) for Shibboleth authentication."
+    fi
     ;;
 esac
 

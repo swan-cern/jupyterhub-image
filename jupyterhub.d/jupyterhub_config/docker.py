@@ -43,10 +43,13 @@ c.JupyterHub.admin_access = True
 
 
 ### User Authentication ###
-if ( os.environ['AUTH_TYPE'] == "shibboleth" ):
-    print ("Authenticator: Using SSO")
+if ( os.environ['AUTH_TYPE'] == "cernsso" ):
+    print ("Authenticator: Using CERN SSO")
     c.JupyterHub.authenticator_class = 'ssoauthenticator.SSOAuthenticator'
     c.SSOAuthenticator.accepted_egroup = 'swan-admins;swan-qa;swan-qa2'
+elif ( os.environ['AUTH_TYPE'] == "shibboleth" ):
+    print ("Authenticator: Using user-defined authenticator")
+    c.JupyterHub.authenticator_class = '%%%SHIBBOLETH_AUTHENTICATOR_CLASS%%%'
 elif ( os.environ['AUTH_TYPE'] == "local" ):
     print ("Authenticator: Using LDAP")
     # See: https://github.com/jupyterhub/ldapauthenticator
