@@ -34,8 +34,8 @@ with open(pjoin(here, 'version.py')) as f:
     exec(f.read(), {}, version_ns)
 
 setup_args = dict(
-    name                = 'webtounix_authenticator',
-    packages            = ['webtounix_authenticator'],
+    name                = 'ssotoldap_authenticator',
+    packages            = ['ssotoldap_authenticator'],
     version             = version_ns['__version__'],
     description         = """Web to Unix Authenticator: Authenticate users with a Web identifier (e.g., via Shibboleth) and map them to Unix accounts.""",
     long_description    = "",
