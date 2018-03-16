@@ -63,9 +63,9 @@ ADD ./jupyterhub.d/jupyterhub_CERN/1afb53edbf1ede3650b003aa3cd7e24f /tmp
 
 
 # ----- Install CERN customizations ----- #
-# Install Web to Unix Authenticator
-ADD ./jupyterhub.d/Web2UnixAuthenticator /tmp/Web2UnixAuthenticator
-WORKDIR /tmp/Web2UnixAuthenticator
+# Install SSO to LDAP Authenticator
+ADD ./jupyterhub.d/SSO2LdapAuthenticator /tmp/SSO2LdapAuthenticator
+WORKDIR /tmp/SSO2LdapAuthenticator
 RUN pip3 install -r requirements.txt && \
 	python3 setup.py install
 
