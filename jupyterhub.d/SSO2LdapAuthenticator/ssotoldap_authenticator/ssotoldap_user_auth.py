@@ -20,13 +20,13 @@ class SSOUserLogoutHandler(BaseHandler):
     """
     Log a user out by clearing her JupyterHub login cookie.
     Clearing out SSO cookie is deferred to a hook on the SSO side callable
-    from a URL, which can be set via the 'SSO_LOGOUT_REDIRECT' parameter.
+    from a URL, which can be set via the 'SSO_LOGOUT_URL' parameter.
     """
     def get(self):
-        if ('SSO_LOGOUT_REDIRECT' not in os.environ.keys()):
+        if ('SSO_LOGOUT_URL' not in os.environ.keys()):
             sso_logout_url = "https://swan.web.cern.ch"
         else:
-            sso_logout_url = os.environ['SSO_LOGOUT_REDIRECT']
+            sso_logout_url = os.environ['SSO_LOGOUT_URL']
 
         user = self.get_current_user()
         self.clear_login_cookie()
