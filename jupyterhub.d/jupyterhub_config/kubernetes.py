@@ -37,8 +37,15 @@ c.JupyterHub.port = 8000
 #       The hub must listen on an IP address that is reachable from DOCKER_NETWORK_NAME
 #       and not on "localhost"||"127.0.0.1" or any other name that could not be resolved
 #       See also c.CERNSpawner.hub_ip_connect (https://github.com/jupyterhub/jupyterhub/issues/291)
-public_ip = socket.gethostbyname(socket.getfqdn())
-c.JupyterHub.hub_ip = public_ip
+try:
+  hub_ip = socket.gethostbyname(socket.getfqdn())
+except:
+  print ("WARNING: Unable to identify iface IP from FQDN")
+  s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+  s.connect(("8.8.8.8", 80))
+  hub_ip = s.getsockname()[0]
+hub_port = 8080
+c.JupyterHub.hub_ip = hub_ip
 c.JupyterHub.hub_port = 8080
 
 # Load the list of users with admin privileges and enable access

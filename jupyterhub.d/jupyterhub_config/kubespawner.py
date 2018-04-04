@@ -56,7 +56,13 @@ c.JupyterHub.port = 8000	# You may end up in detecting the wrong IP address due 
 # NOTE: The Hub IP must be known and rechable from spawned containers
 # 	Leveraging on the FQDN makes the Hub accessible both when the JupyterHub Pod 
 #	uses the Kubernetes overlay network and the host network
-hub_ip = socket.gethostbyname(socket.getfqdn())
+try:
+  hub_ip = socket.gethostbyname(socket.getfqdn())
+except:
+  print ("WARNING: Unable to identify iface IP from FQDN")
+  s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+  s.connect(("8.8.8.8", 80))
+  hub_ip = s.getsockname()[0]
 hub_port = 8080
 c.JupyterHub.hub_ip = hub_ip
 c.JupyterHub.hub_port = hub_port
