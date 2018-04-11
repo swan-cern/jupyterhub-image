@@ -58,7 +58,6 @@ RUN pip3 install git+git://github.com/jupyterhub/dockerspawner.git@92a7ca676997d
 RUN pip3 install git+git://github.com/jupyterhub/kubespawner.git@ae1c6d6f58a45c2ba4b9e2fa81d50b16503f9874	# Kubespawner
 
 RUN pip3 install git+git://github.com/jupyterhub/ldapauthenticator.git@f3b2db14bfb591df09e05f8922f6041cc9c1b3bd	# LDAP auth
-RUN pip3 install git+git://github.com/cwaldbieser/jhub_remote_user_authenticator.git				# REMOTE_USER auth
 ADD ./jupyterhub.d/jupyterhub_CERN/1afb53edbf1ede3650b003aa3cd7e24f /tmp
 
 
