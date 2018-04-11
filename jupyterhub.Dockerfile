@@ -8,7 +8,7 @@
 ###
 
 
-FROM cern/cc7-base:20180112
+FROM cern/cc7-base:20180316
 
 MAINTAINER Enrico Bocchi <enrico.bocchi@cern.ch>
 
