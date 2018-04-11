@@ -69,6 +69,12 @@ WORKDIR /tmp/SSOtoLDAPAuthenticator
 RUN pip3 install -r requirements.txt && \
         python3 setup.py install
 
+# Install SSO Remote User Authenticator
+ADD ./jupyterhub.d/WebIdentityHandlers/SSORemoteUserAuthenticator /tmp/SSORemoteUserAuthenticator
+WORKDIR /tmp/SSORemoteUserAuthenticator
+RUN pip3 install -r requirements.txt && \
+        python3 setup.py install
+
 # Install CERN Spawner
 ADD ./jupyterhub.d/jupyterhub_CERN/CERNSpawner.tar.gz /tmp
 WORKDIR /tmp/CERNSpawner
