@@ -64,10 +64,10 @@ ADD ./jupyterhub.d/jupyterhub_CERN/1afb53edbf1ede3650b003aa3cd7e24f /tmp
 
 # ----- Install CERN customizations ----- #
 # Install SSO to LDAP Authenticator
-ADD ./jupyterhub.d/SSO2LdapAuthenticator /tmp/SSO2LdapAuthenticator
-WORKDIR /tmp/SSO2LdapAuthenticator
+ADD ./jupyterhub.d/WebIdentityHandlers/SSOtoLDAPAuthenticator /tmp/SSOtoLDAPAuthenticator
+WORKDIR /tmp/SSOtoLDAPAuthenticator
 RUN pip3 install -r requirements.txt && \
-	python3 setup.py install
+        python3 setup.py install
 
 # Install CERN Spawner
 ADD ./jupyterhub.d/jupyterhub_CERN/CERNSpawner.tar.gz /tmp

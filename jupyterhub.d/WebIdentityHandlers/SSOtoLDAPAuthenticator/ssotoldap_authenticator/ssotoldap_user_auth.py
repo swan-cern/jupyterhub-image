@@ -1,7 +1,4 @@
 # Author: Enrico Bocchi, 2018
-
-"""Web to Unix Authenticator"""
-
 # Inspired from https://github.com/cwaldbieser/jhub_remote_user_authenticator/blob/master/jhub_remote_user_authenticator/remote_user_auth.py
 
 
@@ -40,7 +37,7 @@ class SSOUserLogoutHandler(BaseHandler):
 
 
 class SSOUserLoginHandler(BaseHandler):
-    """Log a user in an lookup for her Unix account on LDAP."""
+    """Log a user in and lookup for her Unix account on LDAP."""
     def get(self):
         unix_user_attrname	= "uid"
         sso_uid_attrname	= "ssouid"
