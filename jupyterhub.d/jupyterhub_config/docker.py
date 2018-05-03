@@ -5,11 +5,13 @@ import os
 
 ### VARIABLES ###
 # Get configuration parameters from environment variables
-DOCKER_NETWORK_NAME	= os.environ['DOCKER_NETWORK_NAME']
-CVMFS_FOLDER		= os.environ['CVMFS_FOLDER']
-EOS_FOLDER		= os.environ['EOS_FOLDER']
-CONTAINER_IMAGE		= os.environ['CONTAINER_IMAGE']
-LDAP_ENDPOINT		= os.environ['LDAP_ENDPOINT']
+DOCKER_NETWORK_NAME     = os.environ['DOCKER_NETWORK_NAME']
+CVMFS_FOLDER            = os.environ['CVMFS_FOLDER']
+EOS_FOLDER              = os.environ['EOS_FOLDER']
+CONTAINER_IMAGE         = os.environ['CONTAINER_IMAGE']
+LDAP_URI                = os.environ['LDAP_URI']
+LDAP_PORT               = os.environ['LDAP_PORT']
+LDAP_BASE_DN            = os.environ['LDAP_BASE_DN']
 
 c = get_config()
 
@@ -47,28 +49,21 @@ if ( os.environ['AUTH_TYPE'] == "cernsso" ):
     print ("Authenticator: Using CERN SSO")
     c.JupyterHub.authenticator_class = 'ssoauthenticator.SSOAuthenticator'
     c.SSOAuthenticator.accepted_egroup = 'swan-admins;swan-qa;swan-qa2'
+
 elif ( os.environ['AUTH_TYPE'] == "shibboleth" ):
     print ("Authenticator: Using user-defined authenticator")
     c.JupyterHub.authenticator_class = '%%%SHIBBOLETH_AUTHENTICATOR_CLASS%%%'
+
 elif ( os.environ['AUTH_TYPE'] == "local" ):
     print ("Authenticator: Using LDAP")
-    # See: https://github.com/jupyterhub/ldapauthenticator
     c.JupyterHub.authenticator_class = 'ldapauthenticator.LDAPAuthenticator'
+    c.LDAPAuthenticator.server_address = LDAP_URI
+    c.LDAPAuthenticator.use_ssl = False
+    c.LDAPAuthenticator.server_port = int(LDAP_PORT)
+    if (LDAP_URI[0:8] == "ldaps://"):
+      c.LDAPAuthenticator.use_ssl = True
+    c.LDAPAuthenticator.bind_dn_template = 'uid={username},'+LDAP_BASE_DN
 
-    c.LDAPAuthenticator.server_address = LDAP_ENDPOINT
-    c.LDAPAuthenticator.use_ssl = True
-    c.LDAPAuthenticator.server_port = 636
-    # LDAP tries to authenticate the client, but we are running on self-signed certificates.
-    # One could alway add the self-signed certificate to the LDAP side...
-    # or make client authentication not mandatory --> in docker-compose.yaml set 'LDAP_TLS_VERIFY_CLIENT: try'
-    # Have a look at: https://github.com/osixia/docker-openldap/issues/105
-    #	ldap      | 58de1281 conn=1003 fd=16 ACCEPT from IP=172.18.0.2:57734 (IP=0.0.0.0:636)
-    #	ldap      | TLS: can't accept: No certificate was found..
-    #	ldap      | 58de1281 conn=1003 fd=16 closed (TLS negotiation failure)
-    c.LDAPAuthenticator.bind_dn_template = 'uid={username},dc=example,dc=org'
-    #c.LDAPAuthenticator.lookup_dn = True
-    #c.LDAPAuthenticator.user_search_base = 'ou=People,dc=example,dc=com'
-    #c.LDAPAuthenticator.user_attribute = 'uid'
 else:
     print ("ERROR: Authentication type not specified.")
     print ("Cannot start JupyterHub.")
