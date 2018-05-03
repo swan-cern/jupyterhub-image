@@ -153,15 +153,11 @@ RUN chmod +x /usr/sbin/nslcd_foreground.sh
 #RUN authconfig --enablesssd --enablesssdauth --update 2>/dev/null
 
 
-# ----- Extra files required by integration with SSO solutions ----- #
-
-# 1. CERN-specific shibboleth config and attributes
+# ----- Extra files required for integration with CERN SSO ----- #
+# NOTE: Integration with SSO solutions might require a custom authenticator!
 ADD ./shibd.d/attribute-map.xml /root/CERN_SSO/attribute-map.xml
 ADD ./shibd.d/ADFS-metadata.xml /root/CERN_SSO/ADFS-metadata.xml
 ADD ./jupyterhub.d/shibboleth2.yaml.template /root/CERN_SSO/shibboleth2.yaml.template
-
-# NOTE: Integration with SSO solutions might require a custom authenticator!
-
 
 
 # ----- Copy configuration files and reset current directory ----- #
