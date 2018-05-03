@@ -86,6 +86,12 @@ WORKDIR /tmp/CERNSpawner
 RUN pip3 install -r requirements.txt && \
 	python3 setup.py install
 
+# Install CERN Kube Spawner
+ADD ./jupyterhub.d/CERNKubeSpawner /tmp/CERNKubeSpawner
+WORKDIR /tmp/CERNKubeSpawner
+RUN pip3 install -r requirements.txt && \
+       python3 setup.py install
+
 # Install CERN Handlers
 ADD ./jupyterhub.d/jupyterhub_CERN/CERNHandlers.tar.gz /tmp
 WORKDIR /tmp/CERNHandlers
