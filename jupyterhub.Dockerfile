@@ -33,26 +33,31 @@ ADD ./supervisord.d/supervisord.conf /etc/supervisord.conf
 
 
 # ----- Install the required packages ----- #
-# Install Pyhon 3.4, pip and related upgrades
+# Install Pyhon 3.4, pip, nodejs, and related upgrades
 RUN yum -y install \
 	python34 \
-	python34-pip
+	python34-pip \
+	python34-libs \
+	python34-setuptools \
+	nodejs
 RUN pip3 install --upgrade pip
 
-# Install Tornado, NodeJS, ...
-RUN yum -y install \
-	python34-sqlalchemy \
-	python34-tornado \
-	python34-jinja2 \
-	python34-traitlets \
-	python34-requests \
-	nodejs
-RUN npm install -g configurable-http-proxy
+# Install Python packages via pip
+RUN pip3 install \
+	decorator \
+	requests \
+	tornado \
+	traitlets \
+	urllib3 \
+	Jinja2 \
+	SQLAlchemy
 
 # Install Docker, JupyterHub, spawners, and authenticators
 RUN wget -q https://get.docker.com -O /tmp/getdocker.sh && \
     bash /tmp/getdocker.sh
+
 RUN pip3 install jupyterhub==0.7.2
+RUN npm install -g configurable-http-proxy
 
 RUN pip3 install git+git://github.com/jupyterhub/dockerspawner.git@92a7ca676997dc77b51730ff7626d8fcd31860da	# Dockerspawner
 RUN pip3 install git+git://github.com/jupyterhub/kubespawner.git@ae1c6d6f58a45c2ba4b9e2fa81d50b16503f9874	# Kubespawner
