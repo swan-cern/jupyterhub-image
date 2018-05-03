@@ -53,8 +53,9 @@ RUN pip3 install \
 	SQLAlchemy
 
 # Install Docker, JupyterHub, spawners, and authenticators
-RUN wget -q https://get.docker.com -O /tmp/getdocker.sh && \
-    bash /tmp/getdocker.sh
+RUN yum -y install \
+	https://download.docker.com/linux/centos/7/x86_64/stable/Packages/docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm \
+	https://download.docker.com/linux/centos/7/x86_64/stable/Packages/docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm
 
 RUN pip3 install jupyterhub==0.7.2
 RUN npm install -g configurable-http-proxy
