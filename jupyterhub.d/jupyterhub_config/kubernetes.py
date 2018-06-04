@@ -7,7 +7,7 @@ import socket
 # Get configuration parameters from environment variables
 DOCKER_NETWORK_NAME     = os.environ['DOCKER_NETWORK_NAME']
 CVMFS_FOLDER            = os.environ['CVMFS_FOLDER']
-EOS_FOLDER              = os.environ['EOS_FOLDER']
+EOS_USER_PATH           = os.environ['EOS_USER_PATH']
 CONTAINER_IMAGE         = os.environ['CONTAINER_IMAGE']
 LDAP_URI                = os.environ['LDAP_URI']
 LDAP_PORT               = os.environ['LDAP_PORT']
@@ -117,5 +117,5 @@ c.CERNSpawner.read_only_volumes = { CVMFS_FOLDER : '/cvmfs' }
 # Local home inside users' containers
 #c.CERNSpawner.local_home = True		# If set to True, user <username> $HOME will be /scratch/<username>/
 c.CERNSpawner.local_home = False
-c.CERNSpawner.volumes = { os.path.join(EOS_FOLDER, "docker", "user") : '/eos/user' }
+c.CERNSpawner.volumes = { EOS_USER_PATH : '/eos/user' }
 

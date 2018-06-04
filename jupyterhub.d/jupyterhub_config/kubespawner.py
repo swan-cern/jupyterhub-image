@@ -14,7 +14,7 @@ import socket
 ### VARIABLES ###
 # Get configuration parameters from environment variables
 CVMFS_FOLDER            = os.environ['CVMFS_FOLDER']
-EOS_FOLDER              = os.environ['EOS_FOLDER']
+EOS_USER_PATH           = os.environ['EOS_USER_PATH']
 CONTAINER_IMAGE         = os.environ['CONTAINER_IMAGE']
 LDAP_URI                = os.environ['LDAP_URI']
 LDAP_PORT               = os.environ['LDAP_PORT']
@@ -156,7 +156,7 @@ c.CERNKubeSpawner.volumes = [
     {
         'name': 'eos',
         'hostPath': {
-            'path': '/eos/docker/user',
+            'path': EOS_USER_PATH,
             'type': 'Directory',
         }
     }
