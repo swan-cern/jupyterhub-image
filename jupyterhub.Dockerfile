@@ -32,9 +32,29 @@ RUN yum -y install \
 	sudo
 
 
-# ----- Install supervisord and base configuration file ----- #
-RUN yum -y install supervisor
-ADD ./supervisord.d/supervisord.conf /etc/supervisord.conf
+# ----- Install tools for LDAP access ----- #
+RUN yum -y install \
+        nscd \
+        nss-pam-ldapd \
+        openldap-clients
+ADD ./ldappam.d/*.conf /etc/
+RUN chmod 600 /etc/nslcd.conf
+ADD ./ldappam.d/nslcd_foreground.sh /usr/sbin/nslcd_foreground.sh
+RUN chmod +x /usr/sbin/nslcd_foreground.sh
+
+# Needed to bind to CERN ldap
+#RUN yum -y install \
+#               sssd \
+#               nss \
+#               pam \
+#               policycoreutils \
+#               authconfig
+# See: http://linux.web.cern.ch/linux/docs/account-mgmt.shtml
+#RUN wget -q http://linux.web.cern.ch/linux/docs/sssd.conf.example -O /etc/sssd/sssd.conf && \
+#       chown root:root /etc/sssd/sssd.conf && \
+#       chmod 0600 /etc/sssd/sssd.conf && \
+#       restorecon /etc/sssd/sssd.conf
+#RUN authconfig --enablesssd --enablesssdauth --update 2>/dev/null
 
 
 # ----- Install the required packages ----- #
@@ -103,6 +123,9 @@ WORKDIR /tmp/CERNHandlers
 RUN pip3 install -r requirements.txt && \
         python3 setup.py install
 
+# Reset current directory
+WORKDIR /
+
 # CERN Logos, Templates, Session Form, Start Script
 ADD ./jupyterhub.d/jupyterhub_CERN/CERNTemplates.tar.gz /srv/jupyterhub
 ADD ./jupyterhub.d/jupyterhub_CERN/CERNLogos.tar.gz /srv/jupyterhub
@@ -114,14 +137,17 @@ ADD ./jupyterhub.d/jupyterhub_CERN/start_jupyterhub.py /srv/jupyterhub/start_jup
 RUN yum -y install \
         httpd \
         mod_ssl
+
 # Disable listen directive from conf/httpd.conf and SSL default config
 RUN sed -i "s/Listen 80/#Listen 80/" /etc/httpd/conf/httpd.conf
 RUN mv /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/ssl.defaults
-#Copy plain+ssl config files and rewrites for shibboleth
+
+# Copy plain+ssl config files and rewrites for shibboleth
 ADD ./jupyterhub.d/httpd.d/jupyterhub_plain.conf.template /root/httpd_config/jupyterhub_plain.conf.template
 ADD ./jupyterhub.d/httpd.d/jupyterhub_ssl.conf.template /root/httpd_config/jupyterhub_ssl.conf.template
 ADD ./jupyterhub.d/httpd.d/jupyterhub_shib.conf.template /root/httpd_config/jupyterhub_shib.conf.template
-#Copy secrets for SSL
+
+# Copy SSL certificates
 ADD ./secrets/boxed.crt /etc/boxed/certs/boxed.crt
 ADD ./secrets/boxed.key /etc/boxed/certs/boxed.key
 
@@ -135,33 +161,9 @@ RUN ln -s /usr/lib64/shibboleth/mod_shib_24.so /etc/httpd/modules/mod_shib_24.so
 RUN mv /etc/httpd/conf.d/shib.conf /etc/httpd/conf.d/shib.noload
 RUN mv /etc/shibboleth/attribute-map.xml /etc/shibboleth/attribute-map.xml.defaults
 RUN mv /etc/shibboleth/shibboleth2.xml /etc/shibboleth/shibboleth2.defaults
+
 # Fix the library path for shibboleth (https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPLinuxRH6)
 ENV LD_LIBRARY_PATH=/opt/shibboleth/lib64
-
-
-# ----- Install sssd to access user account information ----- #
-RUN yum -y install \
-	nscd \
-	nss-pam-ldapd \
-	openldap-clients
-ADD ./ldappam.d/*.conf /etc/
-RUN chmod 600 /etc/nslcd.conf
-ADD ./ldappam.d/nslcd_foreground.sh /usr/sbin/nslcd_foreground.sh
-RUN chmod +x /usr/sbin/nslcd_foreground.sh
-
-# Needed to bind to CERN ldap
-#RUN yum -y install \
-#		sssd \
-#		nss \
-#		pam \
-#		policycoreutils \
-#		authconfig
-# See: http://linux.web.cern.ch/linux/docs/account-mgmt.shtml
-#RUN wget -q http://linux.web.cern.ch/linux/docs/sssd.conf.example -O /etc/sssd/sssd.conf && \
-#	chown root:root /etc/sssd/sssd.conf && \
-#	chmod 0600 /etc/sssd/sssd.conf && \
-#	restorecon /etc/sssd/sssd.conf
-#RUN authconfig --enablesssd --enablesssdauth --update 2>/dev/null
 
 
 # ----- Extra files required for integration with CERN SSO ----- #
@@ -171,7 +173,7 @@ ADD ./shibd.d/ADFS-metadata.xml /root/CERN_SSO/ADFS-metadata.xml
 ADD ./jupyterhub.d/shibboleth2.yaml.template /root/CERN_SSO/shibboleth2.yaml.template
 
 
-# ----- Copy configuration files and reset current directory ----- #
+# ----- Copy configuration files for jupyterhub ----- #
 # Copy the list of users with administrator privileges
 ADD ./jupyterhub.d/adminslist /srv/jupyterhub/adminslist
 
@@ -179,13 +181,19 @@ ADD ./jupyterhub.d/adminslist /srv/jupyterhub/adminslist
 ADD ./jupyterhub.d/jupyterhub_config /root/jupyterhub_config
 
 
-# ----- Run the setup script in the container ----- #
-WORKDIR /
-ADD ./jupyterhub.d/start.sh /root/start.sh
+# ----- Install supervisord and base configuration file ----- #
+RUN yum -y install supervisor
+ADD ./supervisord.d/supervisord.conf /etc/supervisord.conf
+
+# Copy Supervisor ini files
+ADD ./supervisord.d/jupyterhub.ini /etc/supervisord.d
+ADD ./supervisord.d/httpd.ini /etc/supervisord.d
+ADD ./supervisord.d/shibd.ini /etc/supervisord.d/shibd.noload
 ADD ./supervisord.d/nscd.ini /etc/supervisord.d
 ADD ./supervisord.d/nslcd.ini /etc/supervisord.d
-ADD ./supervisord.d/shibd.ini /etc/supervisord.d/shibd.noload
-ADD ./supervisord.d/httpd.ini /etc/supervisord.d
-ADD ./supervisord.d/jupyterhub.ini /etc/supervisord.d
+
+
+# ----- Run the setup script in the container ----- #
+ADD ./jupyterhub.d/start.sh /root/start.sh
 CMD ["/bin/bash", "/root/start.sh"]
 
