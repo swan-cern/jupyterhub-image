@@ -203,7 +203,7 @@ ADD ./logrotate.d/logrotate /etc/cron.hourly/logrotate
 RUN chmod +x /etc/cron.hourly/logrotate
 
 
-# ----- Install logrotate and copy configuration files to rotate EOS logs ----- #
+# ----- Install logrotate and copy configuration files ----- #
 RUN yum -y install logrotate
 RUN mv /etc/logrotate.conf /etc/logrotate.defaults
 ADD ./logrotate.d/logrotate.conf /etc/logrotate.conf
