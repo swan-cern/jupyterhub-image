@@ -1,4 +1,4 @@
-### DOCKER FILE FOR jupyterhub IMAGE ###
+### DOCKER FILE FOR JupyterHub IMAGE ###
 
 ###
 # export RELEASE_VERSION=":v0"
@@ -77,11 +77,15 @@ RUN pip3 install \
 	Jinja2 \
 	SQLAlchemy
 
-# Install Docker, JupyterHub, spawners, and authenticators
+# Install Docker
+# Note: Needed only by docker-compose or single-box deployment
 RUN yum -y install \
 	https://download.docker.com/linux/centos/7/x86_64/stable/Packages/docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm \
 	https://download.docker.com/linux/centos/7/x86_64/stable/Packages/docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm
 
+
+# ----- Intall JupyterHub ----- #
+# Install JupyterHub, spawners, and authenticators
 RUN pip3 install jupyterhub==0.7.2
 RUN npm install -g configurable-http-proxy
 
@@ -132,8 +136,15 @@ ADD ./jupyterhub.d/jupyterhub_CERN/CERNLogos.tar.gz /srv/jupyterhub
 ADD ./jupyterhub.d/jupyterhub_CERN/jupyterhub_form.html.erb /srv/jupyterhub/jupyterhub_form.html
 ADD ./jupyterhub.d/jupyterhub_CERN/start_jupyterhub.py /srv/jupyterhub/start_jupyterhub.py
 
+# ----- JupyterHub  configuration files ----- #
+# Copy the configuration files for JupyterHub
+ADD ./jupyterhub.d/jupyterhub_config /root/jupyterhub_config
 
-# ----- Install and related mods ----- #
+# Copy the list of users with administrator privileges
+ADD ./jupyterhub.d/adminslist /srv/jupyterhub/adminslist
+
+
+# ----- Install httpd and related mods ----- #
 RUN yum -y install \
         httpd \
         mod_ssl
@@ -168,17 +179,10 @@ ENV LD_LIBRARY_PATH=/opt/shibboleth/lib64
 
 # ----- Extra files required for integration with CERN SSO ----- #
 # NOTE: Integration with SSO solutions might require a custom authenticator!
+# TODO: This should moved away
 ADD ./shibd.d/attribute-map.xml /root/CERN_SSO/attribute-map.xml
 ADD ./shibd.d/ADFS-metadata.xml /root/CERN_SSO/ADFS-metadata.xml
 ADD ./jupyterhub.d/shibboleth2.yaml.template /root/CERN_SSO/shibboleth2.yaml.template
-
-
-# ----- Copy configuration files for jupyterhub ----- #
-# Copy the list of users with administrator privileges
-ADD ./jupyterhub.d/adminslist /srv/jupyterhub/adminslist
-
-# Copy the configuration files for JupyterHub
-ADD ./jupyterhub.d/jupyterhub_config /root/jupyterhub_config
 
 
 # ----- Install supervisord and base configuration file ----- #
@@ -191,6 +195,24 @@ ADD ./supervisord.d/httpd.ini /etc/supervisord.d
 ADD ./supervisord.d/shibd.ini /etc/supervisord.d/shibd.noload
 ADD ./supervisord.d/nscd.ini /etc/supervisord.d
 ADD ./supervisord.d/nslcd.ini /etc/supervisord.d
+
+
+# ----- Run crond under supervisor and copy configuration files for log rotation ----- #
+ADD ./supervisord.d/crond.ini /etc/supervisord.d/crond.noload
+ADD ./logrotate.d/logrotate /etc/cron.hourly/logrotate
+RUN chmod +x /etc/cron.hourly/logrotate
+
+
+# ----- Install logrotate and copy configuration files to rotate EOS logs ----- #
+RUN yum -y install logrotate
+RUN mv /etc/logrotate.conf /etc/logrotate.defaults
+ADD ./logrotate.d/logrotate.conf /etc/logrotate.conf
+
+# Copy logrotate jobs for JupyterHub
+RUN rm -f /etc/logrotate.d/httpd
+ADD ./logrotate.d/logrotate.jobs.d/httpd /etc/logrotate.d/httpd
+ADD ./logrotate.d/logrotate.jobs.d/shibd /etc/logrotate.d/shibd
+ADD ./logrotate.d/logrotate.jobs.d/jupyterhub /etc/logrotate.d/jupyterhub
 
 
 # ----- Run the setup script in the container ----- #

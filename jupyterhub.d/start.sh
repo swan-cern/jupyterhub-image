@@ -17,6 +17,9 @@ case $DEPLOYMENT_TYPE in
     echo "Deploying with configuration for Kubernetes..."
     cp /root/jupyterhub_config/kubernetes.py /srv/jupyterhub/jupyterhub_config.py
 
+    echo "Enabling crond for logrotation..."
+    mv /etc/supervisord.d/crond.noload /etc/supervisord.d/crond.ini
+
     echo "Downloading single-user image: $CONTAINER_IMAGE ..."
     docker pull $CONTAINER_IMAGE
 
@@ -37,6 +40,9 @@ case $DEPLOYMENT_TYPE in
 
     echo "Deploying with configuration for KubeSpawner..."
     cp /root/jupyterhub_config/kubespawner.py /srv/jupyterhub/jupyterhub_config.py
+
+    echo "Enabling crond for logrotation..."
+    mv /etc/supervisord.d/crond.noload /etc/supervisord.d/crond.ini
     ;;
 
   ###
