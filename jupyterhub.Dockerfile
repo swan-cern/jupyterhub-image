@@ -93,7 +93,6 @@ RUN pip3 install git+git://github.com/jupyterhub/dockerspawner.git@92a7ca676997d
 RUN pip3 install git+git://github.com/jupyterhub/kubespawner.git@ae1c6d6f58a45c2ba4b9e2fa81d50b16503f9874	# Kubespawner
 
 RUN pip3 install git+git://github.com/jupyterhub/ldapauthenticator.git@f3b2db14bfb591df09e05f8922f6041cc9c1b3bd	# LDAP auth
-ADD ./jupyterhub.d/jupyterhub_CERN/1afb53edbf1ede3650b003aa3cd7e24f /tmp
 
 
 # ----- Install CERN customizations ----- #
@@ -175,14 +174,6 @@ RUN mv /etc/shibboleth/shibboleth2.xml /etc/shibboleth/shibboleth2.defaults
 
 # Fix the library path for shibboleth (https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPLinuxRH6)
 ENV LD_LIBRARY_PATH=/opt/shibboleth/lib64
-
-
-# ----- Extra files required for integration with CERN SSO ----- #
-# NOTE: Integration with SSO solutions might require a custom authenticator!
-# TODO: This should moved away
-ADD ./shibd.d/attribute-map.xml /root/CERN_SSO/attribute-map.xml
-ADD ./shibd.d/ADFS-metadata.xml /root/CERN_SSO/ADFS-metadata.xml
-ADD ./jupyterhub.d/shibboleth2.yaml.template /root/CERN_SSO/shibboleth2.yaml.template
 
 
 # ----- Install supervisord and base configuration file ----- #
