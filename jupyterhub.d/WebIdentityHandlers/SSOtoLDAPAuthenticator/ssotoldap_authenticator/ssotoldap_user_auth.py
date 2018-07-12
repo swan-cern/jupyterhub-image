@@ -78,6 +78,10 @@ class SSOUserLoginHandler(BaseHandler):
             try:
                 with open(list_approved_users_path, 'r') as file:
                     list_approved_users = file.read().splitlines()
+                if len(list_approved_users)==0:
+                    self.log.info("ERROR: Whitelist is empty!")
+                    raise web.HTTPError(401)
+                    return
             except IOError:
                 self.log.info("ERROR: Whitelist file does not exist at %s", list_approved_users_path)
                 raise web.HTTPError(500)
@@ -113,11 +117,10 @@ class SSOUserLoginHandler(BaseHandler):
             raise web.HTTPError(401)
             return
 
-        if list_approved_users and user_to_be_approved:
-            if not user_to_be_approved in list_approved_users:
-                self.log.info("ERROR: User not authorized for SSO_UID: %s, EMAIL_ADDRESS: %s", sso_uid, user_to_be_approved)
-                raise web.HTTPError(401)
-                return
+        if user_to_be_approved not in list_approved_users:
+            self.log.info("ERROR: User not authorized for SSO_UID: %s, EMAIL_ADDRESS: %s", sso_uid, user_to_be_approved)
+            raise web.HTTPError(401)
+            return
 
         # From now on, use the Unix uid instead of the SSO one
         self.log.info("INFO: User logged in %s", sso_uid)
