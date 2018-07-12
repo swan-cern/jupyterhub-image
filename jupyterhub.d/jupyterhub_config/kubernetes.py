@@ -75,23 +75,6 @@ else:
     print ("ERROR: Authentication type not specified.")
     print ("Cannot start JupyterHub.")
 
-'''
-# LDAP for CERN
-# https://linux.web.cern.ch/linux/docs/account-mgmt.shtml
-c.LDAPAuthenticator.server_address = 'cerndc.cern.ch'   # This guy provides authentication capabilities
-#c.LDAPAuthenticator.server_address = 'xldap.cern.ch'   # This doesn't, it is only to access user account information
-c.LDAPAuthenticator.use_ssl = True
-c.LDAPAuthenticator.server_port = 636
-
-c.LDAPAuthenticator.bind_dn_template = 'CN={username},OU=Users,OU=Organic Units,DC=cern,DC=ch'
-c.LDAPAuthenticator.lookup_dn = True
-c.LDAPAuthenticator.user_search_base = 'OU=Users,OU=Organic Units,DC=cern,DC=ch'
-c.LDAPAuthenticator.user_attribute = 'sAMAccountName'
-
-# Optional settings for LDAP
-#LDAPAuthenticator.valid_username_regex
-#LDAPAuthenticator.allowed_groups
-'''
 
 ### Configuration for single-user containers ###
 
