@@ -59,6 +59,7 @@ c.JupyterHub.admin_access = True
 if ( os.environ['AUTH_TYPE'] == "shibboleth" ):
     print ("Authenticator: Using user-defined authenticator")
     c.JupyterHub.authenticator_class = '%%%SHIBBOLETH_AUTHENTICATOR_CLASS%%%'
+    # %%% Additional SHIBBOLETH_AUTHENTICATOR_CLASS parameters here %%% #
 
 elif ( os.environ['AUTH_TYPE'] == "local" ):
     print ("Authenticator: Using LDAP")
