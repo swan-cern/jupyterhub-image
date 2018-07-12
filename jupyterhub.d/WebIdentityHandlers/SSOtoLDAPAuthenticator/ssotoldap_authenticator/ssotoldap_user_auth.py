@@ -41,11 +41,17 @@ class SSOUserLoginHandler(BaseHandler):
     def get(self):
         unix_user_attrname	= "uid"
         sso_uid_attrname	= "ssouid"
-        object_class        = "ssoUnixMatch"
-        ldap_endpoint		= os.environ['LDAP_ENDPOINT']
-        ldap_basedn		    = os.environ['LDAP_BASEDN']
-        ldap_binddn		    = os.environ['LDAP_BINDDN']
-        ldap_binddn_pwd		= os.environ['LDAP_BINDDN_PWD']
+        object_class		= "ssoUnixMatch"
+        ldap_uri		= os.environ['LDAP_URI']
+        ldap_port		= os.environ['LDAP_PORT']
+        ldap_basedn		= os.environ['LDAP_BASE_DN']
+        ldap_binddn		= os.environ['LDAP_BIND_DN']
+        ldap_binddn_pwd		= os.environ['LDAP_BIND_PASSWORD']
+
+        # Support for whitelisting
+        approved_key			= os.environ['APPROVED_KEY'] if ('APPROVED_KEY' in os.environ.keys()) else None
+        list_approved_users_path	= os.environ['LIST_APPROVED'] if ('LIST_APPROVED' in os.environ.keys()) else None
+        list_approved_users		= None
 
         header_name = self.authenticator.header_name
         sso_uid = self.request.headers.get(header_name, "")
@@ -66,12 +72,19 @@ class SSOUserLoginHandler(BaseHandler):
         search_filter = "(&(objectclass=%s)(%s=%s))" %(object_class, sso_uid_attrname, sso_uid)
         wanted_attributes = [unix_user_attrname]
 
-        approval_key = s.environ.get('APPROVED_KEY','mail') #For testing purposes.. the default value should be empty
-        if approval_key:
-            wanted_attributes.append(approval_key)
+        # If the proper env vars are set, get ready to check the whitelist
+        if approved_key and list_approved_users_path:
+            wanted_attributes.append(approved_key)
+            try:
+                with open(list_approved_users_path, 'r') as file:
+                    list_approved_users = file.read().splitlines()
+            except IOError:
+                self.log.info("ERROR: Whitelist file does not exist at %s", list_approved_users_path)
+                raise web.HTTPError(500)
+                return
 
         try:
-            ldap_srv = Server(ldap_endpoint, get_info=ALL)
+            ldap_srv = Server(ldap_uri, port=int(ldap_port), get_info=ALL)
             ldap_conn = Connection(ldap_srv, ldap_binddn, ldap_binddn_pwd, auto_bind=True)
             ldap_conn.search(ldap_basedn, search_filter, attributes=wanted_attributes)
             ldap_result = ldap_conn.entries
@@ -93,22 +106,18 @@ class SSOUserLoginHandler(BaseHandler):
             return
         try:
             unix_user = getattr(ldap_result[0], unix_user_attrname).value
-            if approval_key:
-                approval_user = getattr(ldap_result[0], approval_key).value
+            if approved_key:
+                user_to_be_approved = getattr(ldap_result[0], approved_key).value
         except:
             self.log.info("ERROR: Something went wrong parsing the LDAP response for SSO_UID: %s", sso_uid)
             raise web.HTTPError(401)
             return
 
-        list_aproved_users_path = s.environ.get('LIST_APPROVED','/etc/approved_mails') #For testing purposes.. the default value should be empty
-        if list_aproved_users_path and approval_user:
-            with open(list_aproved_users_path, 'r') as file:
-                approved_users = file.readlines()
-            if not approval_user in approved_users:
-                self.log.info("ERROR: User not authorized for SSO_UID: %s", sso_uid)
+        if list_approved_users and user_to_be_approved:
+            if not user_to_be_approved in list_approved_users:
+                self.log.info("ERROR: User not authorized for SSO_UID: %s, EMAIL_ADDRESS: %s", sso_uid, user_to_be_approved)
                 raise web.HTTPError(401)
                 return
-            
 
         # From now on, use the Unix uid instead of the SSO one
         self.log.info("INFO: User logged in %s", sso_uid)
