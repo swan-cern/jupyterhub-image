@@ -93,6 +93,11 @@ case $AUTH_TYPE in
     ;;
 
   "cernsso")
+
+    ###
+    #  TODO: This is deprecated
+    ###
+
     echo "CONFIG: User authentication via CERN SSO"
     # Install the SSO Authenticator, if a valid password is provided
     if [ -z "$SSO_PASSWD" ]; then
