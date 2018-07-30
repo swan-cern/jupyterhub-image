@@ -41,6 +41,10 @@ Listen %%%HTTPS_PORT%%%
   SSLCertificateKeyFile   /etc/boxed/certs/boxed.key
   SSLCACertificatePath    /etc/pki/tls/certs
 
+  ## Disable unsafe protocols and ciphers
+  SSLProtocol all -SSLv2 -SSLv3
+  SSLCipherSuite HIGH:3DES:!aNULL:!MD5:!SEED:!IDEA
+
   ## Authentication via shibboleth (optional)
   #IncludeOptional conf.d/shib_auth.conf
 
