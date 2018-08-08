@@ -63,3 +63,13 @@
 <select name="ncores">
 <option value="1" selected>1</option>
 </select>
+<br>
+<label for="memory">Memory <a href="#" onclick="toggle_visibility('memoryDetails');"><span class='nbs'>more...</span></a>
+<div style="display:none;" id="memoryDetails">
+   <span class='nb'>Amount of Memory allocated to the container.</span>
+</div>
+</label>
+<select name="memory">
+    <option value="8" selected>8 GB</option>
+    <option value="10">10 GB</option>
+</select>
