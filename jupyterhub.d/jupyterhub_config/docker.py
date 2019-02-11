@@ -27,14 +27,14 @@ c.Spawner.debug = True
 c.LocalProcessSpawner.debug = True
 
 # Add SWAN look&feel
-c.JupyterHub.template_paths = ['/srv/jupyterhub/templates']
-c.JupyterHub.logo_file = '/srv/jupyterhub/logo/logo_swan_cloudhisto.png'
+c.JupyterHub.template_paths = ['/srv/jupyterhub/jh_gitlab/templates']
+c.JupyterHub.logo_file = '/usr/local/share/jupyterhub/static/swan/logos/logo_swan_cloudhisto.png'
 
-# TLS configuration to reach the Hub from the outside
+# Reach the Hub from local httpd (proxypass)
 c.JupyterHub.ip = "127.0.0.1"
 c.JupyterHub.port = 8000
 
-# Configuration to reach the Hub from Jupyter containers
+# Reach the Hub from Jupyter containers
 c.JupyterHub.hub_ip = "jupyterhub"
 c.JupyterHub.hub_port = 8080
 
@@ -66,7 +66,6 @@ else:
 
 
 ### Configuration for single-user containers ###
-
 # Spawn single-user's servers as Docker containers
 c.JupyterHub.spawner_class = 'cernspawner.CERNSpawner'
 c.CERNSpawner.image = CONTAINER_IMAGE
