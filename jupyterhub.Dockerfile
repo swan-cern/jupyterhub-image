@@ -11,7 +11,7 @@
 #   docker push gitlab-registry.cern.ch/cernbox/boxedhub/jupyterhub${RELEASE_VERSION}
 
 
-FROM gitlab-registry.cern.ch/cernbox/boxedhub/base:v0
+FROM gitlab-registry.cern.ch/sciencebox/docker-images/parent-images/base:v0
 
 MAINTAINER Enrico Bocchi <enrico.bocchi@cern.ch>
 
@@ -25,12 +25,6 @@ ARG LDAPAUTHENTICATOR_VERSION="@f3b2db14bfb591df09e05f8922f6041cc9c1b3bd"
 ARG DOCKERSPAWNER_VERSION="@92a7ca676997dc77b51730ff7626d8fcd31860da"
 ARG KUBESPAWNER_VERSION="@ae1c6d6f58a45c2ba4b9e2fa81d50b16503f9874"
 
-
-# ----- Install Supervisord ----- #
-RUN yum -y install \
-      supervisor && \
-    yum clean all && \
-    rm -rf /var/cache/yum
 
 # ----- Install tools for LDAP access ----- #
 #TODO: Replace this with sssd
