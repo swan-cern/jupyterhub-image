@@ -83,8 +83,7 @@ RUN yum -y install \
 # Install Docker (needed only by docker-compose or single-box deployment)
 ADD ./repos/docker-ce.repo /etc/yum.repos.d/docker-ce.repo
 RUN yum -y install \
-      docker-ce$DOCKER_VERSION \
-      docker-ce-selinux$DOCKER_VERSION && \
+      docker-ce$DOCKER_VERSION && \
     yum clean all && \
     rm -rf /var/cache/yum
 
