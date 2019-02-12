@@ -23,7 +23,7 @@ ARG DOCKER_VERSION="-18.06.1.ce"
 ARG JUPYTERHUB_VERSION="0.9.4"
 ARG LDAPAUTHENTICATOR_VERSION="1.2.2"
 ARG DOCKERSPAWNER_VERSION="0.9.1"
-ARG KUBESPAWNER_VERSION="@ae1c6d6f58a45c2ba4b9e2fa81d50b16503f9874"
+ARG KUBESPAWNER_VERSION="0.6.1"
 
 
 # ----- Install tools for LDAP access ----- #
@@ -112,7 +112,7 @@ RUN npm install -g configurable-http-proxy
 
 RUN pip install jupyterhub-ldapauthenticator==$LDAPAUTHENTICATOR_VERSION        # LDAP auth
 RUN pip install dockerspawner==$DOCKERSPAWNER_VERSION                           # Dockerspawner
-RUN pip install git+git://github.com/jupyterhub/kubespawner.git$KUBESPAWNER_VERSION                # Kubespawner
+RUN pip install jupyterhub-kubespawner==$KUBESPAWNER_VERSION                    # Kubespawner
 
 #TODO: NNFP -- Remove and install separately by building on top of the produced image
 # Additional authenticator: SSO to LDAP Authenticator
