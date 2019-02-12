@@ -22,7 +22,7 @@ ARG DOCKER_VERSION="-18.06.1.ce"
 #ARG JUPYTERHUB_VERSION="0.8.1"
 ARG JUPYTERHUB_VERSION="0.9.4"
 ARG LDAPAUTHENTICATOR_VERSION="@455432a65aef3f8a4652c4bf434defde8274d973"
-ARG DOCKERSPAWNER_VERSION="@92a7ca676997dc77b51730ff7626d8fcd31860da"
+ARG DOCKERSPAWNER_VERSION="0.9.1"
 ARG KUBESPAWNER_VERSION="@ae1c6d6f58a45c2ba4b9e2fa81d50b16503f9874"
 
 
@@ -111,7 +111,7 @@ RUN pip install jupyterhub==$JUPYTERHUB_VERSION
 RUN npm install -g configurable-http-proxy
 
 RUN pip install git+git://github.com/jupyterhub/ldapauthenticator.git$LDAPAUTHENTICATOR_VERSION    # LDAP auth
-RUN pip install git+git://github.com/jupyterhub/dockerspawner.git$DOCKERSPAWNER_VERSION            # Dockerspawner
+RUN pip install dockerspawner==$DOCKERSPAWNER_VERSION                                              # Dockerspawner
 RUN pip install git+git://github.com/jupyterhub/kubespawner.git$KUBESPAWNER_VERSION                # Kubespawner
 
 #TODO: NNFP -- Remove and install separately by building on top of the produced image
