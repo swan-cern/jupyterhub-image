@@ -21,20 +21,19 @@ c.JupyterHub.cookie_secret_file = '/srv/jupyterhub/cookie_secret'
 c.JupyterHub.db_url = '/srv/jupyterhub/jupyterhub.sqlite'
 
 # Logging
-c.JupyterHub.extra_log_file = '/var/log/jupyterhub.log'
 c.JupyterHub.log_level = 'DEBUG'
 c.Spawner.debug = True
 c.LocalProcessSpawner.debug = True
 
 # Add SWAN look&feel
-c.JupyterHub.template_paths = ['/srv/jupyterhub/templates']
-c.JupyterHub.logo_file = '/srv/jupyterhub/logo/logo_swan_cloudhisto.png'
+c.JupyterHub.template_paths = ['/srv/jupyterhub/jh_gitlab/templates']
+c.JupyterHub.logo_file = '/usr/local/share/jupyterhub/static/swan/logos/logo_swan_cloudhisto.png'
 
-# TLS configuration to reach the Hub from the outside
+# Reach the Hub from local httpd (proxypass)
 c.JupyterHub.ip = "127.0.0.1"
 c.JupyterHub.port = 8000
 
-# Configuration to reach the Hub from Jupyter containers
+# Reach the Hub from Jupyter containers
 # NOTE: Containers are connected to a separate Docker network: DOCKER_NETWORK_NAME
 #       The hub must listen on an IP address that is reachable from DOCKER_NETWORK_NAME
 #       and not on "localhost"||"127.0.0.1" or any other name that could not be resolved

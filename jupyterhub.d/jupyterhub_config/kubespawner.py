@@ -39,22 +39,21 @@ c.JupyterHub.cleanup_proxy = False
 c.JupyterHub.cleanup_servers = False	# Note: Need to store the sqlite database on persistent storage
 
 # Logging
-c.JupyterHub.extra_log_file = '/var/log/jupyterhub.log'
 c.JupyterHub.log_level = 'DEBUG'
 c.Spawner.debug = True
 c.LocalProcessSpawner.debug = True
 
 # Add SWAN look&feel
-c.JupyterHub.template_paths = ['/srv/jupyterhub/templates']
-c.JupyterHub.logo_file = '/srv/jupyterhub/logo/logo_swan_cloudhisto.png'
+c.JupyterHub.template_paths = ['/srv/jupyterhub/jh_gitlab/templates']
+c.JupyterHub.logo_file = '/usr/local/share/jupyterhub/static/swan/logos/logo_swan_cloudhisto.png'
 
-# TLS configuration to reach the Hub from the outside
+# Reach the Hub from outside
 c.JupyterHub.ip = "0.0.0.0"     # Listen on all IPs for HTTP traffic when in Kubernetes
 c.JupyterHub.port = 8000	# You may end up in detecting the wrong IP address due to:
 	                        #       - Kubernetes services in front of Pods (headed//headless//clusterIPs)
 	                        #       - hostNetwork used by the JupyterHub Pod
 
-# Configuration to reach the Hub from Jupyter containers
+# Reach the Hub from Jupyter containers
 # NOTE: The Hub IP must be known and rechable from spawned containers
 # 	Leveraging on the FQDN makes the Hub accessible both when the JupyterHub Pod 
 #	uses the Kubernetes overlay network and the host network
