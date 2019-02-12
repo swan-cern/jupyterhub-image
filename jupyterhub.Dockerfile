@@ -17,13 +17,11 @@ MAINTAINER Enrico Bocchi <enrico.bocchi@cern.ch>
 
 
 # ----- Software versions ----- #
-#ARG DOCKER_VERSION="-17.03.2.ce"
 ARG DOCKER_VERSION="-18.06.1.ce"
-#ARG JUPYTERHUB_VERSION="0.8.1"
-ARG JUPYTERHUB_VERSION="0.9.4"
-ARG LDAPAUTHENTICATOR_VERSION="1.2.2"
-ARG DOCKERSPAWNER_VERSION="0.9.1"
-ARG KUBESPAWNER_VERSION="0.6.1"
+ARG JUPYTERHUB_VERSION="==0.9.4"
+ARG LDAPAUTHENTICATOR_VERSION="==1.2.2"
+ARG DOCKERSPAWNER_VERSION="==0.9.1"
+ARG KUBESPAWNER_VERSION="==0.6.1"
 
 
 # ----- Install tools for LDAP access ----- #
@@ -107,12 +105,12 @@ RUN pip3.6 install --upgrade pip
 
 # ----- Install JupyterHub ----- #
 # Install JupyterHub with upstream authenticators and spawners
-RUN pip install jupyterhub==$JUPYTERHUB_VERSION
+RUN pip install jupyterhub$JUPYTERHUB_VERSION
 RUN npm install -g configurable-http-proxy
 
-RUN pip install jupyterhub-ldapauthenticator==$LDAPAUTHENTICATOR_VERSION        # LDAP auth
-RUN pip install dockerspawner==$DOCKERSPAWNER_VERSION                           # Dockerspawner
-RUN pip install jupyterhub-kubespawner==$KUBESPAWNER_VERSION                    # Kubespawner
+RUN pip install jupyterhub-ldapauthenticator$LDAPAUTHENTICATOR_VERSION  # LDAP auth
+RUN pip install dockerspawner$DOCKERSPAWNER_VERSION                     # Dockerspawner
+RUN pip install jupyterhub-kubespawner$KUBESPAWNER_VERSION              # Kubespawner
 
 #TODO: NNFP -- Remove and install separately by building on top of the produced image
 # Additional authenticator: SSO to LDAP Authenticator
