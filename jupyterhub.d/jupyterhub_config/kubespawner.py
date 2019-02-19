@@ -101,11 +101,10 @@ else:
 # Spawn single-user's servers in the Kubernetes cluster
 c.JupyterHub.spawner_class = 'cernkubespawner.CERNKubeSpawner'
 c.CERNKubeSpawner.singleuser_image_spec = CONTAINER_IMAGE
-c.CERNKubeSpawner.namespace = NAMESPACE                                                 # Namespace of the whole machines (unless you want to separete SWAN users for accounting reasons)
+c.CERNKubeSpawner.namespace = NAMESPACE
 c.CERNKubeSpawner.singleuser_node_selector = {NODE_SELECTOR_KEY : NODE_SELECTOR_VALUE}  # Where to run user containers
 c.CERNKubeSpawner.options_form = '/srv/jupyterhub/jupyterhub_form.html'
-c.CERNKubeSpawner.start_timeout = 60 * 5    # Can be very high if the user image is not available locally yet
-                                            # TODO: Need to pre-fetch the image somehow
+c.CERNKubeSpawner.start_timeout = 30
 
 # Single-user's servers extra config, CVMFS, EOS
 #c.CERNKubeSpawner.extra_host_config = { 'mem_limit': '8g', 'cap_drop': ['NET_BIND_SERVICE', 'SYS_CHROOT']}
