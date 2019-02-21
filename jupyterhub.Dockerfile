@@ -128,11 +128,12 @@ RUN pip install -r requirements.txt && \
 
 
 # ----- Install CERN customizations ----- #
+# Web GUI
 RUN git clone -b master https://gitlab.cern.ch/swan/common.git /usr/local/share/jupyterhub/static/swan/
-##TODO: This is copied from prod. Will go out of sync quickly.
-ADD ./jupyterhub.d/style.css /usr/local/share/jupyterhub/static/swan/css/style.css
 
-RUN git clone -b master https://gitlab.cern.ch/swan/jupyterhub.git /srv/jupyterhub/jh_gitlab
+# Handlers, Spawners, Templates, ...
+#TODO: 'CERNKubeSpawner' is a temporary branch. We should clone from master
+RUN git clone -b CERNKubeSpawner https://gitlab.cern.ch/swan/jupyterhub.git /srv/jupyterhub/jh_gitlab
 # Install CERN Handlers
 WORKDIR /srv/jupyterhub/jh_gitlab/CERNHandlers
 RUN pip install -r requirements.txt && \
@@ -141,35 +142,26 @@ RUN pip install -r requirements.txt && \
 WORKDIR /srv/jupyterhub/jh_gitlab/CERNSpawner
 RUN pip install -r requirements.txt && \
     python3.6 setup.py install
-
-# Reset current directory
+# Install CERN Kube Spawner
+WORKDIR /srv/jupyterhub/jh_gitlab/CERNKubeSpawner
+RUN pip install -r requirements.txt && \
+    python3.6 setup.py install
 WORKDIR /
 
 # ----- Copy configuration files ----- #
-##TODO: This should all be done with HELM
-
 # The spawner form
 ##TODO: This is copied from prod. Will go out of sync quickly.
 ADD ./jupyterhub.d/jupyterhub_form.html /srv/jupyterhub/jupyterhub_form.html
 
 # JupyterHub configuration
-#ADD ./jupyterhub.d/jupyterhub_config /srv/jupyterhub/config
+##TODO: This should go to HELM and configmaps
 ADD ./jupyterhub.d/jupyterhub_config /root/jupyterhub_config
-
-
-##
-##TODO: REVIEW CERN CUSTOMIZATIONS
-##
-## Install CERN Kube Spawner
-#ADD ./jupyterhub.d/CERNKubeSpawner /tmp/CERNKubeSpawner
-#WORKDIR /tmp/CERNKubeSpawner
-#RUN pip3 install -r requirements.txt && \
-#       python3 setup.py install
-##
 
 # Copy the list of users with administrator privileges
 ADD ./jupyterhub.d/adminslist /srv/jupyterhub/adminslist
 
+##TODO: This should be removed but requires fixes for prod
+ADD ./jupyterhub.d/style.css /usr/local/share/jupyterhub/static/swan/css/style.css
 
 ## ----- Install supervisord and base configuration file ----- #
 ##TODO: Installation is done before
@@ -181,7 +173,6 @@ ADD ./supervisord.d/httpd.ini /etc/supervisord.d/httpd.ini
 #ADD ./supervisord.d/shibd.ini /etc/supervisord.d/shibd.noload
 #ADD ./supervisord.d/nscd.ini /etc/supervisord.d
 #ADD ./supervisord.d/nslcd.ini /etc/supervisord.d
-
 
 ##TODO: Log files should be handled differently
 ## E.g., sidecar container and central collection point
