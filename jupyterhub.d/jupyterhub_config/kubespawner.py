@@ -34,13 +34,8 @@ c.JupyterHub.cookie_secret_file = os.path.join(jupyterhub_runtime_dir, 'cookie_s
 c.JupyterHub.db_url = os.path.join(jupyterhub_runtime_dir, 'jupyterhub.sqlite')
 
 # Resume previous state if the Hub fails
-#TODO:	```JupyterHub.proxy_auth_token is deprecated in JupyterHub 0.8, use ConfigurableHTTPProxy.auth_token```
-#	I might want to clean the proxy and restart clean by loading the data in the sqlite db
-#	sqlite should be in another conteiner
-
-c.JupyterHub.proxy_auth_token = '122aee66284d48c032752e16d650ae6b71181c96cec3798fa9b335d17111511a'
-c.JupyterHub.cleanup_proxy = False
-c.JupyterHub.cleanup_servers = False	# Note: Need to store the sqlite database on persistent storage
+c.JupyterHub.cleanup_proxy = False      # Do not kill the proxy if the hub fails (will return 'Service Unavailable')
+c.JupyterHub.cleanup_servers = False    # Do not kill single-user's servers (SQLite DB must be on persistent storage)
 
 # Logging
 c.JupyterHub.log_level = 'DEBUG'
