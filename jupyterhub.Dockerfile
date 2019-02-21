@@ -151,7 +151,8 @@ WORKDIR /
 # ----- Copy configuration files ----- #
 # The spawner form
 ##TODO: This is copied from prod. Will go out of sync quickly.
-ADD ./jupyterhub.d/jupyterhub_form.html /srv/jupyterhub/jupyterhub_form.html
+#ADD ./jupyterhub.d/jupyterhub_form.html /srv/jupyterhub/jupyterhub_form.html
+ADD ./jupyterhub.d/jupyterhub_form.simplified.html /srv/jupyterhub/jupyterhub_form.html
 
 # JupyterHub configuration
 ##TODO: This should go to HELM and configmaps
