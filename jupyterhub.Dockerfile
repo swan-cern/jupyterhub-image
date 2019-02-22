@@ -11,7 +11,7 @@
 #   docker push gitlab-registry.cern.ch/cernbox/boxedhub/jupyterhub${RELEASE_VERSION}
 
 
-FROM gitlab-registry.cern.ch/sciencebox/docker-images/parent-images/base:v0
+FROM gitlab-registry.cern.ch/sciencebox/docker-images/parent-images/webserver:v0
 
 MAINTAINER Enrico Bocchi <enrico.bocchi@cern.ch>
 
@@ -37,13 +37,7 @@ RUN chmod 600 /etc/nslcd.conf
 ADD ./ldappam.d/nslcd_foreground.sh /usr/sbin/nslcd_foreground.sh
 RUN chmod +x /usr/sbin/nslcd_foreground.sh
 
-# ----- Install httpd ----- #
-RUN yum -y install \
-      httpd \
-      mod_ssl && \
-    yum clean all && \
-    rm -rf /var/cache/yum
-
+# ----- httpd configuration ----- #
 # Disable listen directive from conf/httpd.conf and SSL default config
 RUN sed -i "s/Listen 80/#Listen 80/" /etc/httpd/conf/httpd.conf
 RUN mv /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/ssl.defaults
@@ -58,13 +52,7 @@ ADD ./jupyterhub.d/httpd.d/jupyterhub_shib.conf.template /root/httpd_config/jupy
 ADD ./secrets/boxed.crt /etc/boxed/certs/boxed.crt
 ADD ./secrets/boxed.key /etc/boxed/certs/boxed.key
 
-# ----- Install Shibboleth ----- #
-RUN yum -y install \
-      shibboleth \
-      opensaml-schemas && \
-    yum clean all && \
-    rm -rf /var/cache/yum
-
+# ----- Shibboleth configuration ----- #
 #TODO: Verify the link is really needed (in CERNBox we do not do that)
 #RUN ln -s /usr/lib64/shibboleth/mod_shib_24.so /etc/httpd/modules/mod_shib_24.so
 #RUN mv /etc/httpd/conf.d/shib.conf /etc/httpd/conf.d/shib.noload
@@ -164,11 +152,7 @@ ADD ./jupyterhub.d/adminslist /srv/jupyterhub/adminslist
 ##TODO: This should be removed but requires fixes for prod
 ADD ./jupyterhub.d/style.css /usr/local/share/jupyterhub/static/swan/css/style.css
 
-## ----- Install supervisord and base configuration file ----- #
-##TODO: Installation is done before
-#ADD ./supervisord.d/supervisord.conf /etc/supervisord.conf
-
-## Copy Supervisor ini files
+# ----- Copy supervisord files ----- #
 #ADD ./supervisord.d/jupyterhub.ini /etc/supervisord.d/jupyterhub.ini
 ADD ./supervisord.d/httpd.ini /etc/supervisord.d/httpd.ini
 #ADD ./supervisord.d/shibd.ini /etc/supervisord.d/shibd.noload
