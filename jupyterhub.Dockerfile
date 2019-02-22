@@ -24,18 +24,8 @@ ARG DOCKERSPAWNER_VERSION="==0.9.1"
 ARG KUBESPAWNER_VERSION="==0.10.1"
 
 
-# ----- Install tools for LDAP access ----- #
-#TODO: Replace this with sssd
-RUN yum -y install \
-      nscd \
-      nss-pam-ldapd \
-      openldap-clients && \
-    yum clean all && \
-    rm -rf /var/cache/yum
-ADD ./ldappam.d/*.conf /etc/
-RUN chmod 600 /etc/nslcd.conf
-ADD ./ldappam.d/nslcd_foreground.sh /usr/sbin/nslcd_foreground.sh
-RUN chmod +x /usr/sbin/nslcd_foreground.sh
+# ----- sssd configuration ----- #
+ADD ./sssd.d/sssd.conf /etc/sssd/sssd.conf
 
 # ----- httpd configuration ----- #
 # Disable listen directive from conf/httpd.conf and SSL default config
@@ -153,11 +143,10 @@ ADD ./jupyterhub.d/adminslist /srv/jupyterhub/adminslist
 ADD ./jupyterhub.d/style.css /usr/local/share/jupyterhub/static/swan/css/style.css
 
 # ----- Copy supervisord files ----- #
+ADD ./supervisord.d/sssd.ini /etc/supervisord.d/sssd.ini
 #ADD ./supervisord.d/jupyterhub.ini /etc/supervisord.d/jupyterhub.ini
 ADD ./supervisord.d/httpd.ini /etc/supervisord.d/httpd.ini
 #ADD ./supervisord.d/shibd.ini /etc/supervisord.d/shibd.noload
-#ADD ./supervisord.d/nscd.ini /etc/supervisord.d
-#ADD ./supervisord.d/nslcd.ini /etc/supervisord.d
 
 ##TODO: Log files should be handled differently
 ## E.g., sidecar container and central collection point
