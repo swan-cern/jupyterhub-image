@@ -53,8 +53,6 @@ ADD ./secrets/boxed.key /etc/boxed/certs/boxed.key
 ## Fix the library path for shibboleth (https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPLinuxRH6)
 #ENV LD_LIBRARY_PATH=/opt/shibboleth/lib64
 
-
-
 # ----- Install the required packages ----- #
 # Install Docker (needed only by docker-compose or single-box deployment)
 ADD ./repos/docker-ce.repo /etc/yum.repos.d/docker-ce.repo
@@ -79,6 +77,7 @@ RUN yum -y install \
     yum clean all && \
     rm -rf /var/cache/yum
 
+# Upgrade pip package manager
 RUN pip3.6 install --upgrade pip
 
 # ----- Install JupyterHub ----- #
@@ -86,6 +85,7 @@ RUN pip3.6 install --upgrade pip
 RUN pip install jupyterhub$JUPYTERHUB_VERSION
 RUN npm install -g configurable-http-proxy
 
+# Upstream authenticators and spawners
 RUN pip install jupyterhub-ldapauthenticator$LDAPAUTHENTICATOR_VERSION  # LDAP auth
 RUN pip install dockerspawner$DOCKERSPAWNER_VERSION                     # Dockerspawner
 RUN pip install jupyterhub-kubespawner$KUBESPAWNER_VERSION              # Kubespawner
@@ -103,7 +103,7 @@ ADD ./jupyterhub.d/WebIdentityHandlers/SSORemoteUserAuthenticator /tmp/SSORemote
 WORKDIR /tmp/SSORemoteUserAuthenticator
 RUN pip install -r requirements.txt && \
     python3.6 setup.py install
-
+WORKDIR /
 
 # ----- Install CERN customizations ----- #
 # Web GUI
