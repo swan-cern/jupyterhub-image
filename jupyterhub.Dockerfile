@@ -24,35 +24,6 @@ ARG DOCKERSPAWNER_VERSION="==0.9.1"
 ARG KUBESPAWNER_VERSION="==0.10.1"
 
 
-# ----- sssd configuration ----- #
-ADD ./sssd.d/sssd.conf /etc/sssd/sssd.conf
-
-# ----- httpd configuration ----- #
-# Disable listen directive from conf/httpd.conf and SSL default config
-RUN sed -i "s/Listen 80/#Listen 80/" /etc/httpd/conf/httpd.conf
-RUN mv /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/ssl.defaults
-
-##TODO: This should go to HELM and configmaps
-# Copy plain+ssl config files and rewrites for shibboleth
-ADD ./jupyterhub.d/httpd.d/jupyterhub_plain.conf.template /root/httpd_config/jupyterhub_plain.conf.template
-ADD ./jupyterhub.d/httpd.d/jupyterhub_ssl.conf.template /root/httpd_config/jupyterhub_ssl.conf.template
-ADD ./jupyterhub.d/httpd.d/jupyterhub_shib.conf.template /root/httpd_config/jupyterhub_shib.conf.template
-
-# Copy SSL certificates
-ADD ./secrets/boxed.crt /etc/boxed/certs/boxed.crt
-ADD ./secrets/boxed.key /etc/boxed/certs/boxed.key
-
-# ----- Shibboleth configuration ----- #
-#TODO: Verify the link is really needed (in CERNBox we do not do that)
-#RUN ln -s /usr/lib64/shibboleth/mod_shib_24.so /etc/httpd/modules/mod_shib_24.so
-#RUN mv /etc/httpd/conf.d/shib.conf /etc/httpd/conf.d/shib.noload
-#RUN mv /etc/shibboleth/attribute-map.xml /etc/shibboleth/attribute-map.xml.defaults
-#RUN mv /etc/shibboleth/shibboleth2.xml /etc/shibboleth/shibboleth2.defaults
-
-## TODO: Remove this. Should be done in supervisor
-## Fix the library path for shibboleth (https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPLinuxRH6)
-#ENV LD_LIBRARY_PATH=/opt/shibboleth/lib64
-
 # ----- Install the required packages ----- #
 # Install Docker (needed only by docker-compose or single-box deployment)
 ADD ./repos/docker-ce.repo /etc/yum.repos.d/docker-ce.repo
@@ -126,7 +97,36 @@ RUN pip install -r requirements.txt && \
     python3.6 setup.py install
 WORKDIR /
 
-# ----- Copy configuration files ----- #
+# ----- sssd configuration ----- #
+ADD ./sssd.d/sssd.conf /etc/sssd/sssd.conf
+
+# ----- httpd configuration ----- #
+# Disable listen directive from conf/httpd.conf and SSL default config
+RUN sed -i "s/Listen 80/#Listen 80/" /etc/httpd/conf/httpd.conf
+RUN mv /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/ssl.defaults
+
+##TODO: This should go to HELM and configmaps
+# Copy plain+ssl config files and rewrites for shibboleth
+ADD ./jupyterhub.d/httpd.d/jupyterhub_plain.conf.template /root/httpd_config/jupyterhub_plain.conf.template
+ADD ./jupyterhub.d/httpd.d/jupyterhub_ssl.conf.template /root/httpd_config/jupyterhub_ssl.conf.template
+ADD ./jupyterhub.d/httpd.d/jupyterhub_shib.conf.template /root/httpd_config/jupyterhub_shib.conf.template
+
+# Copy SSL certificates
+ADD ./secrets/boxed.crt /etc/boxed/certs/boxed.crt
+ADD ./secrets/boxed.key /etc/boxed/certs/boxed.key
+
+# ----- Shibboleth configuration ----- #
+#TODO: Verify the link is really needed (in CERNBox we do not do that)
+#RUN ln -s /usr/lib64/shibboleth/mod_shib_24.so /etc/httpd/modules/mod_shib_24.so
+#RUN mv /etc/httpd/conf.d/shib.conf /etc/httpd/conf.d/shib.noload
+#RUN mv /etc/shibboleth/attribute-map.xml /etc/shibboleth/attribute-map.xml.defaults
+#RUN mv /etc/shibboleth/shibboleth2.xml /etc/shibboleth/shibboleth2.defaults
+
+## TODO: Remove this. Should be done in supervisor
+## Fix the library path for shibboleth (https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPLinuxRH6)
+#ENV LD_LIBRARY_PATH=/opt/shibboleth/lib64
+
+# ----- jupyterhub configuration ----- #
 # The spawner form
 ##TODO: This is copied from prod. Will go out of sync quickly.
 #ADD ./jupyterhub.d/jupyterhub_form.html /srv/jupyterhub/jupyterhub_form.html
