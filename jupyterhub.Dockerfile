@@ -144,7 +144,7 @@ ADD ./jupyterhub.d/style.css /usr/local/share/jupyterhub/static/swan/css/style.c
 
 # ----- Copy supervisord files ----- #
 ADD ./supervisord.d/sssd.ini /etc/supervisord.d/sssd.ini
-#ADD ./supervisord.d/jupyterhub.ini /etc/supervisord.d/jupyterhub.ini
+ADD ./supervisord.d/jupyterhub.ini /etc/supervisord.d/jupyterhub.ini
 ADD ./supervisord.d/httpd.ini /etc/supervisord.d/httpd.ini
 #ADD ./supervisord.d/shibd.ini /etc/supervisord.d/shibd.noload
 
