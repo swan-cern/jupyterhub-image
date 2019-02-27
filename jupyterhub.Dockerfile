@@ -99,6 +99,8 @@ WORKDIR /
 
 # ----- sssd configuration ----- #
 ADD ./sssd.d/sssd.conf /etc/sssd/sssd.conf
+RUN chown root:root /etc/sssd/sssd.conf && \
+    chmod 0600 /etc/sssd/sssd.conf
 
 # ----- httpd configuration ----- #
 # Disable listen directive from conf/httpd.conf and SSL default config
