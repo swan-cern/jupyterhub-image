@@ -118,15 +118,9 @@ ADD ./secrets/boxed.crt /etc/boxed/certs/boxed.crt
 ADD ./secrets/boxed.key /etc/boxed/certs/boxed.key
 
 # ----- Shibboleth configuration ----- #
-#TODO: Verify the link is really needed (in CERNBox we do not do that)
-#RUN ln -s /usr/lib64/shibboleth/mod_shib_24.so /etc/httpd/modules/mod_shib_24.so
-#RUN mv /etc/httpd/conf.d/shib.conf /etc/httpd/conf.d/shib.noload
-#RUN mv /etc/shibboleth/attribute-map.xml /etc/shibboleth/attribute-map.xml.defaults
-#RUN mv /etc/shibboleth/shibboleth2.xml /etc/shibboleth/shibboleth2.defaults
-
-## TODO: Remove this. Should be done in supervisor
-## Fix the library path for shibboleth (https://wiki.shibboleth.net/confluence/display/SHIB2/NativeSPLinuxRH6)
-#ENV LD_LIBRARY_PATH=/opt/shibboleth/lib64
+RUN mv /etc/httpd/conf.d/shib.conf /etc/httpd/conf.d/shib.noload && \
+    mv /etc/shibboleth/attribute-map.xml /etc/shibboleth/attribute-map.xml.defaults && \
+    mv /etc/shibboleth/shibboleth2.xml /etc/shibboleth/shibboleth2.defaults
 
 # ----- jupyterhub configuration ----- #
 # The spawner form
@@ -148,7 +142,7 @@ ADD ./jupyterhub.d/style.css /usr/local/share/jupyterhub/static/swan/css/style.c
 ADD ./supervisord.d/sssd.ini /etc/supervisord.d/sssd.ini
 ADD ./supervisord.d/jupyterhub.ini /etc/supervisord.d/jupyterhub.ini
 ADD ./supervisord.d/httpd.ini /etc/supervisord.d/httpd.ini
-#ADD ./supervisord.d/shibd.ini /etc/supervisord.d/shibd.noload
+ADD ./supervisord.d/shibd.ini /etc/supervisord.d/shibd.noload
 
 ##TODO: Log files should be handled differently
 ## E.g., sidecar container and central collection point
