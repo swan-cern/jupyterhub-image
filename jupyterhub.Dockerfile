@@ -140,10 +140,9 @@ ADD ./jupyterhub.d/adminslist /srv/jupyterhub/adminslist
 ADD ./jupyterhub.d/style.css /usr/local/share/jupyterhub/static/swan/css/style.css
 
 # ----- Copy supervisord files ----- #
-ADD ./supervisord.d/sssd.ini /etc/supervisord.d/sssd.ini
+RUN mv /etc/supervisord.d/sssd.noload /etc/supervisord.d/sssd.ini && \
+    mv /etc/supervisord.d/httpd.noload /etc/supervisord.d/httpd.ini
 ADD ./supervisord.d/jupyterhub.ini /etc/supervisord.d/jupyterhub.ini
-ADD ./supervisord.d/httpd.ini /etc/supervisord.d/httpd.ini
-ADD ./supervisord.d/shibd.ini /etc/supervisord.d/shibd.noload
 
 ##TODO: Log files should be handled differently
 ## E.g., sidecar container and central collection point
