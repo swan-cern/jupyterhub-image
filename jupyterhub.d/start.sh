@@ -81,6 +81,29 @@ sed -e "s/%%%HTTP_PORT%%%/${HTTP_PORT}/
 s/%%%HTTPS_PORT%%%/${HTTPS_PORT}/
 s/%%%HOSTNAME%%%/${HOSTNAME}/" /root/httpd_config/jupyterhub_plain.conf.template > /etc/httpd/conf.d/jupyterhub_plain.conf
 
+# Configure the spawner form
+case $SPAWNER_FORM in
+  "complete")
+    ln -s /srv/jupyterhub/jupyterhub_form.complete.html /srv/jupyterhub/jupyterhub_form.html
+    echo "CONFIG: Using complete spawner form"
+    ;;
+  "simple")
+    ln -s /srv/jupyterhub/jupyterhub_form.simple.html /srv/jupyterhub/jupyterhub_form.html
+    echo "CONFIG: Using simple spawner form"
+    ;;
+  "none")
+    #TODO: To be implemented
+    echo "CONFIG: No spawner form used"
+    echo "ERROR: TO BE IMPLEMENTED"
+    echo "ERROR: Defaulting to complete spawner form for now..."
+    ln -s /srv/jupyterhub/jupyterhub_form.complete.html /srv/jupyterhub/jupyterhub_form.html
+    ;;
+  *)
+    echo "WARNING: Jupyterhub spawner form type unknown or unspecified. Defaulting to complete form"
+    ln -s /srv/jupyterhub/jupyterhub_form.complete.html /srv/jupyterhub/jupyterhub_form.html
+    ;;
+esac
+
 # Configure according to selected authentication method
 if [ -z "$AUTH_TYPE" ]; then
   echo "WARNING: Authentication type not specified. Defaulting to local LDAP."

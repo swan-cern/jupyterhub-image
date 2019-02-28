@@ -127,7 +127,7 @@ RUN mv /etc/httpd/conf.d/shib.conf /etc/httpd/conf.d/shib.noload && \
 # The spawner form
 ##TODO: This is copied from prod. Will go out of sync quickly.
 ADD ./jupyterhub.d/jupyterhub_form.complete.html /srv/jupyterhub/jupyterhub_form.complete.html
-ADD ./jupyterhub.d/jupyterhub_form.simplified.html /srv/jupyterhub/jupyterhub_form.simplified.html
+ADD ./jupyterhub.d/jupyterhub_form.simple.html /srv/jupyterhub/jupyterhub_form.simple.html
 
 # JupyterHub configuration
 ##TODO: This should go to HELM and configmaps
