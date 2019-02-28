@@ -98,14 +98,15 @@ RUN pip install -r requirements.txt && \
 WORKDIR /
 
 # ----- sssd configuration ----- #
+##TODO: This should go to HELM and configmaps
 ADD ./sssd.d/sssd.conf /etc/sssd/sssd.conf
 RUN chown root:root /etc/sssd/sssd.conf && \
     chmod 0600 /etc/sssd/sssd.conf
 
 # ----- httpd configuration ----- #
 # Disable listen directive from conf/httpd.conf and SSL default config
-RUN sed -i "s/Listen 80/#Listen 80/" /etc/httpd/conf/httpd.conf
-RUN mv /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/ssl.defaults
+RUN sed -i "s/Listen 80/#Listen 80/" /etc/httpd/conf/httpd.conf && \
+    mv /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/ssl.defaults
 
 ##TODO: This should go to HELM and configmaps
 # Copy plain+ssl config files and rewrites for shibboleth
