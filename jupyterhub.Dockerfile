@@ -144,25 +144,6 @@ RUN mv /etc/supervisord.d/sssd.noload /etc/supervisord.d/sssd.ini && \
     mv /etc/supervisord.d/httpd.noload /etc/supervisord.d/httpd.ini
 ADD ./supervisord.d/jupyterhub.ini /etc/supervisord.d/jupyterhub.ini
 
-##TODO: Log files should be handled differently
-## E.g., sidecar container and central collection point
-## ----- Run crond under supervisor and copy configuration files for log rotation ----- #
-#ADD ./supervisord.d/crond.ini /etc/supervisord.d/crond.noload
-#ADD ./logrotate.d/logrotate /etc/cron.hourly/logrotate
-#RUN chmod +x /etc/cron.hourly/logrotate
-
-## ----- Install logrotate and copy configuration files ----- #
-#RUN yum -y install logrotate
-#RUN mv /etc/logrotate.conf /etc/logrotate.defaults
-#ADD ./logrotate.d/logrotate.conf /etc/logrotate.conf
-
-## Copy logrotate jobs for JupyterHub
-#RUN rm -f /etc/logrotate.d/httpd
-#ADD ./logrotate.d/logrotate.jobs.d/httpd /etc/logrotate.d/httpd
-#ADD ./logrotate.d/logrotate.jobs.d/shibd /etc/logrotate.d/shibd
-#ADD ./logrotate.d/logrotate.jobs.d/jupyterhub /etc/logrotate.d/jupyterhub
-
-
 # ----- Run the setup script in the container ----- #
 ADD ./jupyterhub.d/start.sh /root/start.sh
 CMD ["/bin/bash", "/root/start.sh"]
