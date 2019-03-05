@@ -85,3 +85,8 @@ c.CERNSpawner.read_only_volumes = { CVMFS_FOLDER : '/cvmfs' }
 c.CERNSpawner.local_home = False
 c.CERNSpawner.volumes = { os.path.join(EOS_FOLDER, "docker", "user") : '/eos/user' }
 
+c.CERNSpawner.extra_env = dict(
+    SHARE_CBOX_API = "https://%%%CERNBOXGATEWAY_HOSTNAME%%%/cernbox",
+    HELP_ENDPOINT  = "https://raw.githubusercontent.com/swan-cern/help/up2u/"
+)
+

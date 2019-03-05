@@ -138,3 +138,8 @@ c.CERNKubeSpawner.volumes = [
     }
 ]
 
+c.CERNKubeSpawner.extra_env = dict(
+    SHARE_CBOX_API = "https://%%%CERNBOXGATEWAY_HOSTNAME%%%/cernbox",
+    HELP_ENDPOINT  = "https://raw.githubusercontent.com/swan-cern/help/up2u/"
+)
+

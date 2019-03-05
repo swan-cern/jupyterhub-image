@@ -80,6 +80,8 @@ sed "s/%%%HTTPS_PORT%%%/${HTTPS_PORT}/" /root/httpd_config/jupyterhub_ssl.conf.t
 sed -e "s/%%%HTTP_PORT%%%/${HTTP_PORT}/
 s/%%%HTTPS_PORT%%%/${HTTPS_PORT}/
 s/%%%HOSTNAME%%%/${HOSTNAME}/" /root/httpd_config/jupyterhub_plain.conf.template > /etc/httpd/conf.d/jupyterhub_plain.conf
+# Configure Jupyter extensions
+sed -i "s|%%%CERNBOXGATEWAY_HOSTNAME%%%|${CERNBOXGATEWAY_HOSTNAME}|" /srv/jupyterhub/jupyterhub_config.py
 
 # Configure the spawner form
 case $SPAWNER_FORM in
