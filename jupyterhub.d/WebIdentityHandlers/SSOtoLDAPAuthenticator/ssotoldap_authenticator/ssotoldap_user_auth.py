@@ -117,7 +117,7 @@ class SSOUserLoginHandler(BaseHandler):
             raise web.HTTPError(401)
             return
 
-        if user_to_be_approved not in list_approved_users:
+        if approved_key and user_to_be_approved not in list_approved_users:
             self.log.info("ERROR: User not authorized for SSO_UID: %s, EMAIL_ADDRESS: %s", sso_uid, user_to_be_approved)
             raise web.HTTPError(401)
             return
