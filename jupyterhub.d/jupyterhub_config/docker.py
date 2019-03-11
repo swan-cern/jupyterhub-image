@@ -86,7 +86,8 @@ c.CERNSpawner.local_home = False
 c.CERNSpawner.volumes = { os.path.join(EOS_FOLDER, "docker", "user") : '/eos/user' }
 
 c.CERNSpawner.extra_env = dict(
-    SHARE_CBOX_API = "https://%%%CERNBOXGATEWAY_HOSTNAME%%%/cernbox",
-    HELP_ENDPOINT  = "https://raw.githubusercontent.com/swan-cern/help/up2u/"
+    SHARE_CBOX_API_DOMAIN = "https://%%%CERNBOXGATEWAY_HOSTNAME%%%",
+    SHARE_CBOX_API_BASE   = "/cernbox/swanapi/v1",
+    HELP_ENDPOINT         = "https://raw.githubusercontent.com/swan-cern/help/up2u/"
 )
 
