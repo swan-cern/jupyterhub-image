@@ -6,9 +6,9 @@
 
 # Build and push to Docker registry with:
 #   export RELEASE_VERSION=":v0"
-#   docker build -t gitlab-registry.cern.ch/cernbox/boxedhub/jupyterhub${RELEASE_VERSION} -f jupyterhub.Dockerfile .
+#   docker build -t gitlab-registry.cern.ch/swan/docker-images/jupyterhub${RELEASE_VERSION} -f jupyterhub.Dockerfile .
 #   docker login gitlab-registry.cern.ch
-#   docker push gitlab-registry.cern.ch/cernbox/boxedhub/jupyterhub${RELEASE_VERSION}
+#   docker push gitlab-registry.cern.ch/swan/docker-images/jupyterhub${RELEASE_VERSION}
 
 
 FROM gitlab-registry.cern.ch/sciencebox/docker-images/parent-images/webserver:v0
