@@ -1,0 +1,21 @@
+
+variables:
+  NAME: gitlab-registry.cern.ch/swan/docker-images/jupyterhub
+
+
+stages:
+    - build
+
+
+build_final_image:
+    stage: build
+    script:
+        - docker build --compress --squash --rm -t $NAME:$CI_COMMIT_TAG .
+        - docker login gitlab-registry.cern.ch -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
+        - docker push $NAME:$CI_COMMIT_TAG
+        - docker logout
+        - docker rmi $NAME:$CI_COMMIT_TAG
+    tags:
+        - docker-image-build
+    only: 
+        - /^v.*$/
