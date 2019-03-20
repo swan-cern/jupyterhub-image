@@ -89,8 +89,7 @@ RUN pip install -r requirements.txt && \
     python3.6 setup.py install
 # Install CERN Spawner
 WORKDIR /srv/jupyterhub/jh_gitlab/CERNSpawner
-RUN pip install -r requirements.txt && \
-    python3.6 setup.py install
+RUN pip install .
 # Install CERN Kube Spawner
 WORKDIR /srv/jupyterhub/jh_gitlab/CERNKubeSpawner
 RUN pip install -r requirements.txt && \
