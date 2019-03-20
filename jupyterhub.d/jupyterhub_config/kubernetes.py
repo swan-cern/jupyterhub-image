@@ -33,6 +33,10 @@ c.JupyterHub.logo_file = '/usr/local/share/jupyterhub/static/swan/logos/logo_swa
 c.JupyterHub.ip = "127.0.0.1"
 c.JupyterHub.port = 8000
 
+# Proxy
+# Wrap the start of the proxy to allow bigger headers in nodejs
+c.ConfigurableHTTPProxy.command = '/srv/jupyterhub/jh_gitlab/jh_gitlab/scripts/start_proxy.sh'
+
 # Reach the Hub from Jupyter containers
 # NOTE: Containers are connected to a separate Docker network: DOCKER_NETWORK_NAME
 #       The hub must listen on an IP address that is reachable from DOCKER_NETWORK_NAME

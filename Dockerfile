@@ -96,6 +96,9 @@ RUN pip install -r requirements.txt && \
     python3.6 setup.py install
 WORKDIR /
 
+# Make proxy wrapper script executable
+RUN chmod u+x /srv/jupyterhub/jh_gitlab/scripts/start_proxy.sh
+
 # ----- sssd configuration ----- #
 ##TODO: This should go to HELM and configmaps
 ADD ./sssd.d/sssd.conf /etc/sssd/sssd.conf

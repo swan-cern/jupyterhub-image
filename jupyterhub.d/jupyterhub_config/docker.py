@@ -37,6 +37,10 @@ c.JupyterHub.port = 8000
 c.JupyterHub.hub_ip = "jupyterhub"
 c.JupyterHub.hub_port = 8080
 
+# Proxy
+# Wrap the start of the proxy to allow bigger headers in nodejs
+c.ConfigurableHTTPProxy.command = '/srv/jupyterhub/jh_gitlab/scripts/start_proxy.sh'
+
 # Load the list of users with admin privileges and enable access
 admins = set(open(os.path.join(os.path.dirname(__file__), 'adminslist'), 'r').read().splitlines())
 c.Authenticator.admin_users = admins
