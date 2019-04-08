@@ -52,6 +52,16 @@ c.JupyterHub.port = 8000	# You may end up in detecting the wrong IP address due 
 	                        #       - Kubernetes services in front of Pods (headed//headless//clusterIPs)
 	                        #       - hostNetwork used by the JupyterHub Pod
 
+c.JupyterHub.cleanup_servers = False
+# Use local_home set to true to prevent calling the script that updates EOS tickets
+c.JupyterHub.services = [
+    {
+        'name': 'cull-idle',
+        'admin': True,
+        'command': 'python3 /srv/jupyterhub/jh_gitlab/scripts/cull_idle_servers.py --cull_every=600 --timeout=14400 --local_home=True --cull_users=True'.split(),
+    }
+]
+
 # Reach the Hub from Jupyter containers
 # NOTE: The Hub IP must be known and rechable from spawned containers
 # 	Leveraging on the FQDN makes the Hub accessible both when the JupyterHub Pod 
@@ -110,7 +120,7 @@ c.SwanSpawner.options_form = '/srv/jupyterhub/jupyterhub_form.html'
 c.SwanSpawner.start_timeout = 30
 
 # Single-user's servers extra config, CVMFS, EOS
-#c.SwanSpawner.extra_host_config = { 'mem_limit': '8g', 'cap_drop': ['NET_BIND_SERVICE', 'SYS_CHROOT']}
+#c.SwanSpawner.extra_host_config = { 'cap_drop': ['NET_BIND_SERVICE', 'SYS_CHROOT']}
 
 #c.SwanSpawner.local_home = True	# $HOME is a volatile scratch space at /scratch/<username>/
 c.SwanSpawner.local_home = False	# $HOME is on EOS
@@ -141,6 +151,9 @@ c.SwanSpawner.volumes = [
         }
     }
 ]
+c.SwanSpawner.available_cores = ["2", "4"]
+c.SwanSpawner.available_memory = ["8", "10"]
+c.SwanSpawner.metrics_on = False #For now the metrics are hardcoded for CERN
 
 c.SwanSpawner.extra_env = dict(
     SHARE_CBOX_API_DOMAIN = "https://%%%CERNBOXGATEWAY_HOSTNAME%%%",
@@ -148,3 +161,10 @@ c.SwanSpawner.extra_env = dict(
     HELP_ENDPOINT         = "https://raw.githubusercontent.com/swan-cern/help/up2u/"
 )
 
+# local_home equal to true to hide the "always start with this config"
+c.SpawnHandlersConfigs.local_home = True
+c.SpawnHandlersConfigs.spawn_error_message = """SWAN could not start a session for your user, please try again. If the problem persists, please check:
+<ul>
+    <li>Do you have a CERNBox account? If not, click <a href="https://%%%CERNBOXGATEWAY_HOSTNAME%%%" target="_blank">here</a>.</li>
+    <li>Check with the service manager that SWAN is running properly.</li>
+</ul>"""
