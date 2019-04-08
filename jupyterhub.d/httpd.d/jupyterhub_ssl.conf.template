@@ -31,9 +31,6 @@ Listen %%%HTTPS_PORT%%%
   ProxyPass / http://localhost:8000/
   ProxyPassReverse / http://localhost:8000/
 
-  ProxyPassMatch ^/user/([a-zA-Z0-9]*)/static(.*) !
-  ProxyPassReverse ^/user/([a-zA-Z0-9]*)/static(.*) !
-
   ## SSL directives
   SSLEngine on
   SSLCertificateFile      /etc/boxed/certs/boxed.crt
