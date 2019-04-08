@@ -102,19 +102,19 @@ else:
 ### Configuration for single-user containers ###
 
 # Spawn single-user's servers in the Kubernetes cluster
-c.JupyterHub.spawner_class = 'cernkubespawner.CERNKubeSpawner'
-c.CERNKubeSpawner.image = CONTAINER_IMAGE
-c.CERNKubeSpawner.namespace = NAMESPACE
-c.CERNKubeSpawner.node_selector = {NODE_SELECTOR_KEY : NODE_SELECTOR_VALUE}  # Where to run user containers
-c.CERNKubeSpawner.options_form = '/srv/jupyterhub/jupyterhub_form.html'
-c.CERNKubeSpawner.start_timeout = 30
+c.JupyterHub.spawner_class = 'swanspawner.SwanKubeSpawner'
+c.SwanSpawner.image = CONTAINER_IMAGE
+c.SwanSpawner.namespace = NAMESPACE
+c.SwanSpawner.node_selector = {NODE_SELECTOR_KEY : NODE_SELECTOR_VALUE}  # Where to run user containers
+c.SwanSpawner.options_form = '/srv/jupyterhub/jupyterhub_form.html'
+c.SwanSpawner.start_timeout = 30
 
 # Single-user's servers extra config, CVMFS, EOS
-#c.CERNKubeSpawner.extra_host_config = { 'mem_limit': '8g', 'cap_drop': ['NET_BIND_SERVICE', 'SYS_CHROOT']}
+#c.SwanSpawner.extra_host_config = { 'mem_limit': '8g', 'cap_drop': ['NET_BIND_SERVICE', 'SYS_CHROOT']}
 
-#c.CERNKubeSpawner.local_home = True	# $HOME is a volatile scratch space at /scratch/<username>/
-c.CERNKubeSpawner.local_home = False	# $HOME is on EOS
-c.CERNKubeSpawner.volume_mounts = [
+#c.SwanSpawner.local_home = True	# $HOME is a volatile scratch space at /scratch/<username>/
+c.SwanSpawner.local_home = False	# $HOME is on EOS
+c.SwanSpawner.volume_mounts = [
     {
         'name': 'cvmfs',
         'mountPath': '/cvmfs:shared',
@@ -125,7 +125,7 @@ c.CERNKubeSpawner.volume_mounts = [
     }
 ]
 
-c.CERNKubeSpawner.volumes = [
+c.SwanSpawner.volumes = [
     {
         'name': 'cvmfs',
         'hostPath': {
@@ -142,7 +142,7 @@ c.CERNKubeSpawner.volumes = [
     }
 ]
 
-c.CERNKubeSpawner.extra_env = dict(
+c.SwanSpawner.extra_env = dict(
     SHARE_CBOX_API_DOMAIN = "https://%%%CERNBOXGATEWAY_HOSTNAME%%%",
     SHARE_CBOX_API_BASE   = "/cernbox/swanapi/v1",
     HELP_ENDPOINT         = "https://raw.githubusercontent.com/swan-cern/help/up2u/"

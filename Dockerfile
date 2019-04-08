@@ -20,8 +20,7 @@ MAINTAINER SWAN Admins <swan-admins@cern.ch>
 ARG DOCKER_VERSION="-18.06.1.ce"
 ARG JUPYTERHUB_VERSION="==0.9.6"
 ARG LDAPAUTHENTICATOR_VERSION="==1.2.2"
-ARG DOCKERSPAWNER_VERSION="==0.10.0"
-ARG KUBESPAWNER_VERSION="==0.10.1"
+ARG JUPYTERHUB_EXTENSIONS_TAG="v2.1"
 
 
 # ----- Install the required packages ----- #
@@ -56,10 +55,8 @@ RUN pip3.6 install --upgrade pip
 RUN pip install jupyterhub$JUPYTERHUB_VERSION
 RUN npm install -g configurable-http-proxy
 
-# Upstream authenticators and spawners
+# Upstream authenticators
 RUN pip install jupyterhub-ldapauthenticator$LDAPAUTHENTICATOR_VERSION  # LDAP auth
-RUN pip install dockerspawner$DOCKERSPAWNER_VERSION                     # Dockerspawner
-RUN pip install jupyterhub-kubespawner$KUBESPAWNER_VERSION              # Kubespawner
 
 #TODO: NNFP -- Remove and install separately by building on top of the produced image
 # Additional authenticator: SSO to LDAP Authenticator
@@ -82,18 +79,14 @@ RUN git clone -b master https://gitlab.cern.ch/swan/common.git /usr/local/share/
 
 # Handlers, Spawners, Templates, ...
 #TODO: 'CERNKubeSpawner' is a temporary branch. We should clone from master
-RUN git clone -b CERNKubeSpawner https://gitlab.cern.ch/swan/jupyterhub.git /srv/jupyterhub/jh_gitlab
+RUN git clone -b $JUPYTERHUB_EXTENSIONS_TAG https://gitlab.cern.ch/swan/jupyterhub.git /srv/jupyterhub/jh_gitlab
 # Install CERN Handlers
 WORKDIR /srv/jupyterhub/jh_gitlab/CERNHandlers
 RUN pip install -r requirements.txt && \
     python3.6 setup.py install
 # Install CERN Spawner
-WORKDIR /srv/jupyterhub/jh_gitlab/CERNSpawner
+WORKDIR /srv/jupyterhub/jh_gitlab/SwanSpawner
 RUN pip install .
-# Install CERN Kube Spawner
-WORKDIR /srv/jupyterhub/jh_gitlab/CERNKubeSpawner
-RUN pip install -r requirements.txt && \
-    python3.6 setup.py install
 WORKDIR /
 
 # Make proxy wrapper script executable

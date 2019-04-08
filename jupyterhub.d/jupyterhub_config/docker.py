@@ -70,26 +70,26 @@ else:
 
 ### Configuration for single-user containers ###
 # Spawn single-user's servers as Docker containers
-c.JupyterHub.spawner_class = 'cernspawner.CERNSpawner'
-c.CERNSpawner.image = CONTAINER_IMAGE
-c.CERNSpawner.remove_containers = True
-c.CERNSpawner.options_form = '/srv/jupyterhub/jupyterhub_form.html'
+c.JupyterHub.spawner_class = 'swanspawner.SwanDockerSpawner'
+c.SwanSpawner.image = CONTAINER_IMAGE
+c.SwanSpawner.remove_containers = True
+c.SwanSpawner.options_form = '/srv/jupyterhub/jupyterhub_form.html'
 
 # Instruct spawned containers to use the internal Docker network
-c.CERNSpawner.use_internal_ip = True
-c.CERNSpawner.network_name = DOCKER_NETWORK_NAME
-c.CERNSpawner.extra_host_config = { 'network_mode': DOCKER_NETWORK_NAME }
+c.SwanSpawner.use_internal_ip = True
+c.SwanSpawner.network_name = DOCKER_NETWORK_NAME
+c.SwanSpawner.extra_host_config = { 'network_mode': DOCKER_NETWORK_NAME }
 
 # Single-user's servers extra config, CVMFS, EOS
-#c.CERNSpawner.extra_host_config = { 'mem_limit': '8g', 'cap_drop': ['NET_BIND_SERVICE', 'SYS_CHROOT']}
-c.CERNSpawner.read_only_volumes = { CVMFS_FOLDER : '/cvmfs' }
+#c.SwanSpawner.extra_host_config = { 'mem_limit': '8g', 'cap_drop': ['NET_BIND_SERVICE', 'SYS_CHROOT']}
+c.SwanSpawner.read_only_volumes = { CVMFS_FOLDER : '/cvmfs' }
 
 # Local home inside users' containers
-#c.CERNSpawner.local_home = True		# If set to True, user <username> $HOME will be /scratch/<username>/
-c.CERNSpawner.local_home = False
-c.CERNSpawner.volumes = { os.path.join(EOS_FOLDER, "docker", "user") : '/eos/user' }
+#c.SwanSpawner.local_home = True		# If set to True, user <username> $HOME will be /scratch/<username>/
+c.SwanSpawner.local_home = False
+c.SwanSpawner.volumes = { os.path.join(EOS_FOLDER, "docker", "user") : '/eos/user' }
 
-c.CERNSpawner.extra_env = dict(
+c.SwanSpawner.extra_env = dict(
     SHARE_CBOX_API_DOMAIN = "https://%%%CERNBOXGATEWAY_HOSTNAME%%%",
     SHARE_CBOX_API_BASE   = "/cernbox/swanapi/v1",
     HELP_ENDPOINT         = "https://raw.githubusercontent.com/swan-cern/help/up2u/"
