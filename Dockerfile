@@ -21,6 +21,7 @@ ARG DOCKER_VERSION="-18.06.1.ce"
 ARG JUPYTERHUB_VERSION="==0.9.6"
 ARG LDAPAUTHENTICATOR_VERSION="==1.2.2"
 ARG JUPYTERHUB_EXTENSIONS_TAG="v2.1"
+ARG COMMON_ASSETS_TAG="v2.0"
 
 
 # ----- Install the required packages ----- #
@@ -34,7 +35,8 @@ RUN yum -y install \
 # Install nodejs, npm, etc.
 RUN yum -y install \
       nodejs \
-      npm && \
+      npm \
+      unzip && \
     yum clean all && \
     rm -rf /var/cache/yum
 
@@ -75,7 +77,12 @@ WORKDIR /
 
 # ----- Install CERN customizations ----- #
 # Web GUI
-RUN git clone -b master https://gitlab.cern.ch/swan/common.git /usr/local/share/jupyterhub/static/swan/
+RUN mkdir /usr/local/share/jupyterhub/static/swan/ && \
+    cd /usr/local/share/jupyterhub/static/swan/ && \
+    echo "Downloading Common assests build version: ${COMMON_ASSETS_TAG}" && \
+    wget https://gitlab.cern.ch/api/v4/projects/25625/jobs/artifacts/$COMMON_ASSETS_TAG/download?job=release-version -O common.zip && \
+    unzip common.zip && \
+    rm -f common.zip
 
 # Handlers, Spawners, Templates, ...
 #TODO: 'CERNKubeSpawner' is a temporary branch. We should clone from master
@@ -130,9 +137,6 @@ ADD ./jupyterhub.d/jupyterhub_config /root/jupyterhub_config
 
 # Copy the list of users with administrator privileges
 ADD ./jupyterhub.d/adminslist /srv/jupyterhub/adminslist
-
-##TODO: This should be removed but requires fixes for prod
-ADD ./jupyterhub.d/style.css /usr/local/share/jupyterhub/static/swan/css/style.css
 
 # ----- Copy supervisord files ----- #
 RUN mv /etc/supervisord.d/sssd.noload /etc/supervisord.d/sssd.ini && \
