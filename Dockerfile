@@ -20,8 +20,8 @@ MAINTAINER SWAN Admins <swan-admins@cern.ch>
 ARG DOCKER_VERSION="-18.06.1.ce"
 ARG JUPYTERHUB_VERSION="==0.9.6"
 ARG LDAPAUTHENTICATOR_VERSION="==1.2.2"
-ARG JUPYTERHUB_EXTENSIONS_TAG="v2.2"
-ARG COMMON_ASSETS_TAG="v2.0"
+ARG JUPYTERHUB_EXTENSIONS_TAG="v2.3"
+ARG COMMON_ASSETS_TAG="v2.1"
 
 
 # ----- Install the required packages ----- #
@@ -36,6 +36,7 @@ RUN yum -y install \
 RUN yum -y install \
       nodejs \
       npm \
+      gcc \
       unzip && \
     yum clean all && \
     rm -rf /var/cache/yum
@@ -45,6 +46,7 @@ RUN yum -y install \
       python36 \
       python36-libs \
       python36-pip \
+      python36-devel \
       python36-setuptools && \
     yum clean all && \
     rm -rf /var/cache/yum
