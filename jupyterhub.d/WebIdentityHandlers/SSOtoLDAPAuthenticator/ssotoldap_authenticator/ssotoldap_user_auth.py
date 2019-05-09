@@ -26,12 +26,10 @@ class SSOUserLogoutHandler(BaseHandler):
             sso_logout_url = os.environ['SSO_LOGOUT_URL']
 
         user = self.get_current_user()
-        self.clear_login_cookie()
         if user:
             self.log.info("INFO: User logged out: %s", user.name)
-            for name in user.other_user_cookies:
-                self.clear_login_cookie(name)
-            user.other_user_cookies = set([])
+            self.clear_login_cookie()
+            self.statsd.incr('logout')
         self.redirect(sso_logout_url, permanent=False)
 
 
@@ -142,8 +140,8 @@ class SSOUserAuthenticator(Authenticator):
 
     def get_handlers(self, app):
         return [
-            (r'/sso_login', SSOUserLoginHandler),
-            (r'/sso_logout', SSOUserLogoutHandler),
+            (r'/login', SSOUserLoginHandler),
+            (r'/logout', SSOUserLogoutHandler),
         ]
 
     @gen.coroutine
@@ -165,8 +163,8 @@ class SSOUserLocalAuthenticator(LocalAuthenticator):
 
     def get_handlers(self, app):
         return [
-            (r'/sso_login', SSOUserLoginHandler),
-            (r'/sso_logout', SSOUserLogoutHandler),
+            (r'/login', SSOUserLoginHandler),
+            (r'/logout', SSOUserLogoutHandler),
         ]
 
     @gen.coroutine

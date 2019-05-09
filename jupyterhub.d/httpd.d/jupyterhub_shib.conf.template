@@ -42,12 +42,6 @@ Listen %%%HTTPS_PORT%%%
   SSLProtocol all -SSLv2 -SSLv3
   SSLCipherSuite HIGH:3DES:!aNULL:!MD5:!SEED:!IDEA
 
-  ## Rewrite rules
-  RewriteEngine On
-  RewriteRule ^/$ /hub/sso_login [R,L]
-  RewriteRule ^/hub/login$ /hub/sso_login [R,L]
-  RewriteRule ^/hub/logout$ /hub/sso_logout [R,L]
-
   ## Custom fragment
   <Location />
     AuthType shibboleth
