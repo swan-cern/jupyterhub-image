@@ -58,6 +58,7 @@ RUN pip3.6 install --upgrade pip
 # Install JupyterHub with upstream authenticators and spawners
 RUN pip install jupyterhub$JUPYTERHUB_VERSION
 RUN npm install -g configurable-http-proxy
+RUN mkdir -p /var/log/jupyterhub
 
 # Upstream authenticators
 RUN pip install jupyterhub-ldapauthenticator$LDAPAUTHENTICATOR_VERSION  # LDAP auth
@@ -87,7 +88,6 @@ RUN mkdir /usr/local/share/jupyterhub/static/swan/ && \
     rm -f common.zip
 
 # Handlers, Spawners, Templates, ...
-#TODO: 'CERNKubeSpawner' is a temporary branch. We should clone from master
 RUN git clone -b $JUPYTERHUB_EXTENSIONS_TAG https://gitlab.cern.ch/swan/jupyterhub.git /srv/jupyterhub/jh_gitlab
 # Install CERN Handlers
 WORKDIR /srv/jupyterhub/jh_gitlab/CERNHandlers
