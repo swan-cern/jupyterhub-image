@@ -113,6 +113,7 @@ c.SwanSpawner.volumes = { EOS_USER_PATH : '/eos/user' }
 c.SwanSpawner.available_cores = ["2", "4"]
 c.SwanSpawner.available_memory = ["8", "10"]
 c.SwanSpawner.metrics_on = False #For now the metrics are hardcoded for CERN
+c.SwanSpawner.check_cvmfs_status = False #For now it only checks if available in same place as Jupyterhub.
 
 c.SwanSpawner.extra_env = dict(
     SHARE_CBOX_API_DOMAIN = "https://%%%CERNBOXGATEWAY_HOSTNAME%%%",
