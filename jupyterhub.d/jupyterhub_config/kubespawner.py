@@ -153,7 +153,6 @@ c.SwanSpawner.volumes = [
 ]
 c.SwanSpawner.available_cores = ["2", "4"]
 c.SwanSpawner.available_memory = ["8", "10"]
-c.SwanSpawner.metrics_on = False #For now the metrics are hardcoded for CERN
 c.SwanSpawner.check_cvmfs_status = False #For now it only checks if available in same place as Jupyterhub.
 
 c.SwanSpawner.extra_env = dict(
@@ -164,6 +163,7 @@ c.SwanSpawner.extra_env = dict(
 
 # local_home equal to true to hide the "always start with this config"
 c.SpawnHandlersConfigs.local_home = True
+c.SpawnHandlersConfigs.metrics_on = False #For now the metrics are hardcoded for CERN
 c.SpawnHandlersConfigs.spawn_error_message = """SWAN could not start a session for your user, please try again. If the problem persists, please check:
 <ul>
     <li>Do you have a CERNBox account? If not, click <a href="https://%%%CERNBOXGATEWAY_HOSTNAME%%%" target="_blank">here</a>.</li>
