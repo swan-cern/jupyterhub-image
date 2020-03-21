@@ -51,6 +51,12 @@ RUN yum -y install \
     yum clean all && \
     rm -rf /var/cache/yum
 
+# For saml2 authentication
+RUN yum -y install \
+    mod_auth_mellon && \
+    yum clean all && \
+    rm -rf /var/cache/yum
+
 # Upgrade pip package manager
 RUN pip3.6 install --upgrade pip
 
@@ -117,6 +123,7 @@ RUN sed -i "s/Listen 80/#Listen 80/" /etc/httpd/conf/httpd.conf && \
 ADD ./jupyterhub.d/httpd.d/jupyterhub_plain.conf.template /root/httpd_config/jupyterhub_plain.conf.template
 ADD ./jupyterhub.d/httpd.d/jupyterhub_ssl.conf.template /root/httpd_config/jupyterhub_ssl.conf.template
 ADD ./jupyterhub.d/httpd.d/jupyterhub_shib.conf.template /root/httpd_config/jupyterhub_shib.conf.template
+ADD ./jupyterhub.d/httpd.d/jupyterhub_saml2.conf.template /root/httpd_config/jupyterhub_saml2.conf.template
 
 # Copy SSL certificates
 ADD ./secrets/boxed.crt /etc/boxed/certs/boxed.crt

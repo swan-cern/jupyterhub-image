@@ -69,7 +69,7 @@ c.Authenticator.admin_users = admins
 c.JupyterHub.admin_access = True
 
 ### User Authentication ###
-if ( os.environ['AUTH_TYPE'] == "shibboleth" ):
+if ( os.environ['AUTH_TYPE'] == "shibboleth" or os.environ['AUTH_TYPE'] == "saml2"):
     print ("Authenticator: Using user-defined authenticator")
     c.JupyterHub.authenticator_class = '%%%SHIBBOLETH_AUTHENTICATOR_CLASS%%%'
     # %%% Additional SHIBBOLETH_AUTHENTICATOR_CLASS parameters here %%% #

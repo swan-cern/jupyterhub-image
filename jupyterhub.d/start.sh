@@ -116,6 +116,31 @@ case $AUTH_TYPE in
   "local")
     echo "CONFIG: User authentication via LDAP"
     ;;
+  "saml2")
+    echo "CONFIG: User authentication via saml2"
+    mkdir /etc/httpd/saml2/
+    # Disable HTTPS rules on httpd (are included in config file for saml2)
+    mv /etc/httpd/conf.d/jupyterhub_ssl.conf /etc/httpd/conf.d/jupyterhub_ssl.noload
+    sed "s/%%%HTTPS_PORT%%%/${HTTPS_PORT}/" /root/httpd_config/jupyterhub_saml2.conf.template > /etc/httpd/conf.d/jupyterhub_saml2.conf
+
+    if [ -z "$SAML_UID" ]; then
+      echo "ERROR: Missing SAML_UID"
+      echo "Cannot continue."
+      exit 1
+    fi
+
+    sed -i "s|%%%SAML_UID%%%|${SAML_UID}|" /etc/httpd/conf.d/jupyterhub_saml2.conf
+
+    sed -i "s/%%%SHIBBOLETH_AUTHENTICATOR_CLASS%%%/ssotoldap_authenticator.ssotoldap_user_auth.SSOUserAuthenticator/" /srv/jupyterhub/jupyterhub_config.py
+
+    if [ -z "$CUSTOMIZATION_REPO" ]; then
+      echo "ERROR: Customization script is not set."
+      echo "ERROR: The customization script should provide additional configuration files for saml2 authentication (put cert.crt, cert.key, metadata.xml and idp_metadata.xml in /etc/httpd/saml2/)"
+      echo "Cannot continue."
+      exit 1
+    fi
+
+    ;;
   "shibboleth")
     echo "CONFIG: User authentication via Shibboleth"
     # Disable HTTPS rules on httpd (are included in config file for Shibboleth)
