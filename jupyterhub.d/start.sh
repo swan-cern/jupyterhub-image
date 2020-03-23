@@ -130,6 +130,7 @@ case $AUTH_TYPE in
     fi
 
     sed -i "s|%%%SAML_UID%%%|${SAML_UID}|" /etc/httpd/conf.d/jupyterhub_saml2.conf
+    sed -i "s|%%%SAML_TRUST_LOGOUT_URL%%%|${SAML_TRUST_LOGOUT_URL}|" /etc/httpd/conf.d/jupyterhub_saml2.conf
 
     sed -i "s/%%%SHIBBOLETH_AUTHENTICATOR_CLASS%%%/ssotoldap_authenticator.ssotoldap_user_auth.SSOUserAuthenticator/" /srv/jupyterhub/jupyterhub_config.py
 

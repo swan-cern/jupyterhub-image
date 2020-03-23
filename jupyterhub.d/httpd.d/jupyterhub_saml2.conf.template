@@ -49,6 +49,8 @@ Listen %%%HTTPS_PORT%%%
 
     MellonUser %%%SAML_UID%%%
     RequestHeader set REMOTE_USER %{MELLON_%%%SAML_UID%%%}e
+    
+    MellonRedirectDomains [self] %%%SAML_TRUST_LOGOUT_URL%%%
 
     MellonEndpointPath      /saml2/
     MellonSPMetadataFile    /etc/httpd/saml2/metadata.xml
