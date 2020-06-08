@@ -17,10 +17,19 @@ MAINTAINER SWAN Admins <swan-admins@cern.ch>
 
 
 # ----- Software versions ----- #
-ARG DOCKER_VERSION="-18.06.1.ce"
-ARG JUPYTERHUB_VERSION="==0.9.6"
-ARG LDAPAUTHENTICATOR_VERSION="==1.2.2"
-ARG JUPYTERHUB_EXTENSIONS_TAG="v2.6"
+ARG DOCKER_VERSION="18.06.1.ce"
+
+ARG STATSD_VERSION="3.2.2"
+ARG CRYPTOGRAPHY_VERSION="2.3.*"
+ARG PYCURL_VERSION="7.43.0.*"
+ARG PYPOSTGRES_VERSION="2.7.5"
+
+ARG LDAPAUTHENTICATOR_VERSION="1.2.2"
+ARG DUMMYAUTHENTICATOR_VERSION="0.3.1"
+
+ARG JUPYTERHUB_VERSION="1.1.0"
+ARG CHP_VERSION="4.2.0"
+ARG JUPYTERHUB_EXTENSIONS_TAG="v2.7"
 ARG COMMON_ASSETS_TAG="v2.2"
 
 
@@ -28,7 +37,13 @@ ARG COMMON_ASSETS_TAG="v2.2"
 # Install Docker (needed only by docker-compose or single-box deployment)
 ADD ./repos/docker-ce.repo /etc/yum.repos.d/docker-ce.repo
 RUN yum -y install \
-      docker-ce$DOCKER_VERSION && \
+      docker-ce-$DOCKER_VERSION && \
+    yum clean all && \
+    rm -rf /var/cache/yum
+
+# Install kS4U
+RUN yum -y install \
+      kS4U && \
     yum clean all && \
     rm -rf /var/cache/yum
 
@@ -51,17 +66,48 @@ RUN yum -y install \
     yum clean all && \
     rm -rf /var/cache/yum
 
+# Add hadoop repo. and install fetchdt
+ADD ./repos/hdp7-stable.repo /etc/yum.repos.d/hdp7-stable.repo
+RUN yum -y install \
+      hadoop-fetchdt && \
+    yum clean all && \
+    rm -rf /var/cache/yum
+
+# Add openstack repo. and install kubernetes-client, helm
+ADD ./repos/openstackclients7-queens-stable.repo /etc/yum.repos.d/openstackclients7-queens-stable.repo
+RUN yum -y install \
+      kubernetes-client \
+      helm && \
+    yum clean all && \
+    rm -rf /var/cache/yum
+
 # Upgrade pip package manager
 RUN pip3.6 install --upgrade pip
 
 # ----- Install JupyterHub ----- #
-# Install JupyterHub with upstream authenticators and spawners
-RUN pip install jupyterhub$JUPYTERHUB_VERSION
-RUN npm install -g configurable-http-proxy
-RUN mkdir -p /var/log/jupyterhub
 
-# Upstream authenticators
-RUN pip install jupyterhub-ldapauthenticator$LDAPAUTHENTICATOR_VERSION  # LDAP auth
+# Install JupyterHub dependencies for postres db support, pycurl over https and cryptography for auth state
+RUN yum install -y \
+      libcurl-devel && \
+    yum clean all && \
+    rm -rf /var/cache/yum
+
+RUN PYCURL_SSL_LIBRARY=nss pip install \
+    statsd==$STATSD_VERSION \
+    psycopg2==$PYPOSTGRES_VERSION \
+    cryptography==$CRYPTOGRAPHY_VERSION \
+    pycurl==$PYCURL_VERSION
+
+# Install configurable-http-proxy
+RUN npm install -g configurable-http-proxy@$CHP_VERSION
+
+# Install JupyterHub with upstream authenticators and spawners
+RUN pip install \
+    jupyterhub==$JUPYTERHUB_VERSION \
+    jupyterhub-ldapauthenticator==$LDAPAUTHENTICATOR_VERSION \
+    jupyterhub-dummyauthenticator==$DUMMYAUTHENTICATOR_VERSION 
+
+RUN mkdir -p /var/log/jupyterhub
 
 #TODO: NNFP -- Remove and install separately by building on top of the produced image
 # Additional authenticator: SSO to LDAP Authenticator
@@ -89,17 +135,20 @@ RUN mkdir /usr/local/share/jupyterhub/static/swan/ && \
 
 # Handlers, Spawners, Templates, ...
 RUN git clone -b $JUPYTERHUB_EXTENSIONS_TAG https://gitlab.cern.ch/swan/jupyterhub.git /srv/jupyterhub/jh_gitlab
-# Install CERN Handlers
-WORKDIR /srv/jupyterhub/jh_gitlab/CERNHandlers
-RUN pip install -r requirements.txt && \
-    python3.6 setup.py install
+# Install CERN KeyCloakAuthenticator (oauthenticator)
+WORKDIR /srv/jupyterhub/jh_gitlab/KeyCloakAuthenticator
+RUN pip3 install .
 # Install CERN Spawner
 WORKDIR /srv/jupyterhub/jh_gitlab/SwanSpawner
-RUN pip install .
+RUN pip3 install .
+# Install CERN Handlers
+WORKDIR /srv/jupyterhub/jh_gitlab/CERNHandlers
+RUN pip3 install .
+
 WORKDIR /
 
-# Make proxy wrapper script executable
-RUN chmod u+x /srv/jupyterhub/jh_gitlab/scripts/start_proxy.sh
+# make jupyterhub execute start_jupyterhub.py instead
+RUN ln -sf /srv/jupyterhub/jh_gitlab/scripts/start_jupyterhub.py /usr/local/bin/jupyterhub
 
 # ----- sssd configuration ----- #
 ##TODO: This should go to HELM and configmaps
