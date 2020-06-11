@@ -59,6 +59,11 @@ c.JupyterHub.services = [
         'name': 'cull-idle',
         'admin': True,
         'command': 'python3 /srv/jupyterhub/jh_gitlab/scripts/cull_idle_servers.py --cull_every=600 --timeout=14400 --local_home=True --cull_users=True'.split(),
+    },
+    {
+        'name': 'notifications',
+        'command': 'python3 -m swannotificationsservice --port 8989'.split(),
+        'url': 'http://127.0.0.1:8989'
     }
 ]
 
