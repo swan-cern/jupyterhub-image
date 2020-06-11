@@ -59,6 +59,11 @@ c.JupyterHub.services = [
         'name': 'cull-idle',
         'admin': True,
         'command': 'python3 /srv/jupyterhub/jh_gitlab/scripts/cull_idle_servers.py --cull_every=600 --timeout=14400 --local_home=True --cull_users=True'.split(),
+    },
+    {
+        'name': 'notifications',
+        'command': 'python3 -m swannotificationsservice --port 8989'.split(),
+        'url': 'http://127.0.0.1:8989'
     }
 ]
 
@@ -78,10 +83,6 @@ c.JupyterHub.hub_ip = hub_ip
 c.JupyterHub.hub_port = hub_port
 c.KubeSpawner.hub_connect_ip = hub_ip
 c.KubeSpawner.hub_connect_port = hub_port
-
-# Proxy
-# Wrap the start of the proxy to allow bigger headers in nodejs
-c.ConfigurableHTTPProxy.command = '/srv/jupyterhub/jh_gitlab/scripts/start_proxy.sh'
 
 # Load the list of users with admin privileges and enable access
 admins = set(open(os.path.join(os.path.dirname(__file__), 'adminslist'), 'r').read().splitlines())
