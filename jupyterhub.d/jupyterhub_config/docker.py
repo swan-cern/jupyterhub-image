@@ -47,10 +47,6 @@ c.JupyterHub.services = [
     }
 ]
 
-# Proxy
-# Wrap the start of the proxy to allow bigger headers in nodejs
-c.ConfigurableHTTPProxy.command = ['configurable-http-proxy', '--redirect-port', '80', '--redirect-to', '443']
-
 # Load the list of users with admin privileges and enable access
 admins = set(open(os.path.join(os.path.dirname(__file__), 'adminslist'), 'r').read().splitlines())
 c.Authenticator.admin_users = admins

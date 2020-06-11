@@ -79,10 +79,6 @@ c.JupyterHub.hub_port = hub_port
 c.KubeSpawner.hub_connect_ip = hub_ip
 c.KubeSpawner.hub_connect_port = hub_port
 
-# Proxy
-# Wrap the start of the proxy to allow bigger headers in nodejs
-c.ConfigurableHTTPProxy.command = '/srv/jupyterhub/jh_gitlab/scripts/start_proxy.sh'
-
 # Load the list of users with admin privileges and enable access
 admins = set(open(os.path.join(os.path.dirname(__file__), 'adminslist'), 'r').read().splitlines())
 c.Authenticator.admin_users = admins

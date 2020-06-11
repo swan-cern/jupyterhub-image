@@ -92,7 +92,8 @@ RUN yum install -y \
     yum clean all && \
     rm -rf /var/cache/yum
 
-RUN PYCURL_SSL_LIBRARY=nss pip install \
+RUN PYCURL_SSL_LIBRARY=nss \
+    pip install \
     statsd==$STATSD_VERSION \
     psycopg2==$PYPOSTGRES_VERSION \
     cryptography==$CRYPTOGRAPHY_VERSION \
@@ -143,6 +144,9 @@ WORKDIR /srv/jupyterhub/jh_gitlab/SwanSpawner
 RUN pip3 install .
 # Install CERN Handlers
 WORKDIR /srv/jupyterhub/jh_gitlab/CERNHandlers
+RUN pip3 install .
+# Install CERN SwanNotificationsService
+WORKDIR /srv/jupyterhub/jh_gitlab/SwanNotificationsService
 RUN pip3 install .
 
 WORKDIR /
