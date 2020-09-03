@@ -118,7 +118,9 @@ c.JupyterHub.spawner_class = 'swanspawner.SwanKubeSpawner'
 c.SwanSpawner.image = CONTAINER_IMAGE
 c.SwanSpawner.namespace = NAMESPACE
 c.SwanSpawner.node_selector = {NODE_SELECTOR_KEY : NODE_SELECTOR_VALUE}  # Where to run user containers
-c.SwanSpawner.options_form = '/srv/jupyterhub/jupyterhub_form.html'
+c.SwanSpawner.options_form = open('/srv/jupyterhub/jupyterhub_form.html').read()
+# JSON with default values (if not present, Spawner will crash...)
+c.SwanSpawner.options_form_config = '/srv/jupyterhub/options_form_config.json'
 c.SwanSpawner.start_timeout = 30
 
 # Single-user's servers extra config, CVMFS, EOS
