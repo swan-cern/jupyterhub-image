@@ -22,6 +22,7 @@ LDAP_BASE_DN            = os.environ['LDAP_BASE_DN']
 NAMESPACE               = os.environ['PODINFO_NAMESPACE']
 NODE_SELECTOR_KEY       = os.environ['NODE_SELECTOR_KEY']
 NODE_SELECTOR_VALUE     = os.environ['NODE_SELECTOR_VALUE']
+GALLERY_URL             = os.environ.get('GALLERY_URL')
 
 
 c = get_config()
@@ -159,7 +160,8 @@ c.SwanSpawner.check_cvmfs_status = False #For now it only checks if available in
 c.SwanSpawner.extra_env = dict(
     SHARE_CBOX_API_DOMAIN = "https://%%%CERNBOXGATEWAY_HOSTNAME%%%",
     SHARE_CBOX_API_BASE   = "/cernbox/swanapi/v1",
-    HELP_ENDPOINT         = "https://raw.githubusercontent.com/swan-cern/help/up2u/"
+    HELP_ENDPOINT         = "https://raw.githubusercontent.com/swan-cern/help/up2u/",
+    GALLERY_URL           = GALLERY_URL
 )
 
 # local_home equal to true to hide the "always start with this config"
