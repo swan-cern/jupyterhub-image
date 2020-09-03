@@ -2,7 +2,7 @@
 # Inspired from https://github.com/cwaldbieser/jhub_remote_user_authenticator/blob/master/jhub_remote_user_authenticator/remote_user_auth.py
 
 
-import os
+import os, pwd
 from jupyterhub.handlers import BaseHandler
 from jupyterhub.auth import Authenticator
 from jupyterhub.auth import LocalAuthenticator
@@ -147,6 +147,9 @@ class SSOUserAuthenticator(Authenticator):
     @gen.coroutine
     def authenticate(self, *args):
         raise NotImplementedError()
+
+    async def pre_spawn_start(self, user, spawner):
+        spawner.user_uid = pwd.getpwnam(user.name).pw_uid
 
 
 
