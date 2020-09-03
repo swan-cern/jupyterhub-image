@@ -13,7 +13,7 @@
 
 FROM gitlab-registry.cern.ch/sciencebox/docker-images/parent-images/webserver:v0
 
-MAINTAINER SWAN Admins <swan-admins@cern.ch>
+LABEL maintainer="swan-admins@cern.ch"
 
 
 # ----- Software versions ----- #
