@@ -22,38 +22,24 @@
 </div>
 </label>
 <select name="LCG-rel">
-   <option style="border-bottom:1px solid rgba(153,153,153,.3); margin:-10px 0 4px 0" disabled="disabled">Recommended releases (General Purpose)</option>
-   <option value="LCG_96" selected="">96</option>
+   <option disabled="" value="label1" style="border-bottom: 1px solid rgba(153, 153, 153, 0.3); margin: -10px 0px 4px;">Recommended releases (General Purpose)</option>
+   <option value="LCG_98python3" selected="">98</option>
+   <option value="LCG_98">98 Python2</option>
+   <option value="LCG_95apython3_nxcals">NXCals Python3</option>
+   <option disabled="" value="empty1" style="border-bottom: 1px solid rgba(153, 153, 153, 0.3); margin: -10px 0px 4px;"></option>
+   <option disabled="" value="label2" style="border-bottom: 1px solid rgba(153, 153, 153, 0.3); margin: -10px 0px 4px;">Development releases (might be unstable)</option>
+   <option value="dev3python3/latest">Bleeding Edge</option>
+   <option value="dev3/latest">Bleeding Edge Python2</option>
+   <option disabled="" value="empty2" style="border-bottom: 1px solid rgba(153, 153, 153, 0.3); margin: -10px 0px 4px;"></option>
+   <option disabled="" value="label3" style="border-bottom: 1px solid rgba(153, 153, 153, 0.3); margin: -10px 0px 4px;">Other releases</option>
+   <option value="LCG_97apython3">97a</option>
+   <option value="LCG_97a">97a Python2</option>
+   <option value="LCG_96">96</option>
    <option value="LCG_96python3">96 Python3</option>
-   <option style="border-bottom:1px solid rgba(153,153,153,.3); margin:-10px 0 4px 0" disabled="disabled"></option>
-   <option style="border-bottom:1px solid rgba(153,153,153,.3); margin:-10px 0 4px 0" disabled="disabled">Development releases (might be unstable)</option>
-   <option value="dev3/latest">Bleeding Edge</option>
-   <option value="dev3python3/latest">Bleeding Edge Python3</option>
-   <option style="border-bottom:1px solid rgba(153,153,153,.3); margin:-10px 0 4px 0" disabled="disabled"></option>
-   <option style="border-bottom:1px solid rgba(153,153,153,.3); margin:-10px 0 4px 0" disabled="disabled">Development releases (GPU)</option>
-   <option value="LCG_96py3cu10">96 Cuda 10 Python3</option>
-   <option value="dev4cuda/latest">Bleeding Edge Cuda 10 Python3</option>
-   <option style="border-bottom:1px solid rgba(153,153,153,.3); margin:-10px 0 4px 0" disabled="disabled"></option>
-   <option style="border-bottom:1px solid rgba(153,153,153,.3); margin:-10px 0 4px 0" disabled="disabled">Other releases</option>
    <option value="LCG_95a">95a</option>
    <option value="LCG_95apython3">95a Python3</option>
    <option value="LCG_94">94</option>
    <option value="LCG_94python3">94 Python3</option>
-   <option value="LCG_93">93</option>
-   <option value="LCG_93python3">93 Python3</option>
-   <option value="LCG_92">92</option>
-   <option value="LCG_92python3">92 Python3</option>
-   <option value="LCG_91">91</option>
-   <option value="LCG_91python3">91 Python3</option>
-   <option value="LCG_90">90</option>
-   <option value="LCG_90python3">90 Python3</option>
-   <option value="LCG_89">89</option>
-   <option value="LCG_89python3">89 Python3</option>
-   <option value="LCG_88">88</option>
-   <option value="LCG_88Py3">88 Python3</option>
-   <option value="LCG_87">87</option>
-   <option value="LCG_86">86</option>
-   <option value="LCG_85swan3">85 SWAN3</option>
 </select>
 <br>
 <label for="platform">Platform <a href="#" onclick="toggle_visibility('platformDetails');"><span class='nbs'>more...</span></a>
@@ -63,8 +49,6 @@
 </label>
 <select name="platform">
    <option value="x86_64-centos7-gcc8-opt" selected="">CentOS 7 (gcc8)</option>
-   <option value="x86_64-centos7-gcc7-opt">CentOS 7 (gcc7)</option>
-   <option value="x86_64-centos7-gcc62-opt">CentOS 7 (gcc62)</option>
 </select>
 <br>
 <label for="scriptenv">Environment script <a href="#" onclick="toggle_visibility('scriptenvDetails');"><span class='nbs'>more...</span></a>
