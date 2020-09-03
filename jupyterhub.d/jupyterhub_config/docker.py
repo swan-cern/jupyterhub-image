@@ -85,7 +85,9 @@ else:
 c.JupyterHub.spawner_class = 'swanspawner.SwanDockerSpawner'
 c.SwanSpawner.image = CONTAINER_IMAGE
 c.SwanSpawner.remove_containers = True
-c.SwanSpawner.options_form = '/srv/jupyterhub/jupyterhub_form.html'
+c.SwanSpawner.options_form = open('/srv/jupyterhub/jupyterhub_form.html').read()
+# JSON with default values (if not present, Spawner will crash...)
+c.SwanSpawner.options_form_config = '/srv/jupyterhub/options_form_config.json'
 
 # Instruct spawned containers to use the internal Docker network
 c.SwanSpawner.use_internal_ip = True

@@ -185,6 +185,7 @@ RUN mv /etc/httpd/conf.d/shib.conf /etc/httpd/conf.d/shib.noload && \
 ##TODO: This is copied from prod. Will go out of sync quickly.
 ADD ./jupyterhub.d/jupyterhub_form.complete.html /srv/jupyterhub/jupyterhub_form.complete.html
 ADD ./jupyterhub.d/jupyterhub_form.simple.html /srv/jupyterhub/jupyterhub_form.simple.html
+ADD ./jupyterhub.d/options_form_config.json /srv/jupyterhub/options_form_config.json
 
 # JupyterHub configuration
 ##TODO: This should go to HELM and configmaps
