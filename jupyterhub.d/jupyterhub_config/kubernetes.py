@@ -1,6 +1,7 @@
 # Configuration file for JupyterHub
 import os
 import socket
+import pwd
 
 
 ### VARIABLES ###
@@ -124,6 +125,12 @@ c.SwanSpawner.extra_env = dict(
     HELP_ENDPOINT         = "https://raw.githubusercontent.com/swan-cern/help/up2u/",
     GALLERY_URL           = GALLERY_URL
 )
+
+# Now the Spawner expects the user uid to be injected by the authenticator
+# Since ours don't do it, we set the UID as we were doing before: by resolving the user locally
+def auth_state_hook(spawner, auth_state):
+    spawner.user_uid = pwd.getpwnam(spawner.user.name).pw_uid
+c.SwanSpawner.auth_state_hook = auth_state_hook
 
 # local_home equal to true to hide the "always start with this config"
 c.SpawnHandlersConfigs.local_home = True
