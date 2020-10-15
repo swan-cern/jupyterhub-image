@@ -45,7 +45,6 @@ c.Spawner.debug = True
 c.LocalProcessSpawner.debug = True
 
 # Add SWAN look&feel
-c.JupyterHub.template_paths = ['/srv/jupyterhub/jh_gitlab/templates']
 c.JupyterHub.logo_file = '/usr/local/share/jupyterhub/static/swan/logos/logo_swan_cloudhisto.png'
 
 # Reach the Hub from outside
