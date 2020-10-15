@@ -141,8 +141,8 @@ RUN pip install \
         swannotificationsservice==0.0.0 \
         swanspawner==0.0.0
 
-# make jupyterhub execute start_jupyterhub.py instead
-RUN ln -sf /srv/jupyterhub/jh_gitlab/scripts/start_jupyterhub.py /usr/local/bin/jupyterhub
+# make jupyterhub execute swanhub instead
+RUN ln -sf /usr/local/bin/swanhub /usr/local/bin/jupyterhub
 
 # ----- sssd configuration ----- #
 ##TODO: This should go to HELM and configmaps
