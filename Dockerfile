@@ -29,7 +29,6 @@ ARG DUMMYAUTHENTICATOR_VERSION="0.3.1"
 
 ARG JUPYTERHUB_VERSION="1.1.0"
 ARG CHP_VERSION="4.2.0"
-ARG JUPYTERHUB_EXTENSIONS_TAG="v2.9"
 ARG COMMON_ASSETS_TAG="v2.4"
 
 
@@ -134,22 +133,13 @@ RUN mkdir /usr/local/share/jupyterhub/static/swan/ && \
     unzip common.zip && \
     rm -f common.zip
 
-# Handlers, Spawners, Templates, ...
-RUN git clone -b $JUPYTERHUB_EXTENSIONS_TAG https://gitlab.cern.ch/swan/jupyterhub.git /srv/jupyterhub/jh_gitlab
-# Install CERN KeyCloakAuthenticator (oauthenticator)
-WORKDIR /srv/jupyterhub/jh_gitlab/KeyCloakAuthenticator
-RUN pip3 install .
-# Install CERN Spawner
-WORKDIR /srv/jupyterhub/jh_gitlab/SwanSpawner
-RUN pip3 install .
-# Install CERN Handlers
-WORKDIR /srv/jupyterhub/jh_gitlab/CERNHandlers
-RUN pip3 install .
-# Install CERN SwanNotificationsService
-WORKDIR /srv/jupyterhub/jh_gitlab/SwanNotificationsService
-RUN pip3 install .
-
-WORKDIR /
+# Install all of our JH extensions
+RUN pip install \
+        keycloakauthenticator==0.0.0 \
+        swanculler==0.0.0 \
+        swanhub==0.0.0 \
+        swannotificationsservice==0.0.0 \
+        swanspawner==0.0.0
 
 # make jupyterhub execute start_jupyterhub.py instead
 RUN ln -sf /srv/jupyterhub/jh_gitlab/scripts/start_jupyterhub.py /usr/local/bin/jupyterhub
