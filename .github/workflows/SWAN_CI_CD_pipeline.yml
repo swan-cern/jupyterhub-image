@@ -27,16 +27,15 @@ jobs:
     - name: Update package version
       run: |
         echo "Updating information for package = ${{ github.event.inputs.package }} version = ${{ github.event.inputs.version }}"
-
         export PKG_NAME_LOWER=$(echo " ${{ github.event.inputs.package }}" | tr '[:upper:]' '[:lower:]')
         export PKG_VER=$(echo ${{ github.event.inputs.version }} | sed -e "s/v//g")
         sed -i "s/\( $PKG_NAME_LOWER==*\)[^ ]*/\1$PKG_VER/" Dockerfile
-
-    - name: Push
-      uses: github-actions-x/commit@v2.7
+    - name: Create Pull Request
+      id: cpr
+      uses: peter-evans/create-pull-request@v3
       with:
-        github-token: ${{ secrets.WORKFLOW_ACCESS_TOKEN }}
-        push-branch: master
-        name: "SWAN CI/CD pipeline"
+        token: ${{ secrets.GITHUB_TOKEN }}
         commit-message: "Updated package ${{ github.event.inputs.package }} to version ${{ github.event.inputs.version }}"
-        rebase: 'true'
+        branch: '${{ github.event.inputs.package }}-${{ github.event.inputs.version }}'
+        delete-branch: true
+        title: "Updated package ${{ github.event.inputs.package }} to version ${{ github.event.inputs.version }}"
