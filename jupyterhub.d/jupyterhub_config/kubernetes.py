@@ -27,9 +27,6 @@ c.JupyterHub.log_level = 'DEBUG'
 c.Spawner.debug = True
 c.LocalProcessSpawner.debug = True
 
-# Add SWAN look&feel
-c.JupyterHub.logo_file = '/usr/local/share/jupyterhub/static/swan/logos/logo_swan_cloudhisto.png'
-
 # Reach the Hub from local httpd (proxypass)
 c.JupyterHub.ip = "127.0.0.1"
 c.JupyterHub.port = 8000
@@ -114,8 +111,6 @@ c.SwanSpawner.read_only_volumes = { CVMFS_FOLDER : '/cvmfs' }
 #c.SwanSpawner.local_home = True		# If set to True, user <username> $HOME will be /scratch/<username>/
 c.SwanSpawner.local_home = False
 c.SwanSpawner.volumes = { EOS_USER_PATH : '/eos/user' }
-c.SwanSpawner.available_cores = ["2", "4"]
-c.SwanSpawner.available_memory = ["8", "10"]
 c.SwanSpawner.check_cvmfs_status = False #For now it only checks if available in same place as Jupyterhub.
 
 c.SwanSpawner.extra_env = dict(

@@ -44,9 +44,6 @@ c.JupyterHub.log_level = 'DEBUG'
 c.Spawner.debug = True
 c.LocalProcessSpawner.debug = True
 
-# Add SWAN look&feel
-c.JupyterHub.logo_file = '/usr/local/share/jupyterhub/static/swan/logos/logo_swan_cloudhisto.png'
-
 # Reach the Hub from outside
 c.JupyterHub.ip = "0.0.0.0"     # Listen on all IPs for HTTP traffic when in Kubernetes
 c.JupyterHub.port = 8000	# You may end up in detecting the wrong IP address due to:
@@ -155,8 +152,6 @@ c.SwanSpawner.volumes = [
         }
     }
 ]
-c.SwanSpawner.available_cores = ["2", "4"]
-c.SwanSpawner.available_memory = ["8", "10"]
 c.SwanSpawner.check_cvmfs_status = False #For now it only checks if available in same place as Jupyterhub.
 
 c.SwanSpawner.extra_env = dict(
