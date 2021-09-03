@@ -139,7 +139,7 @@ RUN pip install \
         swanculler==0.0.2 \
         swanhub==0.0.3 \
         swannotificationsservice==0.0.1 \
-        swanspawner==0.2.0
+        swanspawner==0.3.1
 
 # make jupyterhub execute swanhub instead
 RUN ln -sf /usr/local/bin/swanhub /usr/local/bin/jupyterhub
