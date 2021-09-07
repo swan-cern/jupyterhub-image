@@ -137,7 +137,7 @@ RUN mkdir /usr/local/share/jupyterhub/static/swan/ && \
 RUN pip install \
         keycloakauthenticator==2.0.0 \
         swanculler==0.0.2 \
-        swanhub==0.0.3 \
+        swanhub==0.1.0 \
         swannotificationsservice==0.0.1 \
         swanspawner==0.3.1
 
