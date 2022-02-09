@@ -56,14 +56,48 @@ RUN yum -y install \
     rm -rf /var/cache/yum
 
 # Install Python, pip, and related upgrades
-RUN yum -y install \
-      python36 \
-      python36-libs \
-      python36-pip \
-      python36-devel \
-      python36-setuptools && \
+RUN yum -y update && \
+    yum -y install \
+        bzip2 \
+        gcc \
+        gcc-c++ \
+        git \
+        kernel-devel \
+        libcurl-openssl-devel \
+        libffi-devel \
+        make \
+        ncurses-devel \
+        nano \
+        openssl-devel \
+        patch \
+        sqlite-devel \
+        unzip \
+        wget \
+        which \
+        zeromq3-devel \
+        zlib-devel \
+        perl-Digest-MD5 \
+        fontconfig && \
     yum clean all && \
     rm -rf /var/cache/yum
+# Install Python 3
+RUN mkdir /tmp/pytmp && \
+    cd /tmp/pytmp && \
+    wget https://www.python.org/ftp/python/3.9.6/Python-3.9.6.tgz && \
+    tar xzvf Python-3.9.6.tgz && \
+    cd /tmp/pytmp/Python-3.9.6 && \
+    ./configure --enable-shared && \
+    make install && \
+    rm -rf /tmp/pytmp
+
+# Set up the LD_LIBRARY_PATH for Pip3 and Python3 to work
+ENV LD_LIBRARY_PATH /usr/local/lib/
+RUN echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH" >> /etc/environment
+
+# Install the recent pip release
+RUN curl -O https://bootstrap.pypa.io/get-pip.py && \
+    python3 get-pip.py && \
+    rm get-pip.py
 
 # Add hadoop repo. and install fetchdt
 ADD ./repos/hdp7-stable.repo /etc/yum.repos.d/hdp7-stable.repo
@@ -80,8 +114,6 @@ RUN yum -y install \
     yum clean all && \
     rm -rf /var/cache/yum
 
-# Upgrade pip package manager
-RUN pip3.6 install --upgrade pip
 
 # ----- Install JupyterHub ----- #
 
@@ -114,14 +146,14 @@ RUN mkdir -p /var/log/jupyterhub
 ADD ./jupyterhub.d/WebIdentityHandlers/SSOtoLDAPAuthenticator /tmp/SSOtoLDAPAuthenticator
 WORKDIR /tmp/SSOtoLDAPAuthenticator
 RUN pip install -r requirements.txt && \
-    python3.6 setup.py install
+    python3.9 setup.py install
 
 #TODO: NNFP -- Remove and install separately by building on top of the produced image
 # Additional authenticator: SSO Remote User Authenticator
 ADD ./jupyterhub.d/WebIdentityHandlers/SSORemoteUserAuthenticator /tmp/SSORemoteUserAuthenticator
 WORKDIR /tmp/SSORemoteUserAuthenticator
 RUN pip install -r requirements.txt && \
-    python3.6 setup.py install
+    python3.9 setup.py install
 WORKDIR /
 
 # ----- Install CERN customizations ----- #
@@ -133,13 +165,16 @@ RUN mkdir /usr/local/share/jupyterhub/static/swan/ && \
     unzip common.zip && \
     rm -f common.zip
 
+RUN rm -rf /usr/local/lib/python3.9/site-packages/jupyterhub*
 # Install all of our JH extensions
 RUN pip install \
         keycloakauthenticator==2.0.0 \
         swanculler==0.0.2 \
         swanhub==0.1.2 \
         swannotificationsservice==0.0.1 \
-        swanspawner==0.4.0
+        swanspawner==0.4.0 \
+        jupyterhub==1.4.2 \
+        kubernetes==20.13.0
 
 # make jupyterhub execute swanhub instead
 RUN ln -sf /usr/local/bin/swanhub /usr/local/bin/jupyterhub
@@ -191,5 +226,6 @@ ADD ./supervisord.d/jupyterhub.ini /etc/supervisord.d/jupyterhub.ini
 
 # ----- Run the setup script in the container ----- #
 ADD ./jupyterhub.d/start.sh /root/start.sh
+RUN ln -s /usr/local/lib/libpython3.9.so.1.0 /lib64
 CMD ["/bin/bash", "/root/start.sh"]
 
