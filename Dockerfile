@@ -189,6 +189,12 @@ RUN mv /etc/supervisord.d/sssd.noload /etc/supervisord.d/sssd.ini && \
     mv /etc/supervisord.d/httpd.noload /etc/supervisord.d/httpd.ini
 ADD ./supervisord.d/jupyterhub.ini /etc/supervisord.d/jupyterhub.ini
 
+# need to install helm v2.17 to set the right helm2 repos, then remove as incompatible with
+# the version in the cluster... to be cleaned up once we move to helm3 in sparkk8s
+RUN curl https://get.helm.sh/helm-v2.17.0-linux-amd64.tar.gz | tar xzvf - -C /usr/bin --strip=1 linux-amd64/helm && \
+	helm init --client-only && \
+	curl https://get.helm.sh/helm-v2.16.7-linux-amd64.tar.gz | tar xzvf - -C /usr/bin --strip=1 linux-amd64/helm
+
 # ----- Run the setup script in the container ----- #
 ADD ./jupyterhub.d/start.sh /root/start.sh
 CMD ["/bin/bash", "/root/start.sh"]
