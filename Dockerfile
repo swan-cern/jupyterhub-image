@@ -138,7 +138,7 @@ RUN pip install \
         keycloakauthenticator==3.0.0 \
         swanculler==0.0.2 \
         swanhub==0.1.3 \
-        swannotificationsservice==0.0.1 \
+        swannotificationsservice==0.1.0 \
         swanspawner==0.4.0 \
         kubernetes~=20.13.0
 
