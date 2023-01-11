@@ -139,7 +139,7 @@ RUN pip install \
         swanculler==0.0.2 \
         swanhub==0.1.6 \
         swannotificationsservice==0.0.1 \
-        swanspawner==0.4.0 \
+        swanspawner==0.4.1 \
         kubernetes~=20.13.0
 
 # make jupyterhub execute swanhub instead
