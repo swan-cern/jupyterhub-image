@@ -74,7 +74,12 @@ RUN pip3 install --no-cache \
          swannotificationsservice==0.0.1 \
          swanspawner==0.4.2
 
-# TODO: Install kS4U
+# Install kS4U
+ADD ./bin/kS4U.pl /usr/bin/kS4U
+ADD ./conf/krb5.conf /etc/krb5.conf
+RUN chmod +x /usr/bin/kS4U && \
+    dnf install -y perl-Authen-Krb5 && \
+    dnf clean all && rm -rf /var/cache/dnf
 
 # Add Hadoop repo and install fetchdt
 ADD ./repos/hdp7-stable.repo /etc/yum.repos.d/hdp7-stable.repo
