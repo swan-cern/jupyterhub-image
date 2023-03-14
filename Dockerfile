@@ -10,7 +10,7 @@ WORKDIR /tmp
 
 RUN dnf group install -y "Development Tools"
 
-RUN yum install -y python3-pip \
+RUN dnf install -y python3-pip \
                    python3-devel \
                    libcurl-devel \
                    openssl-devel
@@ -43,12 +43,12 @@ ARG COMMON_ASSETS_TAG="v2.6"
 # ----- Install JupyterHub ----- #
 
 # Install support packages
-RUN yum install -y python3-pip \
+RUN dnf install -y python3-pip \
                    # needed by pycurl
                    openssl \
                    # needed by swanculler
                    sudo && \
-    yum clean all && rm -rf /var/cache/yum
+    dnf clean all && rm -rf /var/cache/dnf
 
 # Install JH dependencies for PostgreSQL db support, pycurl over https and cryptography for auth state
 ARG PYCURL_WHEEL="/tmp/pycurl-${PYCURL_VERSION}-cp39-cp39-linux_x86_64.whl"
@@ -83,18 +83,18 @@ RUN pip3 install --no-cache \
 
 # Add Hadoop repo and install fetchdt
 ADD ./repos/hdp7-stable.repo /etc/yum.repos.d/hdp7-stable.repo
-RUN yum -y install hadoop-fetchdt && \
-    yum clean all && rm -rf /var/cache/yum
+RUN dnf -y install hadoop-fetchdt && \
+    dnf clean all && rm -rf /var/cache/dnf
 
 # Web GUI (CSS, logo)
-RUN yum install -y unzip wget && \
+RUN dnf install -y unzip wget && \
     mkdir /usr/local/share/jupyterhub/static/swan/ && \
     cd /usr/local/share/jupyterhub/static/swan/ && \
     echo "Downloading Common assests build version: ${COMMON_ASSETS_TAG}" && \
     wget https://gitlab.cern.ch/api/v4/projects/25625/jobs/artifacts/$COMMON_ASSETS_TAG/download?job=release-version -O common.zip && \
     unzip common.zip && \
-    yum remove -y unzip wget && \
-    yum clean all && rm -rf /var/cache/yum \
+    dnf remove -y unzip wget && \
+    dnf clean all && rm -rf /var/cache/dnf \
     rm -f common.zip
 
 # Make jupyterhub execute swanhub instead
