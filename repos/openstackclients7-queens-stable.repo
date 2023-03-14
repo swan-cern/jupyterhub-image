@@ -1,6 +1,0 @@
-[openstackclients7-queens-stable]
-name=Openstack Clients
-baseurl=http://linuxsoft.cern.ch/internal/repos/openstackclients7-queens-stable/x86_64/os
-enabled=1
-gpgcheck=0
-priority=5
