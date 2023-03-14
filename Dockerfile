@@ -34,13 +34,11 @@ ARG PYPOSTGRES_VERSION="2.8.6"
 ARG CRYPTOGRAPHY_VERSION="2.3.*"
 ARG SQLALCHEMY_VERSION="1.4.46"
 
-ARG JUPYTERHUB_VERSION="1.4.2"
-
 ARG KUBECLIENT_VERSION="20.13.0"
 
 ARG COMMON_ASSETS_TAG="v2.6"
 
-# ----- Install JupyterHub ----- #
+# ----- Install JupyterHub dependencies ----- #
 
 # Install support packages
 RUN dnf install -y python3-pip \
@@ -65,9 +63,6 @@ RUN pip3 install --no-cache \
 
 # Install Kubernetes client (for kubespawner)
 RUN pip3 install --no-cache kubernetes==${KUBECLIENT_VERSION}
-
-# Install JH
-RUN pip3 install --no-cache jupyterhub==${JUPYTERHUB_VERSION}
 
 # ----- Install CERN customizations ----- #
 
