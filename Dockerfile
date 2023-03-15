@@ -89,15 +89,30 @@ RUN dnf -y install hadoop-fetchdt && \
     dnf clean all && rm -rf /var/cache/dnf
 
 # Web GUI (CSS, logo)
-RUN dnf install -y unzip wget && \
+RUN dnf install -y unzip && \
     mkdir /usr/local/share/jupyterhub/static/swan/ && \
     cd /usr/local/share/jupyterhub/static/swan/ && \
     echo "Downloading Common assests build version: ${COMMON_ASSETS_TAG}" && \
-    wget https://gitlab.cern.ch/api/v4/projects/25625/jobs/artifacts/$COMMON_ASSETS_TAG/download?job=release-version -O common.zip && \
+    curl -L https://gitlab.cern.ch/api/v4/projects/25625/jobs/artifacts/$COMMON_ASSETS_TAG/download?job=release-version -o common.zip && \
     unzip common.zip && \
-    dnf remove -y unzip wget && \
+    dnf remove -y unzip && \
     dnf clean all && rm -rf /var/cache/dnf \
     rm -f common.zip
 
 # Make jupyterhub execute swanhub instead
 RUN ln -sf /usr/local/bin/swanhub /usr/local/bin/jupyterhub
+
+# Align with upstream image
+
+## Install Tini
+RUN curl -L https://github.com/krallin/tini/releases/download/v0.19.0/tini -o tini && \
+    echo "93dcc18adc78c65a028a84799ecf8ad40c936fdfc5f2a57b1acda5a8117fa82c  tini" | sha256sum -c - && \
+    mv tini /usr/local/bin/tini && \
+    chmod +x /usr/local/bin/tini
+
+RUN pip3 install --no-cache \
+         py-spy
+
+EXPOSE 8081
+ENTRYPOINT ["tini", "--"]
+CMD ["jupyterhub", "--config", "/usr/local/etc/jupyterhub/jupyterhub_config.py"]
