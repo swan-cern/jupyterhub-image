@@ -1,12 +1,12 @@
-ARG PYCURL_VERSION="7.43.0.6"
+
+ARG WHEEL_DIR="/tmp/wheels"
 
 ######### Helper build stage for pycurl #########
 
 FROM gitlab-registry.cern.ch/linuxsupport/alma9-base:20221201-1 AS builder
 
-ARG PYCURL_VERSION
-
-WORKDIR /tmp
+ARG WHEEL_DIR
+ARG PYCURL_VERSION="7.43.0.6"
 
 RUN dnf group install -y "Development Tools"
 
@@ -18,6 +18,7 @@ RUN dnf install -y python3-pip \
 RUN pip3 install --no-cache wheel && \
     PYCURL_SSL_LIBRARY=openssl \
     pip3 wheel --no-cache \
+         --wheel-dir=$WHEEL_DIR \
          pycurl==$PYCURL_VERSION
 
 
@@ -27,9 +28,10 @@ FROM gitlab-registry.cern.ch/linuxsupport/alma9-base:20221201-1
 
 LABEL maintainer="swan-admins@cern.ch"
 
+ARG WHEEL_DIR
+
 # ----- Software versions ----- #
 
-ARG PYCURL_VERSION
 ARG PYPOSTGRES_VERSION="2.8.6"
 ARG CRYPTOGRAPHY_VERSION="2.3.*"
 ARG SQLALCHEMY_VERSION="1.4.46"
@@ -49,17 +51,17 @@ RUN dnf install -y python3-pip \
     dnf clean all && rm -rf /var/cache/dnf
 
 # Install JH dependencies for PostgreSQL db support, pycurl over https and cryptography for auth state
-ARG PYCURL_WHEEL="/tmp/pycurl-${PYCURL_VERSION}-cp39-cp39-linux_x86_64.whl"
-
-COPY --from=builder $PYCURL_WHEEL $PYCURL_WHEEL
+COPY --from=builder $WHEEL_DIR $WHEEL_DIR
 
 RUN pip3 install --no-cache \
-         $PYCURL_WHEEL \
+         --find-links=$WHEEL_DIR \
+         pycurl \
          psycopg2-binary==$PYPOSTGRES_VERSION \
          cryptography==$CRYPTOGRAPHY_VERSION \
          # current version of JH is not compatible with sqlalchemy v2
          # https://github.com/jupyterhub/jupyterhub/issues/4312
-         sqlalchemy==$SQLALCHEMY_VERSION
+         sqlalchemy==$SQLALCHEMY_VERSION && \
+         rm -rf $WHEEL_DIR
 
 # Install Kubernetes client (for kubespawner)
 RUN pip3 install --no-cache kubernetes==${KUBECLIENT_VERSION}
