@@ -105,14 +105,15 @@ RUN dnf install -y unzip && \
 # Make jupyterhub execute swanhub instead
 RUN ln -sf /usr/local/bin/swanhub /usr/local/bin/jupyterhub
 
-# Align with upstream image
+# ----- Align with upstream image ----- #
 
-## Install Tini
+# Install tini
 RUN curl -L https://github.com/krallin/tini/releases/download/v0.19.0/tini -o tini && \
     echo "93dcc18adc78c65a028a84799ecf8ad40c936fdfc5f2a57b1acda5a8117fa82c  tini" | sha256sum -c - && \
     mv tini /usr/local/bin/tini && \
     chmod +x /usr/local/bin/tini
 
+# Install py-spy
 RUN pip3 install --no-cache \
          py-spy
 
