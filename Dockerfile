@@ -54,14 +54,17 @@ RUN dnf install -y python3-pip \
 COPY --from=builder $WHEEL_DIR $WHEEL_DIR
 
 RUN pip3 install --no-cache \
+         --no-index \
          --find-links=$WHEEL_DIR \
-         pycurl \
+         pycurl && \
+         rm -rf $WHEEL_DIR
+
+RUN pip3 install --no-cache \
          psycopg2-binary==$PYPOSTGRES_VERSION \
          cryptography==$CRYPTOGRAPHY_VERSION \
          # current version of JH is not compatible with sqlalchemy v2
          # https://github.com/jupyterhub/jupyterhub/issues/4312
-         sqlalchemy==$SQLALCHEMY_VERSION && \
-         rm -rf $WHEEL_DIR
+         sqlalchemy==$SQLALCHEMY_VERSION
 
 # Install Kubernetes client (for kubespawner)
 RUN pip3 install --no-cache kubernetes==${KUBECLIENT_VERSION}
