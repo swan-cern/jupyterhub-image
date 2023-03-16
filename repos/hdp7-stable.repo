@@ -1,7 +1,0 @@
-[hdp7-stable]
-name=Hadoop repository from CERN Koji [stable]
-baseurl=http://linuxsoft.cern.ch/internal/repos/hdp7-stable/x86_64/os
-enabled=1
-gpgcheck=True
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-koji file:///etc/pki/rpm-gpg/RPM-GPG-KEY-kojiv2
-priority=15

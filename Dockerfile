@@ -86,11 +86,6 @@ RUN chmod +x /usr/bin/kS4U && \
     dnf install -y perl-Authen-Krb5 && \
     dnf clean all && rm -rf /var/cache/dnf
 
-# Add Hadoop repo and install fetchdt
-ADD ./repos/hdp7-stable.repo /etc/yum.repos.d/hdp7-stable.repo
-RUN dnf -y install hadoop-fetchdt && \
-    dnf clean all && rm -rf /var/cache/dnf
-
 # Web GUI (CSS, logo)
 RUN dnf install -y unzip && \
     mkdir /usr/local/share/jupyterhub/static/swan/ && \
