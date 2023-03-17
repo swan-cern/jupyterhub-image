@@ -97,6 +97,10 @@ RUN dnf install -y unzip && \
     dnf clean all && rm -rf /var/cache/dnf \
     rm -f common.zip
 
+# Add scripts for culler (EOS tickets) and token generation
+ADD ./scripts/culler /srv/jupyterhub/culler
+ADD ./scripts/private /srv/jupyterhub/private
+
 # Make jupyterhub execute swanhub instead
 RUN ln -sf /usr/local/bin/swanhub /usr/local/bin/jupyterhub
 
