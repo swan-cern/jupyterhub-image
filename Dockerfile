@@ -99,7 +99,9 @@ RUN dnf install -y unzip && \
 
 # Add scripts for culler (EOS tickets) and token generation
 ADD ./scripts/culler /srv/jupyterhub/culler
+RUN chmod 544 /srv/jupyterhub/culler/*.sh
 ADD ./scripts/private /srv/jupyterhub/private
+RUN chmod 544 /srv/jupyterhub/private/*.sh
 
 # Make jupyterhub execute swanhub instead
 RUN ln -sf /usr/local/bin/swanhub /usr/local/bin/jupyterhub
