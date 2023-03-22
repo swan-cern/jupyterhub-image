@@ -1,0 +1,8 @@
+[kubernetes9al-stable]
+name=Kubernetes clients [stable]
+baseurl=http://linuxsoft.cern.ch/internal/repos/kubernetes9al-stable/x86_64/os
+enabled=1
+gpgcheck=True
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-kojiv2
+includepkgs=kubernetes-client helm
+priority=20

@@ -86,6 +86,12 @@ RUN chmod +x /usr/bin/kS4U && \
     dnf install -y perl-Authen-Krb5 && \
     dnf clean all && rm -rf /var/cache/dnf
 
+# Install kubectl and helm (for sparkk8s_token.sh)
+ADD ./repos/kubernetes9al-stable.repo /etc/yum.repos.d/kubernetes9al-stable.repo
+RUN dnf install -y kubernetes-client \
+                   helm && \
+    dnf clean all && rm -rf /var/cache/dnf
+
 # Web GUI (CSS, logo)
 RUN dnf install -y unzip && \
     mkdir /usr/local/share/jupyterhub/static/swan/ && \
