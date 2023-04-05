@@ -20,6 +20,17 @@ USERNAME="$1"
 SERVICE_ACCOUNT="spark"
 
 KUBECONFIG="/srv/jupyterhub/private/sparkk8s.cred"
+
+if [[ ! -f $KUBECONFIG ]]; then
+    exit 1
+fi
+
+if [ $SWAN_DEV = "true" ]; then
+    # For dev purposes, one can provide already generated token
+    echo $(cat $KUBECONFIG | base64 -w 0)
+    exit 0
+fi
+
 SERVER=$(awk -F"server: " '{print $2}' ${KUBECONFIG} | sed '/^$/d')
 
 helm init --client-only > /dev/null 2>&1
