@@ -14,6 +14,12 @@ echo "$NAMENODES"
 CLUSTER=$1
 USER=$2
 
+if [ $SWAN_DEV = "true" ]; then
+    # For dev purposes, just generate some dummy string
+    echo $(echo "dummy" | base64 -w 0)
+    exit 0
+fi
+
 # Generate HDFS, YARN, HIVE tokens
 export KRB5CCNAME=$(mktemp /tmp/hswan.XXXXXXXXX)
 kinit -V -kt /srv/jupyterhub/private/hadoop.cred hswan@CERN.CH -c $KRB5CCNAME >/dev/null 2>&1

@@ -8,6 +8,12 @@ if [[ ! -f "/srv/jupyterhub/private/eos.cred" ]]; then
     exit 1;
 fi
 
+if [ $SWAN_DEV = "true" ]; then
+    # For dev purposes, one can provide already generated token
+    echo $(cat /srv/jupyterhub/private/eos.cred | base64 -w 0)
+    exit 0
+fi
+
 FILENAME="/tmp/krb5cc_$USER"
 
 kS4U -v -u $USER -s constrdt -proxy xrootd/eosuser.cern.ch,xrootd/eospublic.cern.ch,xrootd/eoshome.cern.ch,xrootd/eosatlas.cern.ch,xrootd/eoscms.cern.ch,xrootd/eoslhcb.cern.ch,xrootd/eosproject-i00.cern.ch,xrootd/eosproject-i01.cern.ch,xrootd/eosproject-i02.cern.ch -k /srv/jupyterhub/private/eos.cred -c $FILENAME > /dev/null 2>&1
