@@ -4,7 +4,9 @@
 # 1) username for which to check ticket
 USER=$1
 
-if [[ ! -f "/srv/jupyterhub/private/eos.cred" ]]; then
+EOS_KEYTAB=/srv/jupyterhub/private/eos.cred
+
+if [[ ! -f "$EOS_KEYTAB" ]]; then
     exit 1;
 fi
 
@@ -16,7 +18,9 @@ fi
 
 FILENAME="/tmp/krb5cc_$USER"
 
-kS4U -v -u $USER -s constrdt -proxy xrootd/eosuser.cern.ch,xrootd/eospublic.cern.ch,xrootd/eoshome.cern.ch,xrootd/eosatlas.cern.ch,xrootd/eoscms.cern.ch,xrootd/eoslhcb.cern.ch,xrootd/eosproject-i00.cern.ch,xrootd/eosproject-i01.cern.ch,xrootd/eosproject-i02.cern.ch -k /srv/jupyterhub/private/eos.cred -c $FILENAME > /dev/null 2>&1
+KEYTAB_SPN=`klist -k $EOS_KEYTAB | grep -m 1 -Po "swaneos[12](?=@CERN.CH)"`
+
+kS4U -v -u $USER -s $KEYTAB_SPN -proxy xrootd/eosuser.cern.ch,xrootd/eospublic.cern.ch,xrootd/eoshome.cern.ch,xrootd/eosatlas.cern.ch,xrootd/eoscms.cern.ch,xrootd/eoslhcb.cern.ch,xrootd/eosproject-i00.cern.ch,xrootd/eosproject-i01.cern.ch,xrootd/eosproject-i02.cern.ch -k $EOS_KEYTAB -c $FILENAME > /dev/null 2>&1
 if [[ $? -ne 0 ]]; then
     exit 1;
 fi
