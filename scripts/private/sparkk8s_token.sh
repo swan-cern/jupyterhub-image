@@ -25,7 +25,7 @@ if [[ ! -f $KUBECONFIG ]]; then
     exit 1
 fi
 
-if [ $SWAN_DEV = "true" ]; then
+if [ "$SWAN_DEV" = "true" ]; then
     # For dev purposes, one can provide already generated token
     echo $(cat $KUBECONFIG | base64 -w 0)
     exit 0
