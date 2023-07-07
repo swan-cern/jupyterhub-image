@@ -20,7 +20,7 @@ function get_namenodes {
 CLUSTER=$1
 USER=$2
 
-if [ $SWAN_DEV = "true" ]
+if [ "$SWAN_DEV" = "true" ]
 then
     # For dev purposes, just generate some dummy string
     echo $(echo "dummy" | base64 -w 0)
