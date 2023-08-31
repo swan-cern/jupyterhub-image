@@ -74,7 +74,7 @@ RUN pip3 install --no-cache kubernetes==${KUBECLIENT_VERSION}
 # Install JH extensions
 RUN pip3 install --no-cache \
          keycloakauthenticator==3.3.0 \
-         swanculler==0.0.2 \
+         swanculler==0.0.3 \
          swanhub==0.1.6 \
          swannotificationsservice==0.0.1 \
          swanspawner==0.5.0
