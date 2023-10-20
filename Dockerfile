@@ -3,7 +3,7 @@ ARG WHEEL_DIR="/tmp/wheels"
 
 ######### Helper build stage for pycurl #########
 
-FROM gitlab-registry.cern.ch/linuxsupport/alma9-base:20221201-1 AS builder
+FROM gitlab-registry.cern.ch/linuxsupport/alma9-base:20231001-1 AS builder
 
 ARG WHEEL_DIR
 ARG PYCURL_VERSION="7.43.0.6"
@@ -24,7 +24,7 @@ RUN pip3 install --no-cache wheel && \
 
 ################ Main build stage ###############
 
-FROM gitlab-registry.cern.ch/linuxsupport/alma9-base:20221201-1
+FROM gitlab-registry.cern.ch/linuxsupport/alma9-base:20231001-1
 
 LABEL maintainer="swan-admins@cern.ch"
 
