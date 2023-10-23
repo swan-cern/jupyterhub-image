@@ -1,75 +1,22 @@
-
-ARG WHEEL_DIR="/tmp/wheels"
-
-######### Helper build stage for pycurl #########
-
-FROM gitlab-registry.cern.ch/linuxsupport/alma9-base:20231001-1 AS builder
-
-ARG WHEEL_DIR
-ARG PYCURL_VERSION="7.43.0.6"
-
-RUN dnf group install -y "Development Tools"
-
-RUN dnf install -y python3-pip \
-                   python3-devel \
-                   libcurl-devel \
-                   openssl-devel
-
-RUN pip3 install --no-cache wheel && \
-    PYCURL_SSL_LIBRARY=openssl \
-    pip3 wheel --no-cache \
-         --wheel-dir=$WHEEL_DIR \
-         pycurl==$PYCURL_VERSION
-
-
-################ Main build stage ###############
-
 FROM gitlab-registry.cern.ch/linuxsupport/alma9-base:20231001-1
 
 LABEL maintainer="swan-admins@cern.ch"
 
-ARG WHEEL_DIR
-
-# ----- Software versions ----- #
-
-ARG PYPOSTGRES_VERSION="2.8.6"
-ARG CRYPTOGRAPHY_VERSION="2.3.*"
-ARG SQLALCHEMY_VERSION="1.4.46"
-
-ARG KUBECLIENT_VERSION="20.13.0"
-
-ARG COMMON_ASSETS_TAG="v2.6"
-
 # ----- Install JupyterHub dependencies ----- #
+
+# Install JH dependencies for PostgreSQL db support, pycurl over https
+
+RUN dnf install -y python3-psycopg2 \
+                   python3-pycurl && \
+    dnf clean all && rm -rf /var/cache/dnf
+
+# ----- Install CERN customizations ----- #
 
 # Install support packages
 RUN dnf install -y python3-pip \
-                   # needed by pycurl
-                   openssl \
                    # needed by swanculler
                    sudo && \
     dnf clean all && rm -rf /var/cache/dnf
-
-# Install JH dependencies for PostgreSQL db support, pycurl over https and cryptography for auth state
-COPY --from=builder $WHEEL_DIR $WHEEL_DIR
-
-RUN pip3 install --no-cache \
-         --no-index \
-         --find-links=$WHEEL_DIR \
-         pycurl && \
-         rm -rf $WHEEL_DIR
-
-RUN pip3 install --no-cache \
-         psycopg2-binary==$PYPOSTGRES_VERSION \
-         cryptography==$CRYPTOGRAPHY_VERSION \
-         # current version of JH is not compatible with sqlalchemy v2
-         # https://github.com/jupyterhub/jupyterhub/issues/4312
-         sqlalchemy==$SQLALCHEMY_VERSION
-
-# Install Kubernetes client (for kubespawner)
-RUN pip3 install --no-cache kubernetes==${KUBECLIENT_VERSION}
-
-# ----- Install CERN customizations ----- #
 
 # Install JH extensions
 RUN pip3 install --no-cache \
@@ -100,6 +47,7 @@ RUN cd /tmp && \
     rm get_helm.sh
 
 # Web GUI (CSS, logo)
+ARG COMMON_ASSETS_TAG="v2.6"
 RUN dnf install -y unzip && \
     mkdir /usr/local/share/jupyterhub/static/swan/ && \
     cd /usr/local/share/jupyterhub/static/swan/ && \
