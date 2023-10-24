@@ -21,7 +21,7 @@ RUN dnf install -y python3-pip \
 # Install JH extensions
 RUN pip3 install --no-cache \
          keycloakauthenticator==4.0.0 \
-         swanculler==0.0.3 \
+         swanculler==1.0.0 \
          swanhub==0.1.6 \
          swannotificationsservice==0.0.1 \
          swanspawner==0.5.0
