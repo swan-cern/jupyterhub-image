@@ -14,6 +14,8 @@ RUN dnf install -y python3-psycopg2 \
 
 # Install support packages
 RUN dnf install -y python3-pip \
+                   # needed by kS4U
+                   perl-Data-Dumper \
                    # needed by swanculler
                    sudo && \
     dnf clean all && rm -rf /var/cache/dnf
