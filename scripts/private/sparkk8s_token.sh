@@ -55,7 +55,7 @@ fi
 # Retrieve service account secret
 SECRET=$(kubectl --kubeconfig="${KUBECONFIG}" \
 --namespace "${USERNAME}" \
-get serviceaccount "${SERVICE_ACCOUNT}" -o json | python -c 'import json,sys;obj=json.load(sys.stdin);print(obj["secrets"][0]["name"])')
+get serviceaccount "${SERVICE_ACCOUNT}" -o json | python3 -c 'import json,sys;obj=json.load(sys.stdin);print(obj["secrets"][0]["name"])')
 
 if [[ -z "${SECRET// }" ]]; then
     echo "secret for SA ${SERVICE_ACCOUNT} is not found"
@@ -65,12 +65,12 @@ fi
 TOKEN=$(kubectl --kubeconfig="${KUBECONFIG}" \
 --namespace "${USERNAME}" \
 get secret "${SECRET}" -o json \
-| python -c 'import json,sys;obj=json.load(sys.stdin);print(obj["data"]["token"])' | base64 --decode)
+| python3 -c 'import json,sys;obj=json.load(sys.stdin);print(obj["data"]["token"])' | base64 --decode)
 
 CA=$(kubectl --kubeconfig="${KUBECONFIG}" \
 --namespace "${USERNAME}" \
 get secret "${SECRET}" -o json \
-| python -c 'import json,sys;obj=json.load(sys.stdin);print(obj["data"]["ca.crt"])')
+| python3 -c 'import json,sys;obj=json.load(sys.stdin);print(obj["data"]["ca.crt"])')
 
 cat > /tmp/k8s-user.config.$USERNAME <<EOF
 apiVersion: v1
