@@ -47,7 +47,7 @@ do
     # to detect active NN. we cannot use jmx, we have to rely on the exit code of the list action
     if [ $(curl -s --negotiate -u : "$HTTP://$namenode:50070/webhdfs/v1/?op=LISTSTATUS" -o /dev/null -s -w "%{http_code}") -eq 200 ]
     then
-        WEBHDFS_TOKEN=$(curl -s --negotiate -u : "$HTTP://$namenode:50070/webhdfs/v1/?doas=$2&op=GETDELEGATIONTOKEN&renewer=yarn" | python -c 'import json,sys;obj=json.load(sys.stdin);print(obj["Token"]["urlString"])')
+        WEBHDFS_TOKEN=$(curl -s --negotiate -u : "$HTTP://$namenode:50070/webhdfs/v1/?doas=$2&op=GETDELEGATIONTOKEN&renewer=yarn" | python3 -c 'import json,sys;obj=json.load(sys.stdin);print(obj["Token"]["urlString"])')
     fi
 done
 
