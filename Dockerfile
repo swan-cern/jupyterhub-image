@@ -38,15 +38,8 @@ RUN chmod +x /usr/bin/kS4U && \
 # Install kubectl and helm (for sparkk8s_token.sh)
 ADD ./repos/kubernetes9al-stable.repo /etc/yum.repos.d/kubernetes9al-stable.repo
 RUN dnf install -y kubernetes-client && \
+    dnf install -y helm && \
     dnf clean all && rm -rf /var/cache/dnf
-# TODO: Replace this by the installation of the helm system package above
-# Install helm v2 temporarily until the k8s Spark cluster is updated to a more
-# recent k8s version -- helm v3 does not work with the current k8s version
-RUN cd /tmp && \
-    curl -LO https://git.io/get_helm.sh && \
-    chmod 700 get_helm.sh && \
-    HELM_INSTALL_DIR=/usr/bin ./get_helm.sh --version v2.16.7 && \
-    rm get_helm.sh
 
 # Web GUI (CSS, logo)
 ARG COMMON_ASSETS_TAG="v2.6"
