@@ -35,7 +35,7 @@ if [[ -z "${user_exists}" ]]; then
     # User not initialized
     helm install \
     spark-user-${USERNAME} \
-    https://gitlab.cern.ch/db/spark-service/spark-service-charts/-/raw/v104/cern-spark-user-1.0.4.tgz \
+    oci://registry.cern.ch/swan/charts/sparkk8s/cern-spark-user --version 1.0.5 \
     --kubeconfig "${KUBECONFIG}" \
     --namespace ${USERNAME} \
     --create-namespace \
