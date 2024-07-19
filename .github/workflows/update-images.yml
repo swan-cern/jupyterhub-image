@@ -1,0 +1,28 @@
+name: Bump version of jupyterhub in other repositories
+
+on:
+  push:
+    tags:
+    - v*.*
+
+jobs:
+  build-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set environnment package name  and version
+      run: |
+        echo "IMAGE_VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+    
+    - name: Invoke workflow in swan-charts
+      uses: benc-uk/workflow-dispatch@v1
+      with:
+        workflow: Update jupyter and jupyterhub images
+        ref: master
+        repo: swan-cern/swan-charts
+        token: ${{ secrets.WORKFLOW_ACCESS_TOKEN }}
+        inputs: '{ "image": "jupyterhub", "version": "${{env.IMAGE_VERSION}}" }'
