@@ -1,4 +1,4 @@
-FROM gitlab-registry.cern.ch/linuxsupport/alma9-base:20231001-1
+FROM gitlab-registry.cern.ch/linuxsupport/alma9-base:20240801-1
 
 LABEL maintainer="swan-admins@cern.ch"
 
