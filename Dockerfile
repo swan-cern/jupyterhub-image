@@ -26,7 +26,7 @@ RUN pip3 install --no-cache \
          swanculler==1.0.0 \
          swanhub==1.0.2 \
          swannotificationsservice==1.0.1 \
-         swanspawner==1.2.13
+         swanspawner==1.2.14
 
 # Install kS4U
 ADD ./bin/kS4U.pl /usr/bin/kS4U
