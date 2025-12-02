@@ -24,7 +24,7 @@ RUN dnf install -y python3-pip \
 RUN pip3 install --no-cache \
          keycloakauthenticator==4.0.2 \
          swanculler==1.0.5 \
-         swanhub==1.0.8 \
+         swanhub==1.0.9 \
          swannotificationsservice==1.0.1 \
          swanspawner==1.2.27
 
