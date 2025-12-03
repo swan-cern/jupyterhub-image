@@ -41,18 +41,6 @@ RUN dnf install -y kubernetes-client && \
     dnf install -y helm && \
     dnf clean all && rm -rf /var/cache/dnf
 
-# Web GUI (CSS, logo)
-ARG COMMON_ASSETS_TAG="v2.6"
-RUN dnf install -y unzip && \
-    mkdir /usr/local/share/jupyterhub/static/swan/ && \
-    cd /usr/local/share/jupyterhub/static/swan/ && \
-    echo "Downloading Common assests build version: ${COMMON_ASSETS_TAG}" && \
-    curl -L https://gitlab.cern.ch/api/v4/projects/25625/jobs/artifacts/$COMMON_ASSETS_TAG/download?job=release-version -o common.zip && \
-    unzip common.zip && \
-    dnf remove -y unzip && \
-    dnf clean all && rm -rf /var/cache/dnf \
-    rm -f common.zip
-
 # Add scripts for culler (EOS tickets) and token generation
 ADD ./scripts/culler /srv/jupyterhub/culler
 RUN chmod 544 /srv/jupyterhub/culler/*.sh
