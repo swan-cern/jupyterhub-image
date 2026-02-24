@@ -22,11 +22,11 @@ RUN dnf install -y python3-pip \
 
 # Install JH extensions
 RUN pip3 install --no-cache \
-         keycloakauthenticator==4.0.4 \
+         keycloakauthenticator==4.0.5 \
          swanculler==1.0.6 \
-         swanhub==1.0.10 \
+         swanhub==1.0.11 \
          swannotificationsservice==1.0.3 \
-         swanspawner==1.2.36
+         swanspawner==1.2.37
 
 # Install kS4U
 ADD ./bin/kS4U.pl /usr/bin/kS4U
