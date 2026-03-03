@@ -20,7 +20,7 @@ FILENAME="/tmp/krb5cc_$USER"
 
 KEYTAB_SPN=`klist -k $EOS_KEYTAB | grep -m 1 -Po "swaneos[12](?=@CERN.CH)"`
 
-kS4U -v -u $USER -s $KEYTAB_SPN -proxy xrootd/eosuser.cern.ch,xrootd/eospublic.cern.ch,xrootd/eoshome.cern.ch,xrootd/eosatlas.cern.ch,xrootd/eoscms.cern.ch,xrootd/eoslhcb.cern.ch,xrootd/eosproject-i00.cern.ch,xrootd/eosproject-i01.cern.ch,xrootd/eosproject-i02.cern.ch -k $EOS_KEYTAB -c $FILENAME > /dev/null 2>&1
+kS4U -v -u $USER -s $KEYTAB_SPN -proxy xrootd/eospublic.cern.ch,xrootd/eoshome.cern.ch,xrootd/eosatlas.cern.ch,xrootd/eoscms.cern.ch,xrootd/eoslhcb.cern.ch,xrootd/eosproject-i00.cern.ch,xrootd/eosproject-i01.cern.ch,xrootd/eosproject-i02.cern.ch -k $EOS_KEYTAB -c $FILENAME > /dev/null 2>&1
 if [[ $? -ne 0 ]]; then
     exit 1;
 fi
