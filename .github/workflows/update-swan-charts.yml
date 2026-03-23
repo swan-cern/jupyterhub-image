@@ -1,0 +1,21 @@
+name: Bump version of jupyterhub in swan-charts
+
+on:
+  push:
+    tags:
+    - v*.*
+
+jobs:
+  notify-swan-charts:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Trigger image version update in swan-charts
+      env:
+        GH_TOKEN: ${{ secrets.WORKFLOW_ACCESS_TOKEN }}
+      run: |
+        gh workflow run "Update jupyter and jupyterhub images" \
+          --repo swan-cern/swan-charts \
+          --ref master \
+          -f image=jupyterhub \
+          -f version="${GITHUB_REF#refs/tags/}"
