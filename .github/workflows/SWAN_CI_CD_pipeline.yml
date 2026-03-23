@@ -1,42 +1,45 @@
-# This is a basic workflow to help you get started with Actions
-# author: Omar.Zapata@cern.ch 2020
-
 name: SWAN CI/CD pipeline
+
 on: 
   workflow_dispatch:
     inputs:
       package:
-        description: 'Package Name'     
+        description: 'Package Name'
         required: true
-        default: ''    
       version:
-        description: 'Package Version'     
+        description: 'Package Version'
         required: true
-        default: ''       
+
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   update-package:
-
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v6
+    - uses: actions/checkout@v6
       with:
         ref: master
-        persist-credentials: false   # Prevents duplicate Authorization header
 
     - name: Update package version
       run: |
-        echo "Updating information for package = ${{ github.event.inputs.package }} version = ${{ github.event.inputs.version }}"
-        export PKG_NAME_LOWER=$(echo " ${{ github.event.inputs.package }}" | tr '[:upper:]' '[:lower:]')
-        export PKG_VER=$(echo ${{ github.event.inputs.version }} | sed -e "s/v//g")
+        PKG_NAME_LOWER=$(echo " ${{ inputs.package }}" | tr '[:upper:]' '[:lower:]')
+        PKG_VER=$(echo "${{ inputs.version }}" | sed -e "s/v//g")
         sed -i "s/\( $PKG_NAME_LOWER==*\)[^ ]*/\1$PKG_VER/" Dockerfile
-    - name: Create Pull Request
-      id: cpr
-      uses: peter-evans/create-pull-request@v6
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        commit-message: "Updated package ${{ github.event.inputs.package }} to version ${{ github.event.inputs.version }}"
-        branch: '${{ github.event.inputs.package }}-${{ github.event.inputs.version }}'
-        delete-branch: true
-        title: "Updated package ${{ github.event.inputs.package }} to version ${{ github.event.inputs.version }}"
+
+    - name: Create pull request
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        BRANCH="${{ inputs.package }}-${{ inputs.version }}"
+        MESSAGE="Updated package ${{ inputs.package }} to version ${{ inputs.version }}"
+
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git checkout -b "$BRANCH"
+        git add Dockerfile
+        git commit -m "$MESSAGE"
+        git push origin "$BRANCH"
+        gh pr create --title "$MESSAGE" --body "" --head "$BRANCH" --base master
