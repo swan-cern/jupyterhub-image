@@ -1,0 +1,44 @@
+name: Release
+run-name: Release by @${{ github.actor }}
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Calculate next version
+        id: version
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0)
+          LAST_VERSION="${LAST_TAG#v}"
+          IFS='.' read -r MAJOR MINOR <<< "$LAST_VERSION"
+          echo "new_tag=v${MAJOR}.$((MINOR + 1))" >> "$GITHUB_OUTPUT"
+          echo "last_tag=${LAST_TAG}" >> "$GITHUB_OUTPUT"
+
+      - name: Create and push tag
+        env:
+          WORKFLOW_ACCESS_TOKEN: ${{ secrets.WORKFLOW_ACCESS_TOKEN }}
+        run: |
+          git tag "${{ steps.version.outputs.new_tag }}"
+          git remote set-url origin "https://x-access-token:${WORKFLOW_ACCESS_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push origin "${{ steps.version.outputs.new_tag }}"
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NEW_TAG: ${{ steps.version.outputs.new_tag }}
+          LAST_TAG: ${{ steps.version.outputs.last_tag }}
+        run: |
+          NOTES=$(git log "${LAST_TAG}..${NEW_TAG}" --pretty='- %h %s')
+          gh release create "$NEW_TAG" --notes "$NOTES"

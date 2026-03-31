@@ -1,4 +1,5 @@
-name: Bump version of jupyterhub in swan-charts
+name: Update swan-charts
+run-name: Bump swan-charts to jupyterhub:${{ github.ref_name }}
 
 on:
   push:
