@@ -42,3 +42,14 @@ jobs:
         run: |
           NOTES=$(git log "${LAST_TAG}..${NEW_TAG}" --pretty='- %h %s')
           gh release create "$NEW_TAG" --notes "$NOTES"
+
+      - name: Trigger image version update in swan-charts
+        env:
+          GH_TOKEN: ${{ secrets.WORKFLOW_ACCESS_TOKEN }}
+          NEW_TAG: ${{ steps.version.outputs.new_tag }}
+        run: |
+          gh workflow run "Update jupyter and jupyterhub images" \
+            --repo swan-cern/swan-charts \
+            --ref master \
+            -f image=jupyterhub \
+            -f version="$NEW_TAG"
