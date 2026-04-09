@@ -37,8 +37,8 @@ RUN chmod +x /usr/bin/kS4U && \
 
 # Install kubectl and helm (for sparkk8s_token.sh)
 RUN curl -LO "https://dl.k8s.io/release/v1.34.4/bin/linux/amd64/kubectl" && \
-    install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl && rm kubectl
-RUN curl -fsSL https://get.helm.sh/helm-v4.1.3-linux-amd64.tar.gz | tar xz && \
+    install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl && rm kubectl && \
+    curl -fsSL https://get.helm.sh/helm-v4.1.3-linux-amd64.tar.gz | tar xz && \
     install -o root -g root -m 0755 linux-amd64/helm /usr/local/bin/helm && rm -rf linux-amd64
 
 # Add scripts for culler (EOS tickets) and token generation
