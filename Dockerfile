@@ -36,10 +36,10 @@ RUN chmod +x /usr/bin/kS4U && \
     dnf clean all && rm -rf /var/cache/dnf
 
 # Install kubectl and helm (for sparkk8s_token.sh)
-ADD ./repos/kubernetes9al-stable.repo /etc/yum.repos.d/kubernetes9al-stable.repo
-RUN dnf install -y kubernetes-client && \
-    dnf install -y helm && \
-    dnf clean all && rm -rf /var/cache/dnf
+RUN curl -LO "https://dl.k8s.io/release/v1.34.4/bin/linux/amd64/kubectl" && \
+    install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl && rm kubectl
+RUN curl -fsSL https://get.helm.sh/helm-v4.1.3-linux-amd64.tar.gz | tar xz && \
+    install -o root -g root -m 0755 linux-amd64/helm /usr/local/bin/helm && rm -rf linux-amd64
 
 # Add scripts for culler (EOS tickets) and token generation
 ADD ./scripts/culler /srv/jupyterhub/culler
