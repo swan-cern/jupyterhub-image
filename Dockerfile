@@ -7,11 +7,14 @@ ARG PYTHON_VERSION=3.12
 # ----- Install CERN customizations ----- #
 
 # Install support packages
-RUN dnf install -y python3-pip \
+# EPEL package needs to install first, so that we can install tini
+RUN dnf install -y epel-release && \
+    dnf install -y python3-pip \
                    # needed by kS4U
                    perl-Data-Dumper \
                    # needed by swanculler
-                   sudo && \
+                   sudo \
+                   tini && \
     dnf clean all && rm -rf /var/cache/dnf
 
 ENV PATH="/opt/venv/bin:$PATH"
@@ -55,16 +58,6 @@ RUN chmod 544 /srv/jupyterhub/private/*.sh
 RUN ln -sf /usr/local/bin/swanhub /usr/local/bin/jupyterhub
 
 # ----- Align with upstream image ----- #
-
-# Install tini
-RUN curl -L https://github.com/krallin/tini/releases/download/v0.19.0/tini -o tini && \
-    echo "93dcc18adc78c65a028a84799ecf8ad40c936fdfc5f2a57b1acda5a8117fa82c  tini" | sha256sum -c - && \
-    mv tini /usr/local/bin/tini && \
-    chmod +x /usr/local/bin/tini
-
-# Install py-spy
-RUN pip3 install --no-cache \
-         py-spy
 
 EXPOSE 8081
 ENTRYPOINT ["tini", "--"]
