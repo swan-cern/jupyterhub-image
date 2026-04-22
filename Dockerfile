@@ -2,13 +2,7 @@ FROM gitlab-registry.cern.ch/linuxsupport/alma9-base:20260415-1
 
 LABEL maintainer="swan-admins@cern.ch"
 
-# ----- Install JupyterHub dependencies ----- #
-
-# Install JH dependencies for PostgreSQL db support, pycurl over https
-
-RUN dnf install -y python3-psycopg2 \
-                   python3-pycurl && \
-    dnf clean all && rm -rf /var/cache/dnf
+ARG PYTHON_VERSION=3.12
 
 # ----- Install CERN customizations ----- #
 
@@ -20,13 +14,23 @@ RUN dnf install -y python3-pip \
                    sudo && \
     dnf clean all && rm -rf /var/cache/dnf
 
-# Install JH extensions
-RUN pip3 install --no-cache \
-         keycloakauthenticator==4.0.7 \
-         swanculler==1.0.7 \
-         swanhub==1.0.16 \
-         swannotificationsservice==1.0.4 \
-         swanspawner==1.2.43
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Configure Python version and environment
+RUN pip3 install --no-cache uv && \
+    uv python install ${PYTHON_VERSION} && \
+    uv venv /opt/venv --python ${PYTHON_VERSION} && \
+    uv pip install \
+        psycopg2-binary==2.9.12 \
+        pycurl==7.45.5 \
+        py-spy==0.4.1 \
+        # SWAN packages
+        keycloakauthenticator==4.0.6 \
+        swanculler==1.0.7 \
+        swanhub==1.0.15 \
+        swannotificationsservice==1.0.4 \
+        swanspawner==1.2.42
+
 
 # Install kS4U
 ADD ./bin/kS4U.pl /usr/bin/kS4U
@@ -64,4 +68,4 @@ RUN pip3 install --no-cache \
 
 EXPOSE 8081
 ENTRYPOINT ["tini", "--"]
-CMD ["jupyterhub", "--config", "/usr/local/etc/jupyterhub/jupyterhub_config.py"]
+CMD ["/opt/venv/bin/jupyterhub", "--config", "/usr/local/etc/jupyterhub/jupyterhub_config.py"]
