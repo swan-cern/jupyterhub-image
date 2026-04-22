@@ -49,13 +49,13 @@ RUN curl -LO "https://dl.k8s.io/release/v1.34.4/bin/linux/amd64/kubectl" && \
     install -o root -g root -m 0755 linux-amd64/helm /usr/local/bin/helm && rm -rf linux-amd64
 
 # Add scripts for culler (EOS tickets) and token generation
-ADD ./scripts/culler /srv/jupyterhub/culler
-RUN chmod 544 /srv/jupyterhub/culler/*.sh
-ADD ./scripts/private /srv/jupyterhub/private
-RUN chmod 544 /srv/jupyterhub/private/*.sh
-
-# Make jupyterhub execute swanhub instead
-RUN ln -sf /usr/local/bin/swanhub /usr/local/bin/jupyterhub
+COPY ./scripts/ /srv/jupyterhub/
+RUN chmod -R 544 /srv/jupyterhub && \
+    # Make jupyterhub execute swanhub instead. The JupyterHub chart uses
+    # jupyterhub as the default command and so overwrites the CMD instruction
+    # defined in this file.
+    # https://github.com/jupyterhub/zero-to-jupyterhub-k8s/blob/4c186f90ce2fecdb66f4e11fbeba5aefc9016301/jupyterhub/templates/hub/deployment.yaml#L113
+    ln -sf /opt/venv/bin/swanhub /opt/venv/bin/jupyterhub
 
 # ----- Align with upstream image ----- #
 
