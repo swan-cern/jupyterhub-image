@@ -12,7 +12,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write # Required for pushing tags and creating releases
     outputs:
       new_tag: ${{ steps.version.outputs.new_tag }}
 
