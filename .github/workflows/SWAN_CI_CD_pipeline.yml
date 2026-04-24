@@ -19,6 +19,9 @@ permissions: {}  # Deny all permissions by default at workflow level
 jobs:
   update-package:
     runs-on: ubuntu-latest
+    env:
+      PACKAGE: ${{ inputs.package }}
+      VERSION: ${{ inputs.version }}
     permissions:
         contents: write # Required for pushing branches
         pull-requests: write # Required for creating pull requests
@@ -29,16 +32,16 @@ jobs:
 
     - name: Update package version
       run: |
-        PKG_NAME_LOWER=$(echo " ${{ inputs.package }}" | tr '[:upper:]' '[:lower:]')
-        PKG_VER=$(echo "${{ inputs.version }}" | sed -e "s/v//g")
+        PKG_NAME_LOWER=$(echo " ${PACKAGE}" | tr '[:upper:]' '[:lower:]')
+        PKG_VER=$(echo "${VERSION}" | sed -e "s/v//g")
         sed -i "s/\( $PKG_NAME_LOWER==*\)[^ ]*/\1$PKG_VER/" Dockerfile
 
     - name: Create pull request
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        BRANCH="${{ inputs.package }}-${{ inputs.version }}"
-        MESSAGE="Updated package ${{ inputs.package }} to version ${{ inputs.version }}"
+        BRANCH="${PACKAGE}-${VERSION}"
+        MESSAGE="Updated package ${PACKAGE} to version ${VERSION}"
 
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
