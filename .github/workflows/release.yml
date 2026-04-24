@@ -13,6 +13,7 @@ permissions: {}  # Deny all permissions by default at workflow level
 jobs:
   release:
     runs-on: ubuntu-latest
+    environment: tag-release
     permissions:
       contents: write # Required for pushing tags and creating releases
     outputs:
@@ -52,6 +53,7 @@ jobs:
 
   build-and-push:
     runs-on: ubuntu-latest
+    environment: build-and-push
     needs: release
 
     steps:
@@ -72,6 +74,7 @@ jobs:
 
   update-swan-charts:
     runs-on: ubuntu-latest
+    environment: update-swan-charts
     needs: [release, build-and-push]
 
     steps:
