@@ -14,6 +14,10 @@ RUN dnf install -y epel-release && \
                    perl-Data-Dumper \
                    # needed by swanculler
                    sudo \
+                   # useful for debugging
+                   vim \
+                   nano \
+                   which \
                    tini && \
     dnf clean all && rm -rf /var/cache/dnf
 
