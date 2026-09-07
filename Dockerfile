@@ -34,7 +34,7 @@ RUN pip3 install --no-cache uv && \
         # SWAN packages
         keycloakauthenticator==4.0.10 \
         swanculler==1.0.7 \
-        swanhub==1.0.20 \
+        swanhub==1.0.21 \
         swanspawner==1.2.49
 
 
