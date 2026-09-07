@@ -32,7 +32,7 @@ RUN pip3 install --no-cache uv && \
         pycurl==7.45.5 \
         py-spy==0.4.1 \
         # SWAN packages
-        keycloakauthenticator==4.0.9 \
+        keycloakauthenticator==4.0.10 \
         swanculler==1.0.7 \
         swanhub==1.0.20 \
         swanspawner==1.2.49
