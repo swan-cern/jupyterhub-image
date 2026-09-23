@@ -2,7 +2,7 @@ FROM gitlab-registry.cern.ch/linuxsupport/alma9-base:20260415-1
 
 LABEL maintainer="swan-admins@cern.ch"
 
-ARG PYTHON_VERSION=3.12
+ARG PYTHON_VERSION=3.14
 
 # ----- Install CERN customizations ----- #
 
