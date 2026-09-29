@@ -28,9 +28,9 @@ RUN pip3 install --no-cache uv && \
     uv python install ${PYTHON_VERSION} && \
     uv venv /opt/venv --python ${PYTHON_VERSION} && \
     uv pip install \
-        psycopg2-binary==2.9.12 \
-        pycurl==7.45.5 \
-        py-spy==0.4.1 \
+        psycopg2-binary==2.9.13 \
+        pycurl==7.48.0 \
+        py-spy==0.4.2 \
         # SWAN packages
         keycloakauthenticator==4.0.12 \
         swanculler==1.0.8 \
