@@ -1,8 +1,8 @@
-FROM gitlab-registry.cern.ch/linuxsupport/alma9-base:20260415-1
+FROM gitlab-registry.cern.ch/linuxsupport/alma9-base:20260929-1
 
 LABEL maintainer="swan-admins@cern.ch"
 
-ARG PYTHON_VERSION=3.12
+ARG PYTHON_VERSION=3.14
 
 # ----- Install CERN customizations ----- #
 
@@ -28,9 +28,9 @@ RUN pip3 install --no-cache uv && \
     uv python install ${PYTHON_VERSION} && \
     uv venv /opt/venv --python ${PYTHON_VERSION} && \
     uv pip install \
-        psycopg2-binary==2.9.12 \
-        pycurl==7.45.5 \
-        py-spy==0.4.1 \
+        psycopg2-binary==2.9.13 \
+        pycurl==7.48.0 \
+        py-spy==0.4.2 \
         # SWAN packages
         keycloakauthenticator==4.0.13 \
         swanculler==1.0.9 \
