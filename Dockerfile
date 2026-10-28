@@ -4,6 +4,8 @@ LABEL maintainer="swan-admins@cern.ch"
 
 ARG PYTHON_VERSION=3.14
 
+ENV TZ=UTC
+
 # ----- Install CERN customizations ----- #
 
 # Install support packages
